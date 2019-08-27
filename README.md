@@ -29,5 +29,13 @@ Then copy the plugin.py file to the plugin folder and overwrite the existing fil
 Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).
 On first run of the plugin additional devices will be created automatically. Existing devices will not change.
 
+## Issues
+If you find a problem with the plugin, just open an issue here.<br>
+As I do not have an EMS thermostat myself, I would like to know if this works as intended.
+
+## To Do List
+- Add the solar/mixer module devices.
+- Add support for the DS18B20 temperature sensors.
+
 ## Credits
-This plugin was based on the beta version version created by @Gert05
+This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
