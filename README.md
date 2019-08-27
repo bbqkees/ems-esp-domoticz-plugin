@@ -28,3 +28,6 @@ To update the plugin, stop the Domoticz service (by typing `sudo systemctl stop 
 Then copy the plugin.py file to the plugin folder and overwrite the existing file.
 Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).
 On first run of the plugin additional devices will be created automatically. Existing devices will not change.
+
+## Credits
+This plugin was based on the beta version version created by @Gert05
