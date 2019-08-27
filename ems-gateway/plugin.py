@@ -1,5 +1,5 @@
 """
-<plugin key="ems-gateway" name="EMS-ESP Wi-Fi Gateway" version="0.5">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.5">
     <description>
       Plugin to interface with Bosch boilers together with the EMS-ESP '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>' firmware<br/>
       <br/>Support for boiler data, thermostats (current temp and setpoint) and the SM10 solar module. Dallas temp sensors not supported yet.<br/>
