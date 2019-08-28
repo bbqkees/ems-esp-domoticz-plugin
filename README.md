@@ -27,6 +27,11 @@ The plugin listens to the topics preceded by "home/ems-esp/". In the latest EMS-
 <br>
 Also make sure you don't change the host name of the Gateway otherwise the topic will change as well!
 
+### Set the right MQTT update frequency
+By default the Gateway will publish the set of MQTT messages every 120 seconds.<br>
+For temperature and general logging this is a good update frequency. However, this is too slow if you also want to capture short events like turning on the warm water for 30 seconds.<br>
+If needed you can change the frequency in the web interface in 'Custom Settings' -> 'Publish Time'. Don't set it too low as it will bombard Domoticz with messages.
+
 ## Using the plugin
 On the first run the plugin will create several devices and sensors in Domoticz.<br>
 The plugin then subscribes and publishes to the default MQTT topics of the Gateway.<br>
