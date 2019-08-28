@@ -1,5 +1,12 @@
+# Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
+# last update: 28 August 2019
+# Author: bbqkees
+# Credits to @Gert05 for creating the first version of this plugin
+# https://github.com/bbqkees/ems-esp-domoticz-plugin
+# Proddy's EMS-ESP repository: https://github.com/proddy/EMS-ESP
+#
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.5">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.6">
     <description>
       Plugin to interface with Bosch boilers together with the EMS-ESP '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>' firmware<br/>
       <br/>Support for boiler data, thermostats (current temp and setpoint) and the SM10 solar module. Dallas temp sensors not supported yet.<br/>
@@ -191,17 +198,68 @@ class EmsDevices:
             switchstate=payload["burnGas"]
             Domoticz.Debug("burnGas: State: {}".format(switchstate))
             if (switchstate == "on"):
-                if Devices[4].nValue != 1:
-                    Devices[4].Update(nValue=1)
-                elif (switchstate == "off"):
-                    if Devices[4].nValue != 0:
-                        Devices[4].Update(nValue=0)
+                Devices[4].Update(nValue=1,sValue="on")
+            if (switchstate == "off"):
+                Devices[4].Update(nValue=0,sValue="off")
+        if "fanWork" in payload:
+            switchstate=payload["fanWork"]
+            Domoticz.Debug("fanWork: State: {}".format(switchstate))
+            if (switchstate == "on"):
+                Devices[5].Update(nValue=1,sValue="on")
+            if (switchstate == "off"):
+                Devices[5].Update(nValue=0,sValue="off")
+        if "ignWork" in payload:
+            switchstate=payload["ignWork"]
+            Domoticz.Debug("ignWork: State: {}".format(switchstate))
+            if (switchstate == "on"):
+                Devices[6].Update(nValue=1,sValue="on")
+            if (switchstate == "off"):
+                Devices[6].Update(nValue=0,sValue="off")
+        if "heatPmp" in payload:
+            switchstate=payload["heatPmp"]
+            Domoticz.Debug("heatPmp: State: {}".format(switchstate))
+            if (switchstate == "on"):
+                Devices[7].Update(nValue=1,sValue="on")
+            if (switchstate == "off"):
+                Devices[7].Update(nValue=0,sValue="off")
+        if "wWActivated" in payload:
+            switchstate=payload["wWActivated"]
+            Domoticz.Debug("wWActivated: State: {}".format(switchstate))
+            if (switchstate == "on"):
+                Devices[8].Update(nValue=1,sValue="on")
+            if (switchstate == "off"):
+                Devices[8].Update(nValue=0,sValue="off")
+        if "wWHeat" in payload:
+            switchstate=payload["wWHeat"]
+            Domoticz.Debug("wWHeat: State: {}".format(switchstate))
+            if (switchstate == "on"):
+                Devices[9].Update(nValue=1,sValue="on")
+            if (switchstate == "off"):
+                Devices[9].Update(nValue=0,sValue="off")
+        if "wWCirc" in payload:
+            switchstate=payload["wWCirc"]
+            Domoticz.Debug("wWCirc: State: {}".format(switchstate))
+            if (switchstate == "on"):
+                Devices[10].Update(nValue=1,sValue="on")
+            if (switchstate == "off"):
+                Devices[10].Update(nValue=0,sValue="off")
         #17 to 20 text
         if "wWComfort" in payload:
             text=payload["wWComfort"]
             Domoticz.Debug("wWComfort: Text: {}".format(text))
-            if Devices[28].sValue != text:
-                Devices[28].Update(nValue=1, sValue=str(text)) 
+            Devices[17].Update(nValue=1, sValue=str(text))
+        if "ServiceCode" in payload:
+            text=payload["ServiceCode"]
+            Domoticz.Debug("ServiceCode: Text: {}".format(text))
+            Devices[18].Update(nValue=1, sValue=str(text)) 
+        if "ServiceCodeNumber" in payload:
+            text=payload["ServiceCodeNumber"]
+            Domoticz.Debug("ServiceCodeNumber: Text: {}".format(text))
+            Devices[19].Update(nValue=1, sValue=str(text))
+        if "THERMOSTAT_MODE" in payload:
+            text=payload["THERMOSTAT_MODE"]
+            Domoticz.Debug("THERMOSTAT_MODE: Text: {}".format(text))
+            Devices[20].Update(nValue=1, sValue=str(text)) 
 
     def onCommand(self, mqttClient, unit, command, level, color):
         topic = "home/ems-esp/thermostat_cmd_temp"
