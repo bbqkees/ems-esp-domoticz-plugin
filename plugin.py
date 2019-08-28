@@ -5,6 +5,7 @@
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
 # Proddy's EMS-ESP repository: https://github.com/proddy/EMS-ESP
 #
+# This is the development and debug version. Use the master version for production.
 """
 <plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.6">
     <description>
