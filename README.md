@@ -8,6 +8,11 @@ The EMS-ESP firmware was intented for integration with Home Assistant.<br>
 To communicate with Domoticz you need this plugin that will listen to the topics the Gateway publishes and listens to.<br>
 The plugin will translate the Home Assistant format to Domoticz format.<br>
 
+## Check if you have a MQTT broker/server
+The Gateway communicates via MQTT. For this you need a MQTT broker installed on your machine. Usually this is [Mosquitto](http://mosquitto.org/).<br>
+You can check if your machine has it installed by typing f.i. `mosquitto_pub` in a terminal.<br>
+If it says 'command not found' you need to [install Mosquitto](https://www.sigmdel.ca/michel/ha/rpi/add_mqtt_en.html) first. If you get a list of option Mosquitto is installed and you can continue installing the plugin directly.<br>
+
 ## Installing the plugin
 Stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
 Now do one of the following actions:<br>
@@ -18,7 +23,7 @@ Go to the domoticz/plugins directory and run `git clone https://github.com/bbqke
 <br>
 Make sure that 'Accept new Hardware Devices' is enabled in settings/system. <br>
 Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
-Create a new hardware of the type "EMS bus Wi-Fi Gateway".<br>
+Create a new hardware of the type "EMS bus Wi-Fi Gateway" (Do not create a hardware of the type 'MQTT Client Gateway', this is something different).<br>
 Set the MQTT server and port. Usually the MQTT server is running on the same machine as Domoticz. If so, you can leave the IP and port to its default setting.
 
 ### Setting the correct topics
