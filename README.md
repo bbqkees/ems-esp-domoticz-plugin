@@ -16,10 +16,12 @@ If it says 'command not found' you need to [install Mosquitto](https://www.sigmd
 ## Installing the plugin
 Stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
 Now do one of the following actions:<br>
+If you have Git installed (preferred method):<br>
+Go to the domoticz/plugins directory and run `git clone https://github.com/bbqkees/ems-esp-domoticz-plugin.git`.<br>
+<br>
+Or as an alternative you can do:<br>
 Create a new directory 'ems-gateway' in the folder domoticz/plugins.<br>
 Copy the files mqtt.py and plugin.py to this new domoticz/plugins/ems-gateway directory.<br>
-Or if you have Git installed:<br>
-Go to the domoticz/plugins directory and run `git clone https://github.com/bbqkees/ems-esp-domoticz-plugin.git`.<br>
 <br>
 Make sure that 'Accept new Hardware Devices' is enabled in settings/system. <br>
 Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
@@ -41,6 +43,7 @@ If needed you can change the frequency in the web interface in 'Custom Settings'
 On the first run the plugin will create several devices and sensors in Domoticz.<br>
 The plugin then subscribes and publishes to the default MQTT topics of the Gateway.<br>
 The plugin captures the messages and updates the Domoticz devices and sensors automatically.<br>
+Go to the 'Devices' tab in Domoticz and search for the devices that are created. You can now add each device to Domoticz by clicking on the small green arrow with 'Add Device'.
 
 ## Updating the plugin
 To update the plugin, stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
@@ -56,6 +59,7 @@ As I do not have an EMS thermostat myself, I would like to know if this works as
 ## To Do List
 - Add the solar/mixer module devices.
 - Add support for the DS18B20 temperature sensors.
+- Add the additional topics for controlling thermostat night/day settings. 
 
 ## Credits
 This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
