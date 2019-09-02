@@ -8,6 +8,11 @@ The EMS-ESP firmware was intented for integration with Home Assistant.<br>
 To communicate with Domoticz you need this plugin that will listen to the topics the Gateway publishes and listens to.<br>
 The plugin will translate the Home Assistant format to Domoticz format.<br>
 
+## Compatibility
+The plugin works with all versions of EMS-ESP. So the old versions with the Telnet interface are supported but also the new versions with the web interface (1.9.0).
+
+# Installation and configuration
+
 ## Check if you have a MQTT broker/server
 The Gateway communicates via MQTT. For this you need a MQTT broker installed on your machine. Usually this is [Mosquitto](http://mosquitto.org/).<br>
 You can check if your machine has it installed by typing f.i. `mosquitto_pub` in a terminal.<br>
