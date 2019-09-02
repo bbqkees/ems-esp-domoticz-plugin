@@ -18,7 +18,7 @@ Stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell
 Now do one of the following actions:<br>
 Create a new directory 'ems-gateway' in the folder domoticz/plugins.<br>
 Copy the files mqtt.py and plugin.py to this new domoticz/plugins/ems-gateway directory.<br>
-Or:<br>
+Or if you have Git installed:<br>
 Go to the domoticz/plugins directory and run `git clone https://github.com/bbqkees/ems-esp-domoticz-plugin.git`.<br>
 <br>
 Make sure that 'Accept new Hardware Devices' is enabled in settings/system. <br>
