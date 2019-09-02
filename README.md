@@ -59,7 +59,8 @@ As I do not have an EMS thermostat myself, I would like to know if this works as
 ## To Do List
 - Add the solar/mixer module devices.
 - Add support for the DS18B20 temperature sensors.
-- Add the additional topics for controlling thermostat night/day settings. 
+- Add the additional topics for controlling thermostat night/day settings.
+- Make the topics configurable.
 
 ## Credits
 This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
