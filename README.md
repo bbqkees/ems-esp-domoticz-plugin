@@ -30,8 +30,10 @@ Copy the files mqtt.py and plugin.py to this new domoticz/plugins/ems-gateway di
 <br>
 Make sure that 'Accept new Hardware Devices' is enabled in settings/system. <br>
 Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
-Create a new hardware of the type "EMS bus Wi-Fi Gateway" (Do not create a hardware of the type 'MQTT Client Gateway', this is something different).<br>
-Set the MQTT server and port. Usually the MQTT server is running on the same machine as Domoticz. If so, you can leave the IP and port to its default setting.
+Create a new hardware of the type "EMS bus Wi-Fi Gateway" (Do not create a hardware of the type 'MQTT Client Gateway', this is something different). See the image below.<br>
+<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/domoticz-plugin-selection.jpg" height="200"><br><br>
+Set the MQTT server and port. Usually the MQTT server is running on the same machine as Domoticz. If so, you can leave the IP and port to its default setting.<br>
+<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/domoticz-plugin-parameters.jpg" height="350"><br>
 
 ### Setting the correct topics
 The plugin listens to the topics preceded by "home/ems-esp/". In the latest EMS-ESP firmware versions the default topic is "ems-esp". To change this go to the Gateway web interface and to the MQTT settings. Now set the Base parameter to "home".<br>
@@ -48,7 +50,9 @@ If needed you can change the frequency in the web interface in 'Custom Settings'
 On the first run the plugin will create several devices and sensors in Domoticz.<br>
 The plugin then subscribes and publishes to the default MQTT topics of the Gateway.<br>
 The plugin captures the messages and updates the Domoticz devices and sensors automatically.<br>
-Go to the 'Devices' tab in Domoticz and search for the devices that are created. You can now add each device to Domoticz by clicking on the small green arrow with 'Add Device'.
+Go to the 'Devices' tab in Domoticz and search for the devices that are created. You can now add each device to Domoticz by clicking on the small green arrow with 'Add Device'.<br>
+<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/domoticz-plugin-devices.jpg" height="300">
+<br>
 
 ## Updating the plugin
 To update the plugin, stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
