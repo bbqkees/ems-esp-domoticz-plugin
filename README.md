@@ -9,7 +9,11 @@ To communicate with Domoticz you need this plugin that will listen to the topics
 The plugin will basically translate the Home Assistant format to Domoticz format.<br>
 
 ## Compatibility
-The plugin works with all versions of EMS-ESP. So the old versions with the Telnet interface are supported but also the new versions with the web interface (1.9.0 and onwards).
+The plugin works with all versions of EMS-ESP. So the old versions with the Telnet interface are supported but also the new versions with the web interface (1.9.0 and onwards).<br>
+<br>
+There have been a lot of additions in the EMS-ESP firmware lately particularly regarding support for multiple heating circuit.<br>
+There is no support for multiple heating circuits in the plugin yet.<br>
+At this point 24 devices and sensors are created by the plugin. 
 
 # Installation and configuration
 
@@ -57,7 +61,7 @@ Go to the 'Devices' tab in Domoticz and search for the devices that are created.
 ## Updating the plugin
 To update the plugin, stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
 Then copy the new plugin.py file to the plugin folder and overwrite the existing file.<br>
-Or if you used the `git clone` command to initially install the plugin just run `git pull`<br>
+Or if you used the `git clone` command to initially install the plugin just type `git pull` when in the plugin folder.<br>
 Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
 On first run of the plugin (takes a minute maybe) additional devices will be created automatically if they were not defined before. Existing devices will not change.<br>
 
@@ -69,6 +73,7 @@ As I do not have an EMS thermostat myself, I would like to know if this works as
 - Add the solar/mixer module devices.
 - Add support for the DS18B20 temperature sensors.
 - Add the additional topics for controlling thermostat night/day settings.
+- Add support for multiple heating circuits.
 - Make the topics configurable.
 
 ## Credits
