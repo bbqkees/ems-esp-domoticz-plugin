@@ -10,7 +10,7 @@ The plugin will basically translate the Home Assistant format to Domoticz format
 
 ## Compatibility
 The plugin works with all versions of EMS-ESP. So the old versions with the Telnet interface are supported but also the new versions with the web interface (1.9.0 and onwards).<br>
-In firmware 1.9.2 the MQTT topics have changed though. I am going to provide an update shortly.<br>
+<b>In firmware 1.9.2 the MQTT topics have changed though. I am going to provide an update shortly. Its recommended to stay on 1.9.1 until further notice.</b><br>
 <br>
 There have been a lot of additions in the EMS-ESP firmware lately particularly regarding support for multiple heating circuit.<br>
 There is no support for multiple heating circuits in the plugin yet.<br>
