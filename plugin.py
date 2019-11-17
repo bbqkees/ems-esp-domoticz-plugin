@@ -29,7 +29,7 @@
                 <option label="False" value="Normal" default="true" />
             </options>
         </param>
-                <param field="SM10" label="SM10 solar module" width="75px">
+        <param field="SM10" label="SM10 solar module" width="75px">
             <options>
                 <option label="Yes" value="Yes"/>
                 <option label="No" value="No" default="true" />
@@ -126,21 +126,23 @@ class EmsDevices:
 
         
     def onMqttMessage(self, topic, payload):
-        if "thermostat_currtemp" in payload:
-            temp=round(float(payload["thermostat_currtemp"]), 1)
-            Domoticz.Debug("thermostat_currtemp: Current temp: {}".format(temp))
-            if Devices[1].sValue != temp:
-                    Devices[1].Update(nValue=1, sValue=str(temp))
+        if "hc1" in payload:
+            payload = payload["hc1"]
+            if "currtemp" in payload:
+                temp=round(float(payload["currtemp"]), 1)
+                Domoticz.Debug("thermostat_currtemp: Current temp: {}".format(temp))
+                if Devices[1].sValue != temp:
+                        Devices[1].Update(nValue=1, sValue=str(temp))
+            if "seltemp" in payload:
+                temp=payload["seltemp"]
+                Domoticz.Debug("thermostat_seltemp: Temp setting: {}".format(temp))
+                if Devices[3].sValue != temp:
+                     Devices[3].Update(nValue=1, sValue=str(temp))
         if "sysPress" in payload:
             pressure=payload["sysPress"]
             Domoticz.Debug("sysPress: Pressure: {}".format(pressure))
             if Devices[2].sValue != pressure:
                 Devices[2].Update(nValue=1, sValue=str(pressure))
-        if "thermostat_seltemp" in payload:
-            temp=payload["thermostat_seltemp"]
-            Domoticz.Debug("thermostat_seltemp: Temp setting: {}".format(temp))
-            if Devices[3].sValue != temp:
-                 Devices[3].Update(nValue=1, sValue=str(temp))
         #11 to 16 temp
         if "selFlowTemp" in payload:
             temp=round(float(payload["selFlowTemp"]), 1)
@@ -263,7 +265,7 @@ class EmsDevices:
 
     def onCommand(self, mqttClient, unit, command, level, color):
         topic = "home/ems-esp/thermostat_cmd_temp"
-        if (command == "Set Level"):
+        if command == "Set Level":
             mqttClient.Publish(topic, str(level))
 
 
