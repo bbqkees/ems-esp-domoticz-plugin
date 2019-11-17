@@ -83,22 +83,22 @@ class EmsDevices:
             Domoticz.Device(Name="Boiler warm water circulation", Unit=10, Type=244, Subtype=73, Switchtype=0).Create()
         if 11 not in Devices:
             Domoticz.Debug("Create temperature device (selFlowTemp)")
-            Domoticz.Device(Name="Boiler selected flow temperate", Unit=11, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler selected flow temperature", Unit=11, Type=80, Subtype=5).Create()
         if 12 not in Devices:
             Domoticz.Debug("Create temperature device (outdoorTemp)")
             Domoticz.Device(Name="Boiler connected outdoor temperature", Unit=12, Type=80, Subtype=5).Create()
         if 13 not in Devices:
             Domoticz.Debug("Create temperature device (wWCurTmp)")
-            Domoticz.Device(Name="Boiler warm water current temperate", Unit=13, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler warm water current temperature", Unit=13, Type=80, Subtype=5).Create()
         if 14 not in Devices:
             Domoticz.Debug("Create temperature device (curFlowTemp)")
-            Domoticz.Device(Name="Boiler current flow temperate", Unit=14, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler current flow temperature", Unit=14, Type=80, Subtype=5).Create()
         if 15 not in Devices:
             Domoticz.Debug("Create temperature device (retTemp)")
-            Domoticz.Device(Name="Boiler return temperate", Unit=15, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler return temperature", Unit=15, Type=80, Subtype=5).Create()
         if 16 not in Devices:
             Domoticz.Debug("Create temperature device (boilTemp)")
-            Domoticz.Device(Name="Boiler temperate", Unit=16, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler temperature", Unit=16, Type=80, Subtype=5).Create()
         if 17 not in Devices:
             Domoticz.Debug("Create text device (wWComfort)")
             Domoticz.Device(Name="Boiler warm water comfort setting", Unit=17, Type=243, Subtype=19).Create()
