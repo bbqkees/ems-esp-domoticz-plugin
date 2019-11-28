@@ -1,12 +1,12 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 28 August 2019
+# last update: 17 November 2019
 # Author: bbqkees
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
 # Proddy's EMS-ESP repository: https://github.com/proddy/EMS-ESP
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.6">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.6.1">
     <description>
       Plugin to interface with Bosch boilers together with the EMS-ESP '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>' firmware<br/>
       <br/>Support for boiler data, thermostats (current temp and setpoint) and the SM10 solar module. Dallas temp sensors not supported yet.<br/>
@@ -29,7 +29,7 @@
                 <option label="False" value="Normal" default="true" />
             </options>
         </param>
-                <param field="SM10" label="SM10 solar module" width="75px">
+        <param field="SM10" label="SM10 solar module" width="75px">
             <options>
                 <option label="Yes" value="Yes"/>
                 <option label="No" value="No" default="true" />
@@ -83,22 +83,22 @@ class EmsDevices:
             Domoticz.Device(Name="Boiler warm water circulation", Unit=10, Type=244, Subtype=73, Switchtype=0).Create()
         if 11 not in Devices:
             Domoticz.Debug("Create temperature device (selFlowTemp)")
-            Domoticz.Device(Name="Boiler selected flow temperate", Unit=11, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler selected flow temperature", Unit=11, Type=80, Subtype=5).Create()
         if 12 not in Devices:
             Domoticz.Debug("Create temperature device (outdoorTemp)")
             Domoticz.Device(Name="Boiler connected outdoor temperature", Unit=12, Type=80, Subtype=5).Create()
         if 13 not in Devices:
             Domoticz.Debug("Create temperature device (wWCurTmp)")
-            Domoticz.Device(Name="Boiler warm water current temperate", Unit=13, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler warm water current temperature", Unit=13, Type=80, Subtype=5).Create()
         if 14 not in Devices:
             Domoticz.Debug("Create temperature device (curFlowTemp)")
-            Domoticz.Device(Name="Boiler current flow temperate", Unit=14, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler current flow temperature", Unit=14, Type=80, Subtype=5).Create()
         if 15 not in Devices:
             Domoticz.Debug("Create temperature device (retTemp)")
-            Domoticz.Device(Name="Boiler return temperate", Unit=15, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler return temperature", Unit=15, Type=80, Subtype=5).Create()
         if 16 not in Devices:
             Domoticz.Debug("Create temperature device (boilTemp)")
-            Domoticz.Device(Name="Boiler temperate", Unit=16, Type=80, Subtype=5).Create()
+            Domoticz.Device(Name="Boiler temperature", Unit=16, Type=80, Subtype=5).Create()
         if 17 not in Devices:
             Domoticz.Debug("Create text device (wWComfort)")
             Domoticz.Device(Name="Boiler warm water comfort setting", Unit=17, Type=243, Subtype=19).Create()
@@ -126,21 +126,23 @@ class EmsDevices:
 
         
     def onMqttMessage(self, topic, payload):
-        if "thermostat_currtemp" in payload:
-            temp=round(float(payload["thermostat_currtemp"]), 1)
-            Domoticz.Debug("thermostat_currtemp: Current temp: {}".format(temp))
-            if Devices[1].sValue != temp:
-                    Devices[1].Update(nValue=1, sValue=str(temp))
+        if "hc1" in payload:
+            payload = payload["hc1"]
+            if "currtemp" in payload:
+                temp=round(float(payload["currtemp"]), 1)
+                Domoticz.Debug("thermostat_currtemp: Current temp: {}".format(temp))
+                if Devices[1].sValue != temp:
+                        Devices[1].Update(nValue=1, sValue=str(temp))
+            if "seltemp" in payload:
+                temp=payload["seltemp"]
+                Domoticz.Debug("thermostat_seltemp: Temp setting: {}".format(temp))
+                if Devices[3].sValue != temp:
+                     Devices[3].Update(nValue=1, sValue=str(temp))
         if "sysPress" in payload:
             pressure=payload["sysPress"]
             Domoticz.Debug("sysPress: Pressure: {}".format(pressure))
             if Devices[2].sValue != pressure:
                 Devices[2].Update(nValue=1, sValue=str(pressure))
-        if "thermostat_seltemp" in payload:
-            temp=payload["thermostat_seltemp"]
-            Domoticz.Debug("thermostat_seltemp: Temp setting: {}".format(temp))
-            if Devices[3].sValue != temp:
-                 Devices[3].Update(nValue=1, sValue=str(temp))
         #11 to 16 temp
         if "selFlowTemp" in payload:
             temp=round(float(payload["selFlowTemp"]), 1)
@@ -263,7 +265,7 @@ class EmsDevices:
 
     def onCommand(self, mqttClient, unit, command, level, color):
         topic = "home/ems-esp/thermostat_cmd_temp"
-        if (command == "Set Level"):
+        if command == "Set Level":
             mqttClient.Publish(topic, str(level))
 
 
