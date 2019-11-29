@@ -8,7 +8,7 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b6">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b7">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
@@ -517,10 +517,10 @@ class EmsDevices:
         if (unit in [113, 123, 133, 143]):
             dictOptions = Devices[unit].Options
             listLevelNames = dictOptions['LevelNames'].split('|')
-            strSelectedName = listLevelNames[int(int(Level)/10)]
+            strSelectedName = listLevelNames[int(int(level)/10)]
             Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
             thermostatModeTopic = "thermostat_cmd_mode"    
-            mqttClient.Publish(self.topicBase+thermostatModeTopic+str(int((unit-102)/10)), sstrSelectedName)
+            mqttClient.Publish(self.topicBase+thermostatModeTopic+str(int((unit-102)/10)), strSelectedName)
 
 
 class BasePlugin:
