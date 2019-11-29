@@ -1,6 +1,8 @@
 # ems-esp-domoticz-plugin
 Domoticz plugin for the EMS Wi-Fi Gateway with Proddy's EMS-ESP firmware. 
 
+--You are now viewing the development branch.--
+
 ## When do you need this?
 If you are using the [EMS Wi-Fi Gateway](https://shop.hotgoodies.nl/ems/) (or another setup with) with [Proddy's EMS-ESP firmware](https://github.com/proddy/EMS-ESP) in combination with Domoticz.<br>
 The EMS-ESP firmware communicates via MQTT. Although MQTT is an open format, the required message contents is specific to each home automation system.<br>
