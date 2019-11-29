@@ -8,7 +8,7 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b5">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b6">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
@@ -506,20 +506,21 @@ class EmsDevices:
         self.topicBase = Parameters["Mode1"].replace(" ", "")
         Domoticz.Log("onCommand called for Unit " + str(unit) + ": Parameter '" + str(command) + "', Level: " + str(level))
 
-        # Change a thermostat setpoint or mode for a specific HC
+        # Change a thermostat setpoint for a specific HC
         if (unit in [112, 122, 132, 142]):
-            # Set HC temp
             if (str(command) == "Set Level"):
                 thermostatSetpointTopic = "thermostat_cmd_temp"    
-                mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
-            # Set HC mode    
-            else:
-                dictOptions = Devices[unit].Options
-                listLevelNames = dictOptions['LevelNames'].split('|')
-                strSelectedName = listLevelNames[int(int(Level)/10)]
-                Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
-                thermostatModeTopic = "thermostat_cmd_mode"    
-                mqttClient.Publish(self.topicBase+thermostatModeTopic+str(int((unit-102)/10)), sstrSelectedName)
+                mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level)
+                                   
+        # This still needs work:
+        # Change a thermostat mode for a specific HC
+        if (unit in [113, 123, 133, 143]):
+            dictOptions = Devices[unit].Options
+            listLevelNames = dictOptions['LevelNames'].split('|')
+            strSelectedName = listLevelNames[int(int(Level)/10)]
+            Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
+            thermostatModeTopic = "thermostat_cmd_mode"    
+            mqttClient.Publish(self.topicBase+thermostatModeTopic+str(int((unit-102)/10)), sstrSelectedName)
 
 
 class BasePlugin:
