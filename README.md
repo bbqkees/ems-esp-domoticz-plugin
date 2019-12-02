@@ -2,6 +2,9 @@
 Domoticz plugin for the EMS Wi-Fi Gateway with Proddy's EMS-ESP firmware. 
 
 --You are now viewing the development branch.--
+On first run the plugin will add a new thermostat device for all heating circuits hc1 to hc4. If you previously used the thermostat you now need to control it via the new Thermostat hc1. In some cases your thermostat is coupled to another heating circuit than hc1, in those cases you need to use the other hc.
+
+This version also supports 5 Dallas temperature sensors and several other new parameters.
 
 ## When do you need this?
 If you are using the [EMS Wi-Fi Gateway](https://shop.hotgoodies.nl/ems/) (or another setup with) with [Proddy's EMS-ESP firmware](https://github.com/proddy/EMS-ESP) in combination with Domoticz.<br>
@@ -44,7 +47,6 @@ As I do not have an EMS thermostat myself, I would like to know if this works as
 
 ## To Do List
 - Add the solar/mixer module devices.
-- Add support for the DS18B20 temperature sensors.
 
 ## Credits
 This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
