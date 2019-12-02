@@ -12,4 +12,9 @@ Firmware of the Gateway needs to be at least 1.9.2
 
 ### Added
 
-- Initial support for heating circuits hc1
+- Initial support for heating circuit hc1
+
+
+## [0.6] 2019-08-27
+
+Initial plugin version for EMS-ESP firmware up to 1.9.1.
