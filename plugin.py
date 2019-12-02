@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 27 November 2019
+# last update: 02 December 2019
 # Author: bbqkees
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -8,13 +8,12 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b7">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b11">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
       <i>Please update the firmware of the Gateway to 1.9.2 or higher for best functionality.</i><br/>
-      If you are using older firmware, select 'Yes' in the legacy firmware option below.<br/>
-      As of firmware 1.9.2 the plugin supports 4 heating zones (HC1 to HC4). If you only have one thermostat/zone, the Gateway listens to zone 1.<br/>
+      As of firmware 1.9.2 the plugin supports 4 heating zones (HC1 to HC4). If you only have one thermostat/zone, the Gateway usually listens to zone 1.<br/>
       Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run<br/>
     <br/>
     Parameters:<br/>
@@ -276,70 +275,74 @@ class EmsDevices:
                      # Devices[3].Update(nValue=1, sValue=str(temp))
 
         # Process the thermostat parameters of each heating zone
-        if "hc1" in payload:
-            payload = payload["hc1"]
-            if "currtemp" in payload:
-                temp=round(float(payload["currtemp"]), 1)
-                Domoticz.Debug("thermostat_currtemp HC1: Current temp: {}".format(temp))
-                if Devices[111].sValue != temp:
-                        Devices[111].Update(nValue=1, sValue=str(temp))
-            if "seltemp" in payload:
-                temp=payload["seltemp"]
-                Domoticz.Debug("thermostat_seltemp HC1: Temp setting: {}".format(temp))
-                if Devices[112].sValue != temp:
-                     Devices[112].Update(nValue=1, sValue=str(temp))
-            if "mode" in payload:
-                mode=payload["mode"]
-                Domoticz.Debug("hermostat HC1: Mode is: "+str(mode["mode"]))
-                setSelectorByName(113, str(mode["mode"]))
-        if "hc2" in payload:
-            payload = payload["hc2"]
-            if "currtemp" in payload:
-                temp=round(float(payload["currtemp"]), 1)
-                Domoticz.Debug("thermostat_currtemp HC2: Current temp: {}".format(temp))
-                if Devices[121].sValue != temp:
-                        Devices[121].Update(nValue=1, sValue=str(temp))
-            if "seltemp" in payload:
-                temp=payload["seltemp"]
-                Domoticz.Debug("thermostat_seltemp HC2: Temp setting: {}".format(temp))
-                if Devices[122].sValue != temp:
-                     Devices[122].Update(nValue=1, sValue=str(temp))
-            if "mode" in payload:
-                mode=payload["mode"]
-                Domoticz.Debug("hermostat HC2: Mode is: "+str(mode["mode"]))
-                setSelectorByName(123, str(mode["mode"]))
-        if "hc3" in payload:
-            payload = payload["hc3"]
-            if "currtemp" in payload:
-                temp=round(float(payload["currtemp"]), 1)
-                Domoticz.Debug("thermostat_currtemp HC3: Current temp: {}".format(temp))
-                if Devices[131].sValue != temp:
-                        Devices[131].Update(nValue=1, sValue=str(temp))
-            if "seltemp" in payload:
-                temp=payload["seltemp"]
-                Domoticz.Debug("thermostat_seltemp HC3: Temp setting: {}".format(temp))
-                if Devices[132].sValue != temp:
-                     Devices[132].Update(nValue=1, sValue=str(temp))
-            if "mode" in payload:
-                mode=payload["mode"]
-                Domoticz.Debug("hermostat HC3: Mode is: "+str(mode["mode"]))
-                setSelectorByName(133, str(mode["mode"]))
-        if "hc4" in payload:
-            payload = payload["hc4"]
-            if "currtemp" in payload:
-                temp=round(float(payload["currtemp"]), 1)
-                Domoticz.Debug("thermostat_currtemp HC4: Current temp: {}".format(temp))
-                if Devices[141].sValue != temp:
-                        Devices[141].Update(nValue=1, sValue=str(temp))
-            if "seltemp" in payload:
-                temp=payload["seltemp"]
-                Domoticz.Debug("thermostat_seltemp HC4: Temp setting: {}".format(temp))
-                if Devices[142].sValue != temp:
-                     Devices[142].Update(nValue=1, sValue=str(temp))
-            if "mode" in payload:
-                mode=payload["mode"]
-                Domoticz.Debug("hermostat HC4: Mode is: "+str(mode["mode"]))
-                setSelectorByName(143, str(mode["mode"]))
+        # Because there are other topics who have 'hc1' etc in the payload, check first
+        # if its thermostat_data topic.
+        # ToDo: Setting the thermostat mode doesn't work yet.
+        if "thermostat_data" in topic:
+            if "hc1" in payload:
+                payloadHc1 = payload["hc1"]
+                if "currtemp" in payloadHc1:
+                    temp=round(float(payloadHc1["currtemp"]), 1)
+                    Domoticz.Debug("thermostat_currtemp HC1: Current temp: {}".format(temp))
+                    if Devices[111].sValue != temp:
+                            Devices[111].Update(nValue=1, sValue=str(temp))
+                if "seltemp" in payloadHc1:
+                    temp=payloadHc1["seltemp"]
+                    Domoticz.Debug("thermostat_seltemp HC1: Temp setting: {}".format(temp))
+                    if Devices[112].sValue != temp:
+                         Devices[112].Update(nValue=1, sValue=str(temp))
+                if "mode" in payloadHc1:
+                    thMode=payloadHc1["mode"]
+                    Domoticz.Debug("Thermostat HC1: Mode is: "+str(thMode))
+                    setSelectorByName(113, str(thMode))
+            if "hc2" in payload:
+                payloadHc2 = payload["hc2"]
+                if "currtemp" in payloadHc2:
+                    temp=round(float(payloadHc2["currtemp"]), 1)
+                    Domoticz.Debug("thermostat_currtemp HC2: Current temp: {}".format(temp))
+                    if Devices[121].sValue != temp:
+                            Devices[121].Update(nValue=1, sValue=str(temp))
+                if "seltemp" in payloadHc2:
+                    temp=payloadHc2["seltemp"]
+                    Domoticz.Debug("thermostat_seltemp HC2: Temp setting: {}".format(temp))
+                    if Devices[122].sValue != temp:
+                         Devices[122].Update(nValue=1, sValue=str(temp))
+                if "mode" in payloadHc2:
+                    thMode=payloadHc2["mode"]
+                    Domoticz.Debug("Thermostat HC2: Mode is: "+str(thMode))
+                    setSelectorByName(123, str(thMode))
+            if "hc3" in payload:
+                payloadHc3 = payload["hc3"]
+                if "currtemp" in payloadHc3:
+                    temp=round(float(payloadHc3["currtemp"]), 1)
+                    Domoticz.Debug("thermostat_currtemp HC3: Current temp: {}".format(temp))
+                    if Devices[131].sValue != temp:
+                            Devices[131].Update(nValue=1, sValue=str(temp))
+                if "seltemp" in payloadHc3:
+                    temp=payloadHc3["seltemp"]
+                    Domoticz.Debug("thermostat_seltemp HC3: Temp setting: {}".format(temp))
+                    if Devices[132].sValue != temp:
+                         Devices[132].Update(nValue=1, sValue=str(temp))
+                if "mode" in payloadHc3:
+                    thMode=payloadHc3["mode"]
+                    Domoticz.Debug("Thermostat HC3: Mode is: "+str(thMode))
+                    setSelectorByName(133, str(thMode))
+            if "hc4" in payload:
+                payloadHc4 = payload["hc4"]
+                if "currtemp" in payloadHc1:
+                    temp=round(float(payloadHc4["currtemp"]), 1)
+                    Domoticz.Debug("thermostat_currtemp HC4: Current temp: {}".format(temp))
+                    if Devices[141].sValue != temp:
+                            Devices[141].Update(nValue=1, sValue=str(temp))
+                if "seltemp" in payloadHc4:
+                    temp=payloadHc4["seltemp"]
+                    Domoticz.Debug("thermostat_seltemp HC4: Temp setting: {}".format(temp))
+                    if Devices[142].sValue != temp:
+                         Devices[142].Update(nValue=1, sValue=str(temp))
+                if "mode" in payloadHc4:
+                    thMode=payloadHc4["mode"]
+                    Domoticz.Debug("Thermostat HC4: Mode is: "+str(thMode))
+                    setSelectorByName(143, str(thMode))
 
         # Process the boiler parameters
         if "sysPress" in payload:
