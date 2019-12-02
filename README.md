@@ -8,7 +8,7 @@ This version also supports 5 Dallas temperature sensors and several other new pa
 <br>
 You need to run firmware 1.9.2 or later.<br>
 <br>
-See the changelog for more details.<br>
+See the [Changelog](https://github.com/bbqkees/ems-esp-domoticz-plugin/blob/dev/CHANGELOG.md) for more details.<br>
 <br>
 
 ## When do you need this?
