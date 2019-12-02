@@ -93,9 +93,9 @@ class EmsDevices:
         # if 1 not in Devices:
             # Domoticz.Debug("Create Temperature Device")
             # Domoticz.Device(Name="EMS thermostat current temp", Unit=1, Type=80, Subtype=5).Create()
-        # if 2 not in Devices:
-            # Domoticz.Debug("Create System Pressure Device")
-            # Domoticz.Device(Name="Boiler system pressure", Unit=2, Type=243, Subtype=9).Create()
+        if 2 not in Devices:
+            Domoticz.Debug("Create System Pressure Device")
+            Domoticz.Device(Name="Boiler system pressure", Unit=2, Type=243, Subtype=9).Create()
         # if 3 not in Devices:
             # Domoticz.Debug("Create Thermostat Setpoint Device")
             # Domoticz.Device(Name="EMS thermostat setpoint", Unit=3, Type=242, Subtype=1).Create()
