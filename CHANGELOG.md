@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.7b11] 2019-12-02
+
+Firmware of the Gateway needs to be at least 1.9.2
   
 ### Fixed
 
@@ -12,7 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   (Setting the thermostat mode does not work yet.)
 - Creation of Device ID 2 (sys pressure) was mistakenly commented out.
 
-## [0.7b07] <2019-11-27
+## [0.7b07] 2019-11-27
+
+In ESM_ESP firmware 1.9.2 the MQTT topics have changed.
+This version of the plugin adds support for the new structure.
+Firmware of the Gateway needs to be at least 1.9.2
 
 ### Added
 
