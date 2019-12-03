@@ -10,12 +10,12 @@ The plugin will basically translate the Home Assistant format to Domoticz format
 
 ## Compatibility
 The plugin works with all versions of EMS-ESP. So the old versions with the Telnet interface are supported but also the new versions with the web interface (1.9.0 and onwards).<br>
-<b>In firmware 1.9.2 the MQTT topics have changed though. I am going to provide a major update. A test version is ready in the dev channel. <br>
-Its recommended to stay on 1.9.1 until further notice. If you are on 1.9.2 or later, hc1 will now work.</b><br>
+<b>In firmware 1.9.2 the MQTT topics have changed though, its recommended to upgrade the firmware to 1.9.3 if possible.
+If you are on older firmware versions than 1.9.2  and are unable to upgrade, do not update the plugin as it will break compatibility with the thermostat.
 <br>
-There have been a lot of additions in the EMS-ESP firmware lately particularly regarding support for multiple heating circuit.<br>
-There is no support for multiple heating circuits in the plugin yet.<br>
-At this point 24 devices and sensors are created by the plugin. 
+There have been a lot of additions in the EMS-ESP firmware lately particularly regarding support for multiple heating circuits.<br>
+If you are already on 1.9.2 or later, hc1 will now work.</b><br>
+In the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev) a test verion is available with support for all 4 heating circuits hc1 to hc4.<br>
 
 # Installation and configuration
 
@@ -25,7 +25,7 @@ You can check if your machine has it installed by typing f.i. `mosquitto_pub` in
 If it says 'command not found' you need to [install Mosquitto](https://www.sigmdel.ca/michel/ha/rpi/add_mqtt_en.html) first. If you get a list of option Mosquitto is installed and you can continue installing the plugin directly.<br>
 
 ## Installing the plugin
-Stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
+Stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell). Actually stopping the service is not really necessary but it doesn't hurt.<br><br>
 Now do one of the following actions:<br>
 If you have Git installed (preferred method):<br>
 Go to the domoticz/plugins directory and run `git clone https://github.com/bbqkees/ems-esp-domoticz-plugin.git`.<br>
@@ -46,6 +46,7 @@ The plugin listens to the topics preceded by "home/ems-esp/". In the latest EMS-
 <img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/ems-esp-web-mqtt-base-setting.jpg" height="300">
 <br>
 Also make sure you don't change the host name of the Gateway otherwise the topic will change as well!
+In the latest plugin version you can change the topic string as well for more flexibility. 
 
 ### Set the right MQTT update frequency
 By default the Gateway will publish the set of MQTT messages every 120 seconds.<br>
@@ -73,10 +74,10 @@ As I do not have an EMS thermostat myself, I would like to know if this works as
 
 ## To Do List
 - Add the solar/mixer module devices.
-- Add support for the DS18B20 temperature sensors.
+- Add support for the DS18B20 temperature sensors. (available in the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev))
 - Add the additional topics for controlling thermostat night/day settings.
-- Add support for multiple heating circuits.
-- Make the topics configurable.
+- Add support for multiple heating circuits. (available in the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev))
+- Make the topics configurable. (available in the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev))
 
 ## Credits
 This plugin is based on the beta version version created by [Gert05](https://github.com/Gert05)
