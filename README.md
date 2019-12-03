@@ -2,7 +2,11 @@
 Domoticz plugin for the EMS Wi-Fi Gateway with Proddy's EMS-ESP firmware. 
 
 ## When do you need this?
-If you are using the [EMS Wi-Fi Gateway](https://shop.hotgoodies.nl/ems/) (or another setup with) with [Proddy's EMS-ESP firmware](https://github.com/proddy/EMS-ESP) in combination with Domoticz.<br>
+If you are using the [EMS Wi-Fi Gateway](https://shop.hotgoodies.nl/ems/) (or another setup with) with [Proddy's EMS-ESP firmware](https://github.com/proddy/EMS-ESP) in combination with Domoticz.<br><br>
+<img src="https://raw.githubusercontent.com/bbqkees/Nefit-Buderus-EMS-bus-Arduino-Domoticz/master/Documentation/nefit-ems-bus-interface-PCB.jpg" height="150">
+<img src="https://shop.hotgoodies.nl/ems/ems-kit/on-boiler.jpg" height="150">
+<img src="https://hotgoodies.nl/shop/ems/ems-kit/ems-kit-2.jpg" height="150">
+<br><br>
 The EMS-ESP firmware communicates via MQTT. Although MQTT is an open format, the required message contents is specific to each home automation system.<br>
 The EMS-ESP firmware was intented for integration with Home Assistant (HA).<br>
 To communicate with Domoticz you need this plugin that will listen to the topics the Gateway publishes and listens to.<br>
