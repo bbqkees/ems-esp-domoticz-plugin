@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+
+## [0.7b12] 2019-12-03
+
+Firmware of the Gateway needs to be at least 1.9.2
+
+### Added
+
+- Support for heat pump (topic hp_data)
+
 ## [0.7b11] 2019-12-02
 
 Firmware of the Gateway needs to be at least 1.9.2
