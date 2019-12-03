@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 02 December 2019
+# last update: 03 December 2019
 # Author: bbqkees
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -8,7 +8,7 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b11">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b12">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
@@ -89,7 +89,7 @@ from mqtt import MqttClient
 class EmsDevices:
 
     def checkDevices(self):
-        # These are 3 old parameters from the old plugin
+        # These are some old parameters from the old plugin
         # if 1 not in Devices:
             # Domoticz.Debug("Create Temperature Device")
             # Domoticz.Device(Name="EMS thermostat current temp", Unit=1, Type=80, Subtype=5).Create()
@@ -257,6 +257,13 @@ class EmsDevices:
                 }
             Domoticz.Device(Name="Boiler mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
 
+        # Create switches for tapwater and heating active
+        if 71 not in Devices:
+            Domoticz.Debug("Create on/off switch (tapwater active)")
+            Domoticz.Device(Name="Tapwater active", Unit=71, Type=244, Subtype=73, Switchtype=0).Create()
+        if 72 not in Devices:
+            Domoticz.Debug("Create on/off switch (heating active)")
+            Domoticz.Device(Name="Heating active", Unit=72, Type=244, Subtype=73, Switchtype=0).Create()
 
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
@@ -502,7 +509,39 @@ class EmsDevices:
             temp=round(float(payload["temp_5"]), 1)
             Domoticz.Debug("Dallas temp 5: Current temp: {}".format(temp))
             if Devices[225].sValue != temp:
-                Devices[225].Update(nValue=1, sValue=str(temp)) 
+                Devices[225].Update(nValue=1, sValue=str(temp))
+
+        # Set tapwater and heating status
+        # This doesn't work yet because onMQTTPublish can't handle a non-JSON object.
+        # The heating and tapwater topic's content is just a boolean.
+        if "heating_active" in topic:
+            if payload == 0:
+                Domoticz.Debug("heating_active: No")
+                Devices[72].Update(nValue=0,sValue="off")
+            if payload == 1:
+                Domoticz.Debug("heating_active: Yes")
+                Devices[72].Update(nValue=1,sValue="on")
+
+        # Decode heat pump data
+        # This creates Domoticz devices only if a heatpump topic message has been received.
+        # (Not everyone has heat pump)
+        if "home/ems-esp/hp_data" in topic:
+            if ( 201 not in Devices ):                
+                Domoticz.Debug("Create percentage device (Heatpump modulation)")
+                Domoticz.Device(Name="Heatpump modulation", Unit=201, Type=243, Subtype=6).Create()
+            if ( 202 not in Devices ):                
+                Domoticz.Debug("Create percentage device (Heatpump speed)")
+                Domoticz.Device(Name="Heatpump speed", Unit=202, Type=243, Subtype=6).Create()
+            if "pumpmodulation" in payload:
+                percentage=payload["pumpmodulation"]
+                Domoticz.Debug("pumpmodulation: Percentage: {}".format(percentage))
+                if Devices[201].sValue != percentage:
+                    Devices[201].Update(nValue=1, sValue=str(percentage))
+            if "pumpspeed" in payload:
+                percentage=payload["pumpspeed"]
+                Domoticz.Debug("pumpspeed: Percentage: {}".format(percentage))
+                if Devices[202].sValue != percentage:
+                    Devices[202].Update(nValue=1, sValue=str(percentage))
 
     # onCommand publishes a MQTT message for each command received from Domoticz
     def onCommand(self, mqttClient, unit, command, level, color):
