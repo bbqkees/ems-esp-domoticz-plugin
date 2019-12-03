@@ -45,8 +45,8 @@ Set the MQTT server and port. Usually the MQTT server is running on the same mac
 The plugin listens to the topics preceded by "home/ems-esp/". In the latest EMS-ESP firmware versions the default topic is just "ems-esp". To change this go to the Gateway web interface and to the MQTT settings. Now set the Base parameter to "home".<br>
 <img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/ems-esp-web-mqtt-base-setting.jpg" height="300">
 <br>
-Also make sure you don't change the host name of the Gateway otherwise the topic will change as well!
-In the latest plugin version you can change the topic string as well for more flexibility. 
+Also make sure you don't change the host name of the Gateway otherwise the topic will change as well!<br>
+In the latest plugin version you can change the topic string to your own preference.
 
 ### Set the right MQTT update frequency
 By default the Gateway will publish the set of MQTT messages every 120 seconds.<br>
