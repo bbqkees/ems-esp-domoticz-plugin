@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
+## [0.7b13] 2019-12-04
+
+Firmware of the Gateway needs to be at least 1.9.2
+
+### Added
+
+- Support for solar modules (topic sm_data).
+  Domoticz devices for the solar module are only generated if a first message in topic sm_data is received,
+  this only happens if a solar module is detected on the EMS bus by the Gateway.
+  (Only pump, modulation and temperature sensors are supported now)
+
+### Changed
+
+- Domoticz devices for the optional Dallas sensors (1 to 5) are now only generated if a first message in topic sensors is received,
+  this only happens if such a sensor is detected on the EMS bus by the Gateway.
+
 ## [0.7b12] 2019-12-03
 
 Firmware of the Gateway needs to be at least 1.9.2
