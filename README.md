@@ -19,7 +19,8 @@ If you are on older firmware versions than 1.9.2  and are unable to upgrade, do 
 <br>
 There have been a lot of additions in the EMS-ESP firmware lately particularly regarding support for multiple heating circuits.<br>
 If you are already on 1.9.2 or later, hc1 will now work.</b><br>
-In the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev) a test verion is available with support for all 4 heating circuits hc1 to hc4.<br>
+In the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev) a test verion is available with support for all 4 heating circuits hc1 to hc4.<br><br>
+If you have a Gateway with old Telnet-only firmware or you are otherwise unable to upgrade the firmware of the Gateway, I can send you a new Wemos with soldered headers loaded with the latest firmware with web interface, so you can do future firmware updates yourself. This is a drop-in replacement. Send me an email for more information if you need this.<br><br>
 
 # Installation and configuration
 
