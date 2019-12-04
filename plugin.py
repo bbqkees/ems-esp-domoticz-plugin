@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 03 December 2019
+# last update: 04 December 2019
 # Author: bbqkees
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -8,7 +8,7 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b12">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="0.7b13">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
@@ -165,25 +165,6 @@ class EmsDevices:
         if 24 not in Devices:
             Domoticz.Debug("Create percentage device (wWCurFlow)")
             Domoticz.Device(Name="Boiler warm water flow", Unit=24, Type=243, Subtype=6).Create()
-            
-        # Create a number of Dallas temperature sensors
-        # These sensors have an ID 220 to 240
-        # Todo: create them only if they are actually present.
-        if 221 not in Devices:
-            Domoticz.Debug("Create temperature device (Dallas sensor 1)")
-            Domoticz.Device(Name="Dallas sensor 1", Unit=221, Type=80, Subtype=5).Create()
-        if 222 not in Devices:
-            Domoticz.Debug("Create temperature device (Dallas sensor 2)")
-            Domoticz.Device(Name="Dallas sensor 2", Unit=222, Type=80, Subtype=5).Create()
-        if 223 not in Devices:
-            Domoticz.Debug("Create temperature device (Dallas sensor 3)")
-            Domoticz.Device(Name="Dallas sensor 3", Unit=223, Type=80, Subtype=5).Create()
-        if 224 not in Devices:
-            Domoticz.Debug("Create temperature device (Dallas sensor 4)")
-            Domoticz.Device(Name="Dallas sensor 4", Unit=224, Type=80, Subtype=5).Create()
-        if 225 not in Devices:
-            Domoticz.Debug("Create temperature device (Dallas sensor 5)")
-            Domoticz.Device(Name="Dallas sensor 5", Unit=225, Type=80, Subtype=5).Create()
 
         # Temperature/room sensors of thermostats for each heating zone
         if 111 not in Devices:
@@ -484,33 +465,6 @@ class EmsDevices:
             # Domoticz.Debug("THERMOSTAT_MODE: Text: {}".format(text))
             # Devices[20].Update(nValue=1, sValue=str(text))
 
-        # Process the Dallas sensors
-        if "temp_1" in payload:
-            temp=round(float(payload["temp_1"]), 1)
-            Domoticz.Debug("Dallas temp 1: Current temp: {}".format(temp))
-            if Devices[221].sValue != temp:
-                Devices[221].Update(nValue=1, sValue=str(temp))
-        if "temp_2" in payload:
-            temp=round(float(payload["temp_2"]), 1)
-            Domoticz.Debug("Dallas temp 2: Current temp: {}".format(temp))
-            if Devices[222].sValue != temp:
-                Devices[222].Update(nValue=1, sValue=str(temp))
-        if "temp_3" in payload:
-            temp=round(float(payload["temp_3"]), 1)
-            Domoticz.Debug("Dallas temp 3: Current temp: {}".format(temp))
-            if Devices[223].sValue != temp:
-                Devices[223].Update(nValue=1, sValue=str(temp))
-        if "temp_4" in payload:
-            temp=round(float(payload["temp_4"]), 1)
-            Domoticz.Debug("Dallas temp 4: Current temp: {}".format(temp))
-            if Devices[224].sValue != temp:
-                Devices[224].Update(nValue=1, sValue=str(temp))
-        if "temp_5" in payload:
-            temp=round(float(payload["temp_5"]), 1)
-            Domoticz.Debug("Dallas temp 5: Current temp: {}".format(temp))
-            if Devices[225].sValue != temp:
-                Devices[225].Update(nValue=1, sValue=str(temp))
-
         # Set tapwater and heating status
         # This doesn't work yet because onMQTTPublish can't handle a non-JSON object.
         # The heating and tapwater topic's content is just a boolean.
@@ -524,8 +478,8 @@ class EmsDevices:
 
         # Decode heat pump data
         # This creates Domoticz devices only if a heatpump topic message has been received.
-        # (Not everyone has heat pump)
-        if "home/ems-esp/hp_data" in topic:
+        # (Not everyone has a heat pump)
+        if "hp_data" in topic:
             if ( 201 not in Devices ):                
                 Domoticz.Debug("Create percentage device (Heatpump modulation)")
                 Domoticz.Device(Name="Heatpump modulation", Unit=201, Type=243, Subtype=6).Create()
@@ -542,6 +496,97 @@ class EmsDevices:
                 Domoticz.Debug("pumpspeed: Percentage: {}".format(percentage))
                 if Devices[202].sValue != percentage:
                     Devices[202].Update(nValue=1, sValue=str(percentage))
+
+        # Decode sensors
+        # These sensors have a Domoticz ID reserved in the range 220 to 240
+        # This creates Domoticz devices only if a sensors topic message has been received.
+        # (Not everyone has optional Dallas sensors)
+        # Todo: create only sensors reported through the topic
+        if "sensors" in topic:
+            if 221 not in Devices:
+                Domoticz.Debug("Create temperature device (Dallas sensor 1)")
+                Domoticz.Device(Name="Dallas sensor 1", Unit=221, Type=80, Subtype=5).Create()
+            if 222 not in Devices:
+                Domoticz.Debug("Create temperature device (Dallas sensor 2)")
+                Domoticz.Device(Name="Dallas sensor 2", Unit=222, Type=80, Subtype=5).Create()
+            if 223 not in Devices:
+                Domoticz.Debug("Create temperature device (Dallas sensor 3)")
+                Domoticz.Device(Name="Dallas sensor 3", Unit=223, Type=80, Subtype=5).Create()
+            if 224 not in Devices:
+                Domoticz.Debug("Create temperature device (Dallas sensor 4)")
+                Domoticz.Device(Name="Dallas sensor 4", Unit=224, Type=80, Subtype=5).Create()
+            if 225 not in Devices:
+                Domoticz.Debug("Create temperature device (Dallas sensor 5)")
+                Domoticz.Device(Name="Dallas sensor 5", Unit=225, Type=80, Subtype=5).Create()
+        # Process the Dallas sensors
+            if "temp_1" in payload:
+                temp=round(float(payload["temp_1"]), 1)
+                Domoticz.Debug("Dallas temp 1: Current temp: {}".format(temp))
+                if Devices[221].sValue != temp:
+                    Devices[221].Update(nValue=1, sValue=str(temp))
+            if "temp_2" in payload:
+                temp=round(float(payload["temp_2"]), 1)
+                Domoticz.Debug("Dallas temp 2: Current temp: {}".format(temp))
+                if Devices[222].sValue != temp:
+                    Devices[222].Update(nValue=1, sValue=str(temp))
+            if "temp_3" in payload:
+                temp=round(float(payload["temp_3"]), 1)
+                Domoticz.Debug("Dallas temp 3: Current temp: {}".format(temp))
+                if Devices[223].sValue != temp:
+                    Devices[223].Update(nValue=1, sValue=str(temp))
+            if "temp_4" in payload:
+                temp=round(float(payload["temp_4"]), 1)
+                Domoticz.Debug("Dallas temp 4: Current temp: {}".format(temp))
+                if Devices[224].sValue != temp:
+                    Devices[224].Update(nValue=1, sValue=str(temp))
+            if "temp_5" in payload:
+                temp=round(float(payload["temp_5"]), 1)
+                Domoticz.Debug("Dallas temp 5: Current temp: {}".format(temp))
+                if Devices[225].sValue != temp:
+                    Devices[225].Update(nValue=1, sValue=str(temp))
+
+        # Decode solar module
+        # These devices have a Domoticz ID reserved in the range 80 to 99
+        # This creates Domoticz devices only if a solar module topic message has been received.
+        # (Not everyone has a solar module)
+        # Available devices in topic: collectortemp bottomtemp pumpmodulation pump
+        # Todo: energylasthour energytoday energytotal pumpWorkMin
+        if "sm_data" in topic:
+            if 81 not in Devices:
+                Domoticz.Debug("Create temperature device (Solar module collectortemp)")
+                Domoticz.Device(Name="Solar Module collector", Unit=81, Type=80, Subtype=5).Create()
+            if 82 not in Devices:
+                Domoticz.Debug("Create temperature device (Solar module bottomtemp)")
+                Domoticz.Device(Name="Solar Module bottom", Unit=82, Type=80, Subtype=5).Create()
+            if 83 not in Devices:
+                Domoticz.Debug("Create on/off switch (Solar module pump)")
+                Domoticz.Device(Name="Solar module pump", Unit=83, Type=244, Subtype=73, Switchtype=0).Create()
+            if 84 not in Devices:                
+                Domoticz.Debug("Create percentage device (Solar module pump modulation)")
+                Domoticz.Device(Name="Solar module pump modulation", Unit=84, Type=243, Subtype=6).Create()
+            if "collectortemp" in payload:
+                temp=round(float(payload["collectortemp"]), 1)
+                Domoticz.Debug("Solar module collectortemp: {}".format(temp))
+                if Devices[81].sValue != temp:
+                    Devices[81].Update(nValue=1, sValue=str(temp))
+            if "bottomtemp" in payload:
+                temp=round(float(payload["bottomtemp"]), 1)
+                Domoticz.Debug("Solar module bottomtemp: {}".format(temp))
+                if Devices[82].sValue != temp:
+                    Devices[82].Update(nValue=1, sValue=str(temp))
+            if "pump" in payload:
+                switchstate=payload["pump"]
+                Domoticz.Debug("Solar module pump: State: {}".format(switchstate))
+                if (switchstate == "on"):
+                    Devices[83].Update(nValue=1,sValue="on")
+                if (switchstate == "off"):
+                    Devices[83].Update(nValue=0,sValue="off")
+            if "pumpmodulation" in payload:
+                percentage=payload["pumpmodulation"]
+                Domoticz.Debug("Solar module pumpmodulation: Percentage: {}".format(percentage))
+                if Devices[84].sValue != percentage:
+                    Devices[84].Update(nValue=1, sValue=str(percentage))
+
 
     # onCommand publishes a MQTT message for each command received from Domoticz
     def onCommand(self, mqttClient, unit, command, level, color):
