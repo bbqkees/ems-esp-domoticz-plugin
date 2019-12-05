@@ -54,7 +54,7 @@ If you find a problem with the plugin, just open an issue here.<br>
 As I do not have an EMS thermostat myself, I would like to know if this works as intended.
 
 ## To Do List
-- Add the solar/mixer module devices.
+- See the readme on the master branch.
 
 ## Credits
 This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
