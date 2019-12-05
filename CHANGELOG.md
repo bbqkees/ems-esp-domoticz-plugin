@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.7b14] 2019-12-05
 
+Firmware of the Gateway needs to be at least 1.9.2.
+
+### Added
+
+- Support for mixing modules on hc1 to hc4 (topic mixing_data).
+  Domoticz devices for the mixing module are only generated if a first message in topic mixing_data is received,
+  this only happens if a mixing module is detected on the EMS bus by the Gateway.
+  (This check is done for each heating zone separately.)
+  
 ## [0.7b13] 2019-12-04
 
 Firmware of the Gateway needs to be at least 1.9.2
