@@ -78,12 +78,20 @@ If you find a problem with the plugin, just open an issue here.<br>
 As I do not have an EMS thermostat myself, I would like to know if this works as intended.
 
 ## To Do List
-- Add the solar module device. (available in the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev))
+### Already available in the dev branch
+The following parameters are already available in the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev)<br>
+- Add the solar module device. 
 - Add the mixer modules.
-- Add support for the DS18B20 temperature sensors. (available in the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev))
+- Add support for the DS18B20 temperature sensors. 
+- Add support for multiple heating circuits (aside from hc1). 
+- Make the topics configurable.
+
+### Not yet available
 - Add the additional topics for controlling thermostat night/day settings.
-- Add support for multiple heating circuits (aside from hc1). (available in the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev))
-- Make the topics configurable. (available in the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev))
+- Add the heating and tapwater active parameters
+- Shower stats
+- Heartbeat check (MQTT availability as a sensor)
+- Add commands for setting boiler comfort parameters and ww temperature and setting.
 
 ## Credits
-This plugin is based on the beta version version created by [Gert05](https://github.com/Gert05)
+This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
