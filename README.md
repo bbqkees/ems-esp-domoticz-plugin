@@ -10,6 +10,9 @@ You need to run firmware 1.9.2 or later.<br>
 <br>
 See the [Changelog](https://github.com/bbqkees/ems-esp-domoticz-plugin/blob/dev/CHANGELOG.md) for more details.<br>
 <br>
+<br>
+The easiest way to try out the dev branch is view the plugin.py file here in raw mode, and copy and paste all contents into the existing plugin.py file on your home automation system. After that restart domoticz.
+<br>
 
 ## When do you need this?
 If you are using the [EMS Wi-Fi Gateway](https://shop.hotgoodies.nl/ems/) (or another setup with) with [Proddy's EMS-ESP firmware](https://github.com/proddy/EMS-ESP) in combination with Domoticz.<br>
