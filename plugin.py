@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 04 December 2019
+# last update: 05 December 2019
 # Author: bbqkees
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -586,6 +586,128 @@ class EmsDevices:
                 Domoticz.Debug("Solar module pumpmodulation: Percentage: {}".format(percentage))
                 if Devices[84].sValue != percentage:
                     Devices[84].Update(nValue=1, sValue=str(percentage))
+
+        # Decode mixing module data
+        # This creates Domoticz devices only if a mixing module topic message has been received.
+        # (Not everyone has a mixing module)
+        # It also creates only those devices for heating circuits in the topic message.
+        # Mixer modules for heating zones (topic mixing_data):
+        if "mixing_data" in topic:
+            if "hc1" in payload:
+                payloadHc1 = payload["hc1"]
+                if 151 not in Devices:                
+                    Domoticz.Debug("Create percentage device (Mixing module HC1 pump modulation)")
+                    Domoticz.Device(Name="Mixing module HC1 pump modulation", Unit=151, Type=243, Subtype=6).Create()
+                if 152 not in Devices:
+                    Domoticz.Debug("Create temperature device (Mixing module HC1 flowtemp)")
+                    Domoticz.Device(Name="Mixing module HC1 flow", Unit=152, Type=80, Subtype=5).Create()
+                if 153 not in Devices:
+                    Domoticz.Debug("Create on/off switch (Mixing module HC1 valvestatus)")
+                    Domoticz.Device(Name="Mixing module HC1 valve", Unit=153, Type=244, Subtype=73, Switchtype=0).Create()
+                if "pumpMod" in payloadHc1:
+                    percentage=payloadHc1["pumpMod"]
+                    Domoticz.Debug("Mixing module HC1 pump modulation: {}".format(percentage))
+                    if Devices[151].sValue != percentage:
+                        Devices[151].Update(nValue=1, sValue=str(percentage))
+                if "flowTemp" in payloadHc1:
+                    temp=round(float(payloadHc1["flowTemp"]), 1)
+                    Domoticz.Debug("Mixing module HC1 flowtemp: {}".format(temp))
+                    if Devices[152].sValue != temp:
+                        Devices[152].Update(nValue=1, sValue=str(temp))
+                if "valveStatus" in payloadHc1:
+                    switchstate=payloadHc1["valveStatus"]
+                    Domoticz.Debug("Mixing module HC1 valve: State: {}".format(switchstate))
+                    if (switchstate == "on"):
+                        Devices[153].Update(nValue=1,sValue="on")
+                    if (switchstate == "off"):
+                        Devices[153].Update(nValue=0,sValue="off")
+
+            if "hc2" in payload:
+                payloadHc2 = payload["hc2"]
+                if 161 not in Devices:                
+                    Domoticz.Debug("Create percentage device (Mixing module HC2 pump modulation)")
+                    Domoticz.Device(Name="Mixing module HC2 pump modulation", Unit=161, Type=243, Subtype=6).Create()
+                if 162 not in Devices:
+                    Domoticz.Debug("Create temperature device (Mixing module HC2 flowtemp)")
+                    Domoticz.Device(Name="Mixing module HC2 flow", Unit=162, Type=80, Subtype=5).Create()
+                if 163 not in Devices:
+                    Domoticz.Debug("Create on/off switch (Mixing module HC2 valvestatus)")
+                    Domoticz.Device(Name="Mixing module HC2 valve", Unit=163, Type=244, Subtype=73, Switchtype=0).Create()
+                if "pumpMod" in payloadHc2:
+                    percentage=payloadHc2["pumpMod"]
+                    Domoticz.Debug("Mixing module HC2 pump modulation: {}".format(percentage))
+                    if Devices[161].sValue != percentage:
+                        Devices[161].Update(nValue=1, sValue=str(percentage))
+                if "flowTemp" in payloadHc2:
+                    temp=round(float(payloadHc2["flowTemp"]), 1)
+                    Domoticz.Debug("Mixing module HC2 flowtemp: {}".format(temp))
+                    if Devices[162].sValue != temp:
+                        Devices[162].Update(nValue=1, sValue=str(temp))
+                if "valveStatus" in payloadHc2:
+                    switchstate=payloadHc2["valveStatus"]
+                    Domoticz.Debug("Mixing module HC2 valve: State: {}".format(switchstate))
+                    if (switchstate == "on"):
+                        Devices[163].Update(nValue=1,sValue="on")
+                    if (switchstate == "off"):
+                        Devices[163].Update(nValue=0,sValue="off")
+
+            if "hc3" in payload:
+                payloadHc3 = payload["hc3"]
+                if 171 not in Devices:                
+                    Domoticz.Debug("Create percentage device (Mixing module HC3 pump modulation)")
+                    Domoticz.Device(Name="Mixing module HC3 pump modulation", Unit=171, Type=243, Subtype=6).Create()
+                if 172 not in Devices:
+                    Domoticz.Debug("Create temperature device (Mixing module HC3 flowtemp)")
+                    Domoticz.Device(Name="Mixing module HC3 flow", Unit=172, Type=80, Subtype=5).Create()
+                if 173 not in Devices:
+                    Domoticz.Debug("Create on/off switch (Mixing module HC3 valvestatus)")
+                    Domoticz.Device(Name="Mixing module HC3 valve", Unit=173, Type=244, Subtype=73, Switchtype=0).Create()
+                if "pumpMod" in payloadHc3:
+                    percentage=payloadHc3["pumpMod"]
+                    Domoticz.Debug("Mixing module HC3 pump modulation: {}".format(percentage))
+                    if Devices[171].sValue != percentage:
+                        Devices[171].Update(nValue=1, sValue=str(percentage))
+                if "flowTemp" in payloadHc3:
+                    temp=round(float(payloadHc3["flowTemp"]), 1)
+                    Domoticz.Debug("Mixing module HC3 flowtemp: {}".format(temp))
+                    if Devices[172].sValue != temp:
+                        Devices[172].Update(nValue=1, sValue=str(temp))
+                if "valveStatus" in payloadHc3:
+                    switchstate=payloadHc3["valveStatus"]
+                    Domoticz.Debug("Mixing module HC3 valve: State: {}".format(switchstate))
+                    if (switchstate == "on"):
+                        Devices[173].Update(nValue=1,sValue="on")
+                    if (switchstate == "off"):
+                        Devices[173].Update(nValue=0,sValue="off")
+
+            if "hc4" in payload:
+                payloadHc4 = payload["hc4"]
+                if 181 not in Devices:                
+                    Domoticz.Debug("Create percentage device (Mixing module HC4 pump modulation)")
+                    Domoticz.Device(Name="Mixing module HC4 pump modulation", Unit=181, Type=243, Subtype=6).Create()
+                if 182 not in Devices:
+                    Domoticz.Debug("Create temperature device (Mixing module HC4 flowtemp)")
+                    Domoticz.Device(Name="Mixing module HC4 flow", Unit=182, Type=80, Subtype=5).Create()
+                if 183 not in Devices:
+                    Domoticz.Debug("Create on/off switch (Mixing module HC1 valvestatus)")
+                    Domoticz.Device(Name="Mixing module HC4 valve", Unit=183, Type=244, Subtype=73, Switchtype=0).Create()
+                if "pumpMod" in payloadHc4:
+                    percentage=payloadHc4["pumpMod"]
+                    Domoticz.Debug("Mixing module HC4 pump modulation: {}".format(percentage))
+                    if Devices[181].sValue != percentage:
+                        Devices[181].Update(nValue=1, sValue=str(percentage))
+                if "flowTemp" in payloadHc4:
+                    temp=round(float(payloadHc4["flowTemp"]), 1)
+                    Domoticz.Debug("Mixing module HC4 flowtemp: {}".format(temp))
+                    if Devices[182].sValue != temp:
+                        Devices[182].Update(nValue=1, sValue=str(temp))
+                if "valveStatus" in payloadHc4:
+                    switchstate=payloadHc4["valveStatus"]
+                    Domoticz.Debug("Mixing module HC4 valve: State: {}".format(switchstate))
+                    if (switchstate == "on"):
+                        Devices[183].Update(nValue=1,sValue="on")
+                    if (switchstate == "off"):
+                        Devices[183].Update(nValue=0,sValue="off")
 
 
     # onCommand publishes a MQTT message for each command received from Domoticz
