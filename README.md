@@ -6,7 +6,7 @@ On first run the plugin will add a new thermostat device for all heating circuit
 <br>
 This version also supports 5 Dallas temperature sensors and several other new parameters.<br>
 <br>
-You need to run firmware 1.9.2 or later.<br>
+You need to run firmware 1.9.3 or later.<br>
 <br>
 See the [Changelog](https://github.com/bbqkees/ems-esp-domoticz-plugin/blob/dev/CHANGELOG.md) for more details.<br>
 <br>
@@ -36,6 +36,7 @@ Set the MQTT server and port. Usually the MQTT server is running on the same mac
 
 ### Setting the correct topics
 The plugin listens to the topics preceded by "home/ems-esp/". In the latest EMS-ESP firmware versions the default topic is "ems-esp". To change this go to the Gateway web interface and to the MQTT settings. Now set the Base parameter to "home".
+You can also change it in the plugin.
 
 ## Using the plugin
 On the first run the plugin will create several devices and sensors in Domoticz.<br>
