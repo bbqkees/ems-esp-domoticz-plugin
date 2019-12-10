@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [0.7b15] 2019-12-10
+
+Firmware of the Gateway needs to be at least 1.9.3.
+
+### Changed
+
+- Changed the thermostat topics.
+
+### Fixed
+
+- Thermostat mode names set to be lower case for EMS-ESP.
 
 ## [0.7b14] 2019-12-05
 
