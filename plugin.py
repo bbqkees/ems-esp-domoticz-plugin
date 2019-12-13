@@ -718,7 +718,7 @@ class EmsDevices:
         # Change a thermostat setpoint for a specific HC
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
-                thermostatSetpointTopic = "temp"    
+                thermostatSetpointTopic = "thermostat_cmd_temp"    
                 mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
                                    
         # This still needs work:
@@ -728,7 +728,7 @@ class EmsDevices:
             listLevelNames = dictOptions['LevelNames'].split('|')
             strSelectedName = listLevelNames[int(int(level)/10)]
             Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
-            thermostatModeTopic = "mode"    
+            thermostatModeTopic = "thermostat_cmd_mode"    
             mqttClient.Publish(self.topicBase+thermostatModeTopic+str(int((unit-102)/10)), strSelectedName.lower())
 
 
