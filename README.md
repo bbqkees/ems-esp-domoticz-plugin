@@ -14,10 +14,10 @@ The plugin will basically translate the Home Assistant format to Domoticz format
 
 ## Compatibility
 The plugin works with all versions of EMS-ESP. So the old versions with the Telnet interface are supported but also the new versions with the web interface (1.9.0 and onwards).<br>
-However in firmware 1.9.2/1.9.3/1.9.4 the MQTT topics have changed though, you need to upgrade to 1.9.4 for full support.
+However in firmware 1.9.2/1.9.3/1.9.4 the MQTT topics have changed though, you need to upgrade to 1.9.4 for full support.<br>
 If you are on older firmware versions than 1.9.4  and are unable to upgrade, do not update the plugin as it will break compatibility with the thermostat.
 <br>
-In the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev) a test verion is also available with more additions and fixes.<br><br>
+In the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev) a test version is also available with more additions and fixes.<br><br>
 If you have a Gateway with old Telnet-only firmware or you are otherwise unable to upgrade the firmware of the Gateway, I can send you a new Wemos with soldered headers loaded with the latest firmware with web interface, so you can do future firmware updates yourself. This is a drop-in replacement. Send me an email for more information if you need this.<br><br>
 
 # Installation and configuration
