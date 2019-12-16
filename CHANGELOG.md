@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [0.8] 2019-12-16
+## [0.7] 2019-12-16
 
 Firmware of the Gateway needs to be at least 1.9.4.
 Thermostat command topics have changed in EMS-ESP, the plugin is now compatible with those in 1.9.4.
