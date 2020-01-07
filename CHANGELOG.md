@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.7b18] 2020-01-07
+
+Firmware of the Gateway needs to be at least 1.9.3.
+
+### Fixed
+
+- Counters were of the wrong type. Used incremental counters at first.
+  Remove the devices 32:wWStarts, 33:wWWorkM, 34:UBAuptime, 35:burnStarts, 36:burnWorkMin, 37:heatWorkMin.
+  Then update the plugin and restart Domoticz.
+
 ## [0.7b17] 2020-01-07
 
 Firmware of the Gateway needs to be at least 1.9.3.
