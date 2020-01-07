@@ -9,7 +9,7 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway-2" name="EMS bus Wi-Fi Gateway 2" version="0.7b17">
+<plugin key="ems-gateway-2" name="EMS bus Wi-Fi Gateway 2" version="0.7b18">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
@@ -190,25 +190,25 @@ class EmsDevices:
             Domoticz.Debug("Create ampere device (flameCurr)")
             Domoticz.Device(Name="Boiler flame current", Unit=29, Type=243, Subtype=23).Create()
 
-        # Counter incremental
+        # Counters
         if 32 not in Devices:
-            Domoticz.Debug("Create incremental counter (wWStarts)")
-            Domoticz.Device(Name="ww starts", Unit=32, Type=243, Subtype=28).Create()
+            Domoticz.Debug("Create counter (wWStarts)")
+            Domoticz.Device(Name="ww starts", Unit=32, Type=113, Subtype=0).Create()
         if 33 not in Devices:
-            Domoticz.Debug("Create incremental counter (wWWorkM)")
-            Domoticz.Device(Name="ww work minutes", Unit=33, Type=243, Subtype=28).Create()
+            Domoticz.Debug("Create counter (wWWorkM)")
+            Domoticz.Device(Name="ww work minutes", Unit=33, Type=113, Subtype=0).Create()
         if 34 not in Devices:
-            Domoticz.Debug("Create incremental counter (UBAuptime)")
-            Domoticz.Device(Name="Boiler UBA uptime", Unit=34, Type=243, Subtype=28).Create()
+            Domoticz.Debug("Create counter (UBAuptime)")
+            Domoticz.Device(Name="Boiler UBA uptime", Unit=34, Type=113, Subtype=0).Create()
         if 35 not in Devices:
-            Domoticz.Debug("Create incremental counter (burnStarts)")
-            Domoticz.Device(Name="boiler burner starts", Unit=35, Type=243, Subtype=28).Create()
+            Domoticz.Debug("Create counter (burnStarts)")
+            Domoticz.Device(Name="boiler burner starts", Unit=35, Type=113, Subtype=0).Create()
         if 36 not in Devices:
-            Domoticz.Debug("Create incremental counter (burnWorkMin)")
-            Domoticz.Device(Name="boiler burner working minutes", Unit=36, Type=243, Subtype=28).Create()
+            Domoticz.Debug("Create counter (burnWorkMin)")
+            Domoticz.Device(Name="boiler burner working minutes", Unit=36, Type=113, Subtype=0).Create()
         if 37 not in Devices:
-            Domoticz.Debug("Create incremental counter (heatWorkMin)")
-            Domoticz.Device(Name="boiler heating working minutes", Unit=37, Type=243, Subtype=28).Create()
+            Domoticz.Debug("Create counter (heatWorkMin)")
+            Domoticz.Device(Name="boiler heating working minutes", Unit=37, Type=113, Subtype=0).Create()
 
         # Temperature/room sensors of thermostats for each heating zone
         if 111 not in Devices:
