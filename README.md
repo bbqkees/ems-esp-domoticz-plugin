@@ -2,7 +2,7 @@
 Domoticz plugin for the EMS Wi-Fi Gateway with Proddy's EMS-ESP firmware. 
 
 ## When do you need this?
-If you are using the [EMS Wi-Fi Gateway](https://shop.hotgoodies.nl/ems/) (or another setup with) with [Proddy's EMS-ESP firmware](https://github.com/proddy/EMS-ESP) in combination with Domoticz.<br><br>
+If you are using the [EMS Wi-Fi Gateway](https://bbqkees-electronics.nl/) (or another setup with) with [Proddy's EMS-ESP firmware](https://github.com/proddy/EMS-ESP) in combination with Domoticz.<br><br>
 <img src="https://raw.githubusercontent.com/bbqkees/Nefit-Buderus-EMS-bus-Arduino-Domoticz/master/Documentation/nefit-ems-bus-interface-PCB.jpg" height="150">
 <img src="https://shop.hotgoodies.nl/ems/ems-kit/on-boiler.jpg" height="150">
 <img src="https://hotgoodies.nl/shop/ems/ems-kit/ems-kit-2.jpg" height="150">
