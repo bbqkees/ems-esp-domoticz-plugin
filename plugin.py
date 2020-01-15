@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 07 January 2020
+# last update: 15 January 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,7 +9,7 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway-2" name="EMS bus Wi-Fi Gateway 2" version="0.7b18">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.7b19">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
@@ -52,7 +52,7 @@
 # Shower data (topic shower_data):
 # ID 60 to 69
 #
-# Tapwater/heating etc on/off (topics tapwater_active and heating_active):
+# Tapwater/heating,Gateway etc on/off (topics tapwater_active and heating_active):
 # ID 70 to 79
 # 
 # Solar module data (topic sm_data):
@@ -291,29 +291,41 @@ class EmsDevices:
                 }
             Domoticz.Device(Name="ww mode", Unit=31, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
 
-        # Create switches for tapwater and heating active
+        # Create switches for tapwater and heating active etc
         if 71 not in Devices:
             Domoticz.Debug("Create on/off switch (tapwater active)")
             Domoticz.Device(Name="Tapwater active", Unit=71, Type=244, Subtype=73, Switchtype=0).Create()
         if 72 not in Devices:
             Domoticz.Debug("Create on/off switch (heating active)")
             Domoticz.Device(Name="Heating active", Unit=72, Type=244, Subtype=73, Switchtype=0).Create()
+        if 73 not in Devices:
+            Domoticz.Debug("Create on/off switch (Gateway online/offline)")
+            Domoticz.Device(Name="Gateway online", Unit=73, Type=244, Subtype=73, Switchtype=0).Create()
 
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
-        # This was for the old plugin version
-        # if "hc1" in payload:
-            # payload = payload["hc1"]
-            # if "currtemp" in payload:
-                # temp=round(float(payload["currtemp"]), 1)
-                # Domoticz.Debug("thermostat_currtemp: Current temp: {}".format(temp))
-                # if Devices[1].sValue != temp:
-                        # Devices[1].Update(nValue=1, sValue=str(temp))
-            # if "seltemp" in payload:
-                # temp=payload["seltemp"]
-                # Domoticz.Debug("thermostat_seltemp: Temp setting: {}".format(temp))
-                # if Devices[3].sValue != temp:
-                     # Devices[3].Update(nValue=1, sValue=str(temp))
+
+        # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
+        if "tapwater_active" in topic:
+            if payload == 0:
+                Devices[71].Update(nValue=0,sValue="off")
+            if payload == 1:
+                Devices[71].Update(nValue=1,sValue="on")
+
+        # Process the heating_active topic. Note the contents a single boolean (0 or 1) and not json.
+        if "heating_active" in topic:
+            if payload == 0:
+                Devices[72].Update(nValue=0,sValue="off")
+            if payload == 1:
+                Devices[72].Update(nValue=1,sValue="on")
+
+        # Process the start topic. Note the contents a single word and not json. Does not work yet
+#        if "start" in topic:
+#            Domoticz.Debug("start topic received")    
+            # if payload == "offline":
+            #     Devices[73].Update(nValue=0,sValue="off")
+            # if payload == "online":
+            #     Devices[73].Update(nValue=1,sValue="on")
 
         # Process the thermostat parameters of each heating zone
         # Because there are other topics who have 'hc1' etc in the payload, check first
@@ -385,198 +397,199 @@ class EmsDevices:
                     Domoticz.Debug("Thermostat HC4: Mode is: "+str(thMode))
                     setSelectorByName(143, str(thMode))
 
-        # Process the boiler parameters
-        if "sysPress" in payload:
-            pressure=payload["sysPress"]
-            Domoticz.Debug("sysPress: Pressure: {}".format(pressure))
-            if Devices[2].sValue != pressure:
-                Devices[2].Update(nValue=1, sValue=str(pressure))
-        #11 to 16 + 25 to 27 temp
-        if "selFlowTemp" in payload:
-            temp=round(float(payload["selFlowTemp"]), 1)
-            Domoticz.Debug("selFlowTemp: Current temp: {}".format(temp))
-            if Devices[11].sValue != temp:
-                Devices[11].Update(nValue=1, sValue=str(temp))
-        if "outdoorTemp" in payload:
-            temp=round(float(payload["outdoorTemp"]), 1)
-            Domoticz.Debug("outdoorTemp: Current temp: {}".format(temp))
-            if Devices[12].sValue != temp:
-                Devices[12].Update(nValue=1, sValue=str(temp))
-        if "wWCurTmp" in payload:
-            temp=round(float(payload["wWCurTmp"]), 1)
-            Domoticz.Debug("wWCurTmp: Current temp: {}".format(temp))
-            if Devices[13].sValue != temp:
-                Devices[13].Update(nValue=1, sValue=str(temp))
-        if "curFlowTemp" in payload:
-            temp=round(float(payload["curFlowTemp"]), 1)
-            Domoticz.Debug("curFlowTemp: Current temp: {}".format(temp))
-            if Devices[14].sValue != temp:
-                Devices[14].Update(nValue=1, sValue=str(temp))
-        if "retTemp" in payload:
-            temp=round(float(payload["retTemp"]), 1)
-            Domoticz.Debug("retTemp: Current temp: {}".format(temp))
-            if Devices[15].sValue != temp:
-                Devices[15].Update(nValue=1, sValue=str(temp))
-        if "boilTemp" in payload:
-            temp=round(float(payload["boilTemp"]), 1)
-            Domoticz.Debug("boilTemp: Current temp: {}".format(temp))
-            if Devices[16].sValue != temp:
-                Devices[16].Update(nValue=1, sValue=str(temp))
-        if "wWSelTemp" in payload:
-            temp=round(float(payload["wWSelTemp"]), 1)
-            Domoticz.Debug("wWSelTemp: Current temp: {}".format(temp))
-            if Devices[25].sValue != temp:
-                Devices[25].Update(nValue=1, sValue=str(temp))
-        if "wWDesiredTemp" in payload:
-            temp=round(float(payload["wWDesiredTemp"]), 1)
-            Domoticz.Debug("wWDesiredTemp: Current temp: {}".format(temp))
-            if Devices[26].sValue != temp:
-                Devices[26].Update(nValue=1, sValue=str(temp))
-        if "heating_temp" in payload:
-            temp=round(float(payload["heating_temp"]), 1)
-            Domoticz.Debug("heating_temp: Current temp: {}".format(temp))
-            if Devices[27].sValue != temp:
-                Devices[27].Update(nValue=1, sValue=str(temp))
-        # 29 ampere
-        if "flameCurr" in payload:
-            temp=round(float(payload["flameCurr"]), 1)
-            Domoticz.Debug("flameCurr: {}".format(temp))
-            if Devices[29].sValue != temp:
-                Devices[29].Update(nValue=1, sValue=str(temp))
-        #21 to 24 + 28 + 38 + 39 percentage
-        if "selBurnPow" in payload:
-            percentage=payload["selBurnPow"]
-            Domoticz.Debug("selBurnPow: Percentage: {}".format(percentage))
-            if Devices[21].sValue != percentage:
-                Devices[21].Update(nValue=1, sValue=str(percentage))
-        if "curBurnPow" in payload:
-            percentage=payload["curBurnPow"]
-            Domoticz.Debug("curBurnPow: Percentage: {}".format(percentage))
-            if Devices[22].sValue != percentage:
-                Devices[22].Update(nValue=1, sValue=str(percentage))
-        if "pumpMod" in payload:
-            percentage=payload["pumpMod"]
-            Domoticz.Debug("pumpMod: Percentage: {}".format(percentage))
-            if Devices[23].sValue != percentage:
-                Devices[23].Update(nValue=1, sValue=str(percentage))
-        if "wWCurFlow" in payload:
-            percentage=payload["wWCurFlow"]
-            Domoticz.Debug("wWCurFlow: Percentage: {}".format(percentage))
-            if Devices[24].sValue != percentage:
-                Devices[24].Update(nValue=1, sValue=str(percentage))
-        if "wWCircPump" in payload:
-            percentage=payload["wWCircPump"]
-            Domoticz.Debug("wWCircPump: Percentage: {}".format(percentage))
-            if Devices[28].sValue != percentage:
-                Devices[28].Update(nValue=1, sValue=str(percentage))
-        if "pump_mod_max" in payload:
-            percentage=payload["pump_mod_max"]
-            Domoticz.Debug("pump_mod_max: Percentage: {}".format(percentage))
-            if Devices[38].sValue != percentage:
-                Devices[38].Update(nValue=1, sValue=str(percentage))
-        if "pump_mod_min" in payload:
-            percentage=payload["pump_mod_min"]
-            Domoticz.Debug("pump_mod_min: Percentage: {}".format(percentage))
-            if Devices[39].sValue != percentage:
-                Devices[39].Update(nValue=1, sValue=str(percentage))
-        #4 to 10 switch
-        if "burnGas" in payload:
-            switchstate=payload["burnGas"]
-            Domoticz.Debug("burnGas: State: {}".format(switchstate))
-            if (switchstate == "on"):
-                Devices[4].Update(nValue=1,sValue="on")
-            if (switchstate == "off"):
-                Devices[4].Update(nValue=0,sValue="off")
-        if "fanWork" in payload:
-            switchstate=payload["fanWork"]
-            Domoticz.Debug("fanWork: State: {}".format(switchstate))
-            if (switchstate == "on"):
-                Devices[5].Update(nValue=1,sValue="on")
-            if (switchstate == "off"):
-                Devices[5].Update(nValue=0,sValue="off")
-        if "ignWork" in payload:
-            switchstate=payload["ignWork"]
-            Domoticz.Debug("ignWork: State: {}".format(switchstate))
-            if (switchstate == "on"):
-                Devices[6].Update(nValue=1,sValue="on")
-            if (switchstate == "off"):
-                Devices[6].Update(nValue=0,sValue="off")
-        if "heatPmp" in payload:
-            switchstate=payload["heatPmp"]
-            Domoticz.Debug("heatPmp: State: {}".format(switchstate))
-            if (switchstate == "on"):
-                Devices[7].Update(nValue=1,sValue="on")
-            if (switchstate == "off"):
-                Devices[7].Update(nValue=0,sValue="off")
-        if "wWActivated" in payload:
-            switchstate=payload["wWActivated"]
-            Domoticz.Debug("wWActivated: State: {}".format(switchstate))
-            if (switchstate == "on"):
-                Devices[8].Update(nValue=1,sValue="on")
-            if (switchstate == "off"):
-                Devices[8].Update(nValue=0,sValue="off")
-        if "wWHeat" in payload:
-            switchstate=payload["wWHeat"]
-            Domoticz.Debug("wWHeat: State: {}".format(switchstate))
-            if (switchstate == "on"):
-                Devices[9].Update(nValue=1,sValue="on")
-            if (switchstate == "off"):
-                Devices[9].Update(nValue=0,sValue="off")
-        if "wWCirc" in payload:
-            switchstate=payload["wWCirc"]
-            Domoticz.Debug("wWCirc: State: {}".format(switchstate))
-            if (switchstate == "on"):
-                Devices[10].Update(nValue=1,sValue="on")
-            if (switchstate == "off"):
-                Devices[10].Update(nValue=0,sValue="off")
-        #17 to 20 text
-        # Old parameter
-        # if "wWComfort" in payload:
-            # text=payload["wWComfort"]
-            # Domoticz.Debug("wWComfort: Text: {}".format(text))
-            # Devices[17].Update(nValue=1, sValue=str(text))
-        # new parameter (doesn't work yet)
-        # if "wWComfort" in payload:
-            # mode=payload["wWComfort"]
-            # Domoticz.Debug("wWComfort: Text: {}".format(mode))
-            # setSelectorByName(30, str(mode["wWComfort"]))
-        if "ServiceCode" in payload:
-            text=payload["ServiceCode"]
-            Domoticz.Debug("ServiceCode: Text: {}".format(text))
-            Devices[18].Update(nValue=1, sValue=str(text)) 
-        if "ServiceCodeNumber" in payload:
-            text=payload["ServiceCodeNumber"]
-            Domoticz.Debug("ServiceCodeNumber: Text: {}".format(text))
-            Devices[19].Update(nValue=1, sValue=str(text))
-        # Parameter of old plugin
-        # if "THERMOSTAT_MODE" in payload:
-            # text=payload["THERMOSTAT_MODE"]
-            # Domoticz.Debug("THERMOSTAT_MODE: Text: {}".format(text))
-            # Devices[20].Update(nValue=1, sValue=str(text))
-        if "wWStarts" in payload:
-            text=payload["wWStarts"]
-            Domoticz.Debug("wWStarts: {}".format(text))
-            Devices[32].Update(nValue=0,sValue=str(text))
-        if "wWWorkM" in payload:
-            text=payload["wWWorkM"]
-            Domoticz.Debug("wWWorkM: {}".format(text))
-            Devices[33].Update(nValue=0,sValue=str(text))
-        if "UBAuptime" in payload:
-            text=payload["UBAuptime"]
-            Domoticz.Debug("UBAuptime: {}".format(text))
-            Devices[34].Update(nValue=0,sValue=str(text))
-        if "burnStarts" in payload:
-            text=payload["burnStarts"]
-            Domoticz.Debug("burnStarts: {}".format(text))
-            Devices[35].Update(nValue=0,sValue=str(text))
-        if "burnWorkMin" in payload:
-            text=payload["burnWorkMin"]
-            Domoticz.Debug("burnWorkMin: {}".format(text))
-            Devices[36].Update(nValue=0,sValue=str(text))
-        if "heatWorkMin" in payload:
-            text=payload["heatWorkMin"]
-            Domoticz.Debug("heatWorkMin: {}".format(text))
-            Devices[37].Update(nValue=0,sValue=str(text))
+        if "boiler_data" in topic:
+            # Process the boiler parameters
+            if "sysPress" in payload:
+                pressure=payload["sysPress"]
+                Domoticz.Debug("sysPress: Pressure: {}".format(pressure))
+                if Devices[2].sValue != pressure:
+                    Devices[2].Update(nValue=1, sValue=str(pressure))
+            #11 to 16 + 25 to 27 temp
+            if "selFlowTemp" in payload:
+                temp=round(float(payload["selFlowTemp"]), 1)
+                Domoticz.Debug("selFlowTemp: Current temp: {}".format(temp))
+                if Devices[11].sValue != temp:
+                    Devices[11].Update(nValue=1, sValue=str(temp))
+            if "outdoorTemp" in payload:
+                temp=round(float(payload["outdoorTemp"]), 1)
+                Domoticz.Debug("outdoorTemp: Current temp: {}".format(temp))
+                if Devices[12].sValue != temp:
+                    Devices[12].Update(nValue=1, sValue=str(temp))
+            if "wWCurTmp" in payload:
+                temp=round(float(payload["wWCurTmp"]), 1)
+                Domoticz.Debug("wWCurTmp: Current temp: {}".format(temp))
+                if Devices[13].sValue != temp:
+                    Devices[13].Update(nValue=1, sValue=str(temp))
+            if "curFlowTemp" in payload:
+                temp=round(float(payload["curFlowTemp"]), 1)
+                Domoticz.Debug("curFlowTemp: Current temp: {}".format(temp))
+                if Devices[14].sValue != temp:
+                    Devices[14].Update(nValue=1, sValue=str(temp))
+            if "retTemp" in payload:
+                temp=round(float(payload["retTemp"]), 1)
+                Domoticz.Debug("retTemp: Current temp: {}".format(temp))
+                if Devices[15].sValue != temp:
+                    Devices[15].Update(nValue=1, sValue=str(temp))
+            if "boilTemp" in payload:
+                temp=round(float(payload["boilTemp"]), 1)
+                Domoticz.Debug("boilTemp: Current temp: {}".format(temp))
+                if Devices[16].sValue != temp:
+                    Devices[16].Update(nValue=1, sValue=str(temp))
+            if "wWSelTemp" in payload:
+                temp=round(float(payload["wWSelTemp"]), 1)
+                Domoticz.Debug("wWSelTemp: Current temp: {}".format(temp))
+                if Devices[25].sValue != temp:
+                    Devices[25].Update(nValue=1, sValue=str(temp))
+            if "wWDesiredTemp" in payload:
+                temp=round(float(payload["wWDesiredTemp"]), 1)
+                Domoticz.Debug("wWDesiredTemp: Current temp: {}".format(temp))
+                if Devices[26].sValue != temp:
+                    Devices[26].Update(nValue=1, sValue=str(temp))
+            if "heating_temp" in payload:
+                temp=round(float(payload["heating_temp"]), 1)
+                Domoticz.Debug("heating_temp: Current temp: {}".format(temp))
+                if Devices[27].sValue != temp:
+                    Devices[27].Update(nValue=1, sValue=str(temp))
+            # 29 ampere
+            if "flameCurr" in payload:
+                temp=round(float(payload["flameCurr"]), 1)
+                Domoticz.Debug("flameCurr: {}".format(temp))
+                if Devices[29].sValue != temp:
+                    Devices[29].Update(nValue=1, sValue=str(temp))
+            #21 to 24 + 28 + 38 + 39 percentage
+            if "selBurnPow" in payload:
+                percentage=payload["selBurnPow"]
+                Domoticz.Debug("selBurnPow: Percentage: {}".format(percentage))
+                if Devices[21].sValue != percentage:
+                    Devices[21].Update(nValue=1, sValue=str(percentage))
+            if "curBurnPow" in payload:
+                percentage=payload["curBurnPow"]
+                Domoticz.Debug("curBurnPow: Percentage: {}".format(percentage))
+                if Devices[22].sValue != percentage:
+                    Devices[22].Update(nValue=1, sValue=str(percentage))
+            if "pumpMod" in payload:
+                percentage=payload["pumpMod"]
+                Domoticz.Debug("pumpMod: Percentage: {}".format(percentage))
+                if Devices[23].sValue != percentage:
+                    Devices[23].Update(nValue=1, sValue=str(percentage))
+            if "wWCurFlow" in payload:
+                percentage=payload["wWCurFlow"]
+                Domoticz.Debug("wWCurFlow: Percentage: {}".format(percentage))
+                if Devices[24].sValue != percentage:
+                    Devices[24].Update(nValue=1, sValue=str(percentage))
+            if "wWCircPump" in payload:
+                percentage=payload["wWCircPump"]
+                Domoticz.Debug("wWCircPump: Percentage: {}".format(percentage))
+                if Devices[28].sValue != percentage:
+                    Devices[28].Update(nValue=1, sValue=str(percentage))
+            if "pump_mod_max" in payload:
+                percentage=payload["pump_mod_max"]
+                Domoticz.Debug("pump_mod_max: Percentage: {}".format(percentage))
+                if Devices[38].sValue != percentage:
+                    Devices[38].Update(nValue=1, sValue=str(percentage))
+            if "pump_mod_min" in payload:
+                percentage=payload["pump_mod_min"]
+                Domoticz.Debug("pump_mod_min: Percentage: {}".format(percentage))
+                if Devices[39].sValue != percentage:
+                    Devices[39].Update(nValue=1, sValue=str(percentage))
+            #4 to 10 switch
+            if "burnGas" in payload:
+                switchstate=payload["burnGas"]
+                Domoticz.Debug("burnGas: State: {}".format(switchstate))
+                if (switchstate == "on"):
+                    Devices[4].Update(nValue=1,sValue="on")
+                if (switchstate == "off"):
+                    Devices[4].Update(nValue=0,sValue="off")
+            if "fanWork" in payload:
+                switchstate=payload["fanWork"]
+                Domoticz.Debug("fanWork: State: {}".format(switchstate))
+                if (switchstate == "on"):
+                    Devices[5].Update(nValue=1,sValue="on")
+                if (switchstate == "off"):
+                    Devices[5].Update(nValue=0,sValue="off")
+            if "ignWork" in payload:
+                switchstate=payload["ignWork"]
+                Domoticz.Debug("ignWork: State: {}".format(switchstate))
+                if (switchstate == "on"):
+                    Devices[6].Update(nValue=1,sValue="on")
+                if (switchstate == "off"):
+                    Devices[6].Update(nValue=0,sValue="off")
+            if "heatPmp" in payload:
+                switchstate=payload["heatPmp"]
+                Domoticz.Debug("heatPmp: State: {}".format(switchstate))
+                if (switchstate == "on"):
+                    Devices[7].Update(nValue=1,sValue="on")
+                if (switchstate == "off"):
+                    Devices[7].Update(nValue=0,sValue="off")
+            if "wWActivated" in payload:
+                switchstate=payload["wWActivated"]
+                Domoticz.Debug("wWActivated: State: {}".format(switchstate))
+                if (switchstate == "on"):
+                    Devices[8].Update(nValue=1,sValue="on")
+                if (switchstate == "off"):
+                    Devices[8].Update(nValue=0,sValue="off")
+            if "wWHeat" in payload:
+                switchstate=payload["wWHeat"]
+                Domoticz.Debug("wWHeat: State: {}".format(switchstate))
+                if (switchstate == "on"):
+                    Devices[9].Update(nValue=1,sValue="on")
+                if (switchstate == "off"):
+                    Devices[9].Update(nValue=0,sValue="off")
+            if "wWCirc" in payload:
+                switchstate=payload["wWCirc"]
+                Domoticz.Debug("wWCirc: State: {}".format(switchstate))
+                if (switchstate == "on"):
+                    Devices[10].Update(nValue=1,sValue="on")
+                if (switchstate == "off"):
+                    Devices[10].Update(nValue=0,sValue="off")
+            #17 to 20 text
+            # Old parameter
+            # if "wWComfort" in payload:
+                # text=payload["wWComfort"]
+                # Domoticz.Debug("wWComfort: Text: {}".format(text))
+                # Devices[17].Update(nValue=1, sValue=str(text))
+            # new parameter (doesn't work yet)
+            # if "wWComfort" in payload:
+                # mode=payload["wWComfort"]
+                # Domoticz.Debug("wWComfort: Text: {}".format(mode))
+                # setSelectorByName(30, str(mode["wWComfort"]))
+            if "ServiceCode" in payload:
+                text=payload["ServiceCode"]
+                Domoticz.Debug("ServiceCode: Text: {}".format(text))
+                Devices[18].Update(nValue=1, sValue=str(text)) 
+            if "ServiceCodeNumber" in payload:
+                text=payload["ServiceCodeNumber"]
+                Domoticz.Debug("ServiceCodeNumber: Text: {}".format(text))
+                Devices[19].Update(nValue=1, sValue=str(text))
+            # Parameter of old plugin
+            # if "THERMOSTAT_MODE" in payload:
+                # text=payload["THERMOSTAT_MODE"]
+                # Domoticz.Debug("THERMOSTAT_MODE: Text: {}".format(text))
+                # Devices[20].Update(nValue=1, sValue=str(text))
+            if "wWStarts" in payload:
+                text=payload["wWStarts"]
+                Domoticz.Debug("wWStarts: {}".format(text))
+                Devices[32].Update(nValue=0,sValue=str(text))
+            if "wWWorkM" in payload:
+                text=payload["wWWorkM"]
+                Domoticz.Debug("wWWorkM: {}".format(text))
+                Devices[33].Update(nValue=0,sValue=str(text))
+            if "UBAuptime" in payload:
+                text=payload["UBAuptime"]
+                Domoticz.Debug("UBAuptime: {}".format(text))
+                Devices[34].Update(nValue=0,sValue=str(text))
+            if "burnStarts" in payload:
+                text=payload["burnStarts"]
+                Domoticz.Debug("burnStarts: {}".format(text))
+                Devices[35].Update(nValue=0,sValue=str(text))
+            if "burnWorkMin" in payload:
+                text=payload["burnWorkMin"]
+                Domoticz.Debug("burnWorkMin: {}".format(text))
+                Devices[36].Update(nValue=0,sValue=str(text))
+            if "heatWorkMin" in payload:
+                text=payload["heatWorkMin"]
+                Domoticz.Debug("heatWorkMin: {}".format(text))
+                Devices[37].Update(nValue=0,sValue=str(text))
 
         # Set tapwater and heating status
         # This doesn't work yet because onMQTTPublish can't handle a non-JSON object.
@@ -858,7 +871,7 @@ class BasePlugin:
 
         self.topicBase = Parameters["Mode1"].replace(" ", "")
 
-        self.topicsList = list(["thermostat_data", "boiler_data", "sensors", "mixing_data", "sm_data", "hp_data", "heating_active"])
+        self.topicsList = list(["thermostat_data", "boiler_data", "sensors", "mixing_data", "sm_data", "hp_data", "heating_active", "tapwater_active"])
         self.topics = [self.topicBase + s for s in self.topicsList]
         Domoticz.Debug("Topiclist is:")
         Domoticz.Debug(", ".join(self.topics))
@@ -908,16 +921,16 @@ class BasePlugin:
 
     def onMQTTPublish(self, topic, rawmessage):
         Domoticz.Debug("MQTT message: " + topic + " " + str(rawmessage))
-
         message = ""
         try:
             message = json.loads(rawmessage.decode('utf8'))
-        except Exception as ex:
-            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-            messageE = template.format(type(ex).__name__, ex.args)
-            Domoticz.Debug(messageE)
-#        except ValueError:
-#            message = rawmessage.decode('utf8')
+#        except Exception as ex:
+#            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+#            messageE = template.format(type(ex).__name__, ex.args)
+#            Domoticz.Debug(messageE)
+        except JSONDecodeError:
+            Domoticz.Debug("Exception of type JSONDecodeError")
+            message = rawmessage.decode('utf8')
 
         if (topic in self.topics):
             self.controller.onMqttMessage(topic, message)
