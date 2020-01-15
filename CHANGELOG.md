@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.7b19] 2020-01-15
+
+Firmware of the Gateway needs to be at least 1.9.3.
+
+### Added
+
+- tapwater_active and heating_active parameters now work.
+
+
 ## [0.7b18] 2020-01-07
 
 Firmware of the Gateway needs to be at least 1.9.3.
