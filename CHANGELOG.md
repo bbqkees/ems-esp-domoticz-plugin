@@ -22,6 +22,10 @@ Firmware of the Gateway needs to be at least 1.9.3.
 - Counters were of the wrong type. Used incremental counters at first.
   Remove the devices 32:wWStarts, 33:wWWorkM, 34:UBAuptime, 35:burnStarts, 36:burnWorkMin, 37:heatWorkMin.
   Then update the plugin and restart Domoticz.
+  When you have added the new counter devices to Domoticz, go to the counter settings and select type 'counter'.
+  Otherwise Domoticz will default to kWh.
+  Optionally set 'Value units' to 'min' for the counters with 'min' on the end.
+  
 
 ## [0.7b17] 2020-01-07
 
