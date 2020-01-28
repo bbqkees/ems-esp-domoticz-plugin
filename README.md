@@ -78,7 +78,6 @@ As I do not have an EMS thermostat myself, I would like to know if this works as
 ## To Do List
 
 - Add the additional topics for controlling thermostat night/day settings.
-- Add the heating and tapwater active parameters
 - Shower stats
 - Heartbeat check (MQTT availability as a sensor)
 - Add commands for setting boiler comfort parameters and ww temperature and setting.
