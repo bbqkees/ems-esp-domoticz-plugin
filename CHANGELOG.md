@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.8] 2020-01-27
+
+Firmware of the Gateway needs to be at least 1.9.4.<br>
+
+### Added
+
+- Added a number of boiler parameters: 31:wWComfort, 25:wWSelTemp, 26:wWDesiredTemp, 27:heating_temp, 28:wWCircPump, 29:flameCurr, 38:pump_mod_max, 39:pump_mod_min, 32:wWStarts, 33:wWWorkM, 34:UBAuptime, 35:burnStarts, 36:burnWorkMin, 37:heatWorkMin.
+- tapwater_active and heating_active parameters now work.
+- Added mqtt authentication with user/pw (thanks @hlugt for pointing it out).
+
 ## [0.7] 2019-12-16
 
 Firmware of the Gateway needs to be at least 1.9.4.<br>
