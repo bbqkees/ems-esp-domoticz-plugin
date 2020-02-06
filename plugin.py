@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 28 January 2020
+# last update: 6 February 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -8,12 +8,12 @@
 #
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.8">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="0.9">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
       Please look at the <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
-      <i>Please update the firmware of the Gateway to 1.9.3 or higher for best functionality.</i><br/>
+      <i>Please update the firmware of the Gateway to 1.9.4 or higher for best functionality.</i><br/>
       As of firmware 1.9.2 the plugin supports 4 heating zones (HC1 to HC4). If you only have one thermostat/zone, the Gateway usually listens to zone 1.<br/>
       Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run<br/>
     <br/>
@@ -839,7 +839,7 @@ class EmsDevices:
         # Change a thermostat setpoint for a specific HC
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
-                thermostatSetpointTopic = "temp"    
+                thermostatSetpointTopic = "thermostat_cmd_temp"    
                 mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
                                    
         # This still needs work:
@@ -849,7 +849,7 @@ class EmsDevices:
             listLevelNames = dictOptions['LevelNames'].split('|')
             strSelectedName = listLevelNames[int(int(level)/10)]
             Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
-            thermostatModeTopic = "mode"    
+            thermostatModeTopic = "thermostat_cmd_mode"    
             mqttClient.Publish(self.topicBase+thermostatModeTopic+str(int((unit-102)/10)), strSelectedName.lower())
 
 
