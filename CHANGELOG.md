@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [107b1] 2020-02-06
+
+Firmware of the Gateway needs to be at least 1.9.4.
+
+### Changed
+
+- Changed the version number to 1.0b1 because the master was already on 0.9.
+
+### Fixed
+
+- The thermostat command topics were changed in EMS-ESP 1.9.4, this has now been fixed here as well.
+
 ## [0.7b20] 2020-01-27
 
 Firmware of the Gateway needs to be at least 1.9.3.
