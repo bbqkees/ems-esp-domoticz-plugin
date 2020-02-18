@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 6 February 2020
+# last update: 18 February 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,7 +9,7 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="1.0b1">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="1.0b2">
     <description>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
@@ -640,7 +640,7 @@ class EmsDevices:
             if 225 not in Devices:
                 Domoticz.Debug("Create temperature device (Dallas sensor 5)")
                 Domoticz.Device(Name="Dallas sensor 5", Unit=225, Type=80, Subtype=5).Create()
-        # Process the Dallas sensors
+        # Process the Dallas sensors for firmware up to 1.9.5b32
             if "temp_1" in payload:
                 temp=round(float(payload["temp_1"]), 1)
                 Domoticz.Debug("Dallas temp 1: Current temp: {}".format(temp))
@@ -666,7 +666,44 @@ class EmsDevices:
                 Domoticz.Debug("Dallas temp 5: Current temp: {}".format(temp))
                 if Devices[225].sValue != temp:
                     Devices[225].Update(nValue=1, sValue=str(temp))
-
+        # Process the Dallas sensors for firmware as of 1.9.5b33
+            if "sensor1" in payload:
+                payloadsensor1 = payload["sensor1"]
+                if "temp" in payloadsensor1:
+                    temp=round(float(payload["temp"]), 1)
+                    Domoticz.Debug("Dallas temp 1: Current temp: {}".format(temp))
+                    if Devices[221].sValue != temp:
+                        Devices[221].Update(nValue=1, sValue=str(temp))
+            if "sensor2" in payload:
+                payloadsensor2 = payload["sensor2"]
+                if "temp" in payloadsensor2:
+                    temp=round(float(payload["temp"]), 1)
+                    Domoticz.Debug("Dallas temp 2: Current temp: {}".format(temp))
+                    if Devices[222].sValue != temp:
+                        Devices[222].Update(nValue=1, sValue=str(temp))
+            if "sensor3" in payload:
+                payloadsensor3 = payload["sensor3"]
+                if "temp" in payloadsensor3:
+                    temp=round(float(payload["temp"]), 1)
+                    Domoticz.Debug("Dallas temp 3: Current temp: {}".format(temp))
+                    if Devices[223].sValue != temp:
+                        Devices[223].Update(nValue=1, sValue=str(temp))
+            if "sensor4" in payload:
+                payloadsensor4 = payload["sensor4"]
+                if "temp" in payloadsensor4:
+                    temp=round(float(payload["temp"]), 1)
+                    Domoticz.Debug("Dallas temp 4: Current temp: {}".format(temp))
+                    if Devices[224].sValue != temp:
+                        Devices[224].Update(nValue=1, sValue=str(temp))
+            if "sensor5" in payload:
+                payloadsensor5 = payload["sensor5"]
+                if "temp" in payloadsensor5:
+                    temp=round(float(payload["temp"]), 1)
+                    Domoticz.Debug("Dallas temp 5: Current temp: {}".format(temp))
+                    if Devices[225].sValue != temp:
+                        Devices[225].Update(nValue=1, sValue=str(temp))                        
+                        
+                        
         # Decode solar module
         # These devices have a Domoticz ID reserved in the range 80 to 99
         # This creates Domoticz devices only if a solar module topic message has been received.
