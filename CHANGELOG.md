@@ -4,7 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [107b1] 2020-02-06
+## [1.0b2] 2020-02-18
+
+Firmware of the Gateway needs to be at least 1.9.4.
+
+### Added
+
+- In firmware 1.9.5b35 the topic structure for the sensors has been changed.
+  Code has been added to process the new structure while keeping the existing sensors.
+
+## [1.0b1] 2020-02-06
 
 Firmware of the Gateway needs to be at least 1.9.4.
 
