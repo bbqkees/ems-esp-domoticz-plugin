@@ -666,42 +666,42 @@ class EmsDevices:
                 Domoticz.Debug("Dallas temp 5: Current temp: {}".format(temp))
                 if Devices[225].sValue != temp:
                     Devices[225].Update(nValue=1, sValue=str(temp))
-        # Process the Dallas sensors for firmware as of 1.9.5b33
+        # Process the Dallas sensors for firmware as of 1.9.5b35
             if "sensor1" in payload:
-                payloadsensor1 = payload["sensor1"]
-                if "temp" in payloadsensor1:
-                    temp=round(float(payload["temp"]), 1)
-                    Domoticz.Debug("Dallas temp 1: Current temp: {}".format(temp))
-                    if Devices[221].sValue != temp:
-                        Devices[221].Update(nValue=1, sValue=str(temp))
+                payloadS1 = payload["sensor1"]
+                if "temp" in payloadS1:
+                    tempS=round(float(payloadS1["temp"]), 1)
+                    Domoticz.Debug("sensor1 temp: {}".format(tempS))
+                    if Devices[221].sValue != str(tempS):
+                        Devices[221].Update(nValue=1, sValue=str(tempS))
             if "sensor2" in payload:
-                payloadsensor2 = payload["sensor2"]
-                if "temp" in payloadsensor2:
-                    temp=round(float(payload["temp"]), 1)
-                    Domoticz.Debug("Dallas temp 2: Current temp: {}".format(temp))
-                    if Devices[222].sValue != temp:
-                        Devices[222].Update(nValue=1, sValue=str(temp))
+                payloadS2 = payload["sensor2"]
+                if "temp" in payloadS2:
+                    tempS=round(float(payloadS2["temp"]), 1)
+                    Domoticz.Debug("sensor2 temp: {}".format(tempS))
+                    if Devices[222].sValue != str(tempS):
+                        Devices[222].Update(nValue=1, sValue=str(tempS))
             if "sensor3" in payload:
-                payloadsensor3 = payload["sensor3"]
-                if "temp" in payloadsensor3:
-                    temp=round(float(payload["temp"]), 1)
-                    Domoticz.Debug("Dallas temp 3: Current temp: {}".format(temp))
-                    if Devices[223].sValue != temp:
-                        Devices[223].Update(nValue=1, sValue=str(temp))
+                payloadS3 = payload["sensor3"]
+                if "temp" in payloadS3:
+                    tempS=round(float(payloadS3["temp"]), 1)
+                    Domoticz.Debug("sensor3 temp: {}".format(tempS))
+                    if Devices[223].sValue != str(tempS):
+                        Devices[223].Update(nValue=1, sValue=str(tempS))
             if "sensor4" in payload:
-                payloadsensor4 = payload["sensor4"]
-                if "temp" in payloadsensor4:
-                    temp=round(float(payload["temp"]), 1)
-                    Domoticz.Debug("Dallas temp 4: Current temp: {}".format(temp))
-                    if Devices[224].sValue != temp:
-                        Devices[224].Update(nValue=1, sValue=str(temp))
+                payloadS4 = payload["sensor4"]
+                if "temp" in payloadS2:
+                    tempS=round(float(payloadS4["temp"]), 1)
+                    Domoticz.Debug("sensor4 temp: {}".format(tempS))
+                    if Devices[224].sValue != str(tempS):
+                        Devices[224].Update(nValue=1, sValue=str(tempS))
             if "sensor5" in payload:
-                payloadsensor5 = payload["sensor5"]
-                if "temp" in payloadsensor5:
-                    temp=round(float(payload["temp"]), 1)
-                    Domoticz.Debug("Dallas temp 5: Current temp: {}".format(temp))
-                    if Devices[225].sValue != temp:
-                        Devices[225].Update(nValue=1, sValue=str(temp))                        
+                payloadS5 = payload["sensor5"]
+                if "temp" in payloadS5:
+                    tempS=round(float(payloadS2["temp"]), 1)
+                    Domoticz.Debug("sensor5 temp: {}".format(tempS))
+                    if Devices[225].sValue != str(tempS):
+                        Devices[225].Update(nValue=1, sValue=str(tempS))                    
                         
                         
         # Decode solar module
