@@ -11,7 +11,7 @@
 """
 <plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.0b4">
     <description>
-      EMS Wi-Fi Gateway plugin version 1.0b4 (DEVELOPMENT)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.0b4 (DEVELOPMENT)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
       Please look at the <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
