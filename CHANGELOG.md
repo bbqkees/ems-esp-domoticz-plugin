@@ -10,7 +10,7 @@ Firmware of the Gateway needs to be at least 1.9.4.
 
 ### Changed
 
-- All sensors are only updated if the value has changed.
+- All devices are only updated if the value has changed.
 
 ## [1.0b3] 2020-02-20
 
