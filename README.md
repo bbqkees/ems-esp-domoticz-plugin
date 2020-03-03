@@ -21,18 +21,22 @@ The EMS-ESP firmware was intented for integration with Home Assistant.<br>
 To communicate with Domoticz you need this plugin that will listen to the topics the Gateway publishes and listens to.<br>
 The plugin will translate the Home Assistant format to Domoticz format.<br>
 
-## Installing the plugin
+## Installing the plugin (development version)
 Stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
 Now do one of the following actions:<br>
 Create a new directory 'ems-gateway' in the folder domoticz/plugins.<br>
 Copy the files mqtt.py and plugin.py to this new domoticz/plugins/ems-gateway directory.<br>
 Or:<br>
-Go to the domoticz/plugins directory and run `git clone https://github.com/bbqkees/ems-esp-domoticz-plugin.git`.<br>
+Go to the domoticz/plugins directory and run `git clone -b dev https://github.com/bbqkees/ems-esp-domoticz-plugin.git`.<br>
 <br>
 Make sure that 'Accept new Hardware Devices' is enabled in settings/system. <br>
 Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
 Create a new hardware of the type "EMS bus Wi-Fi Gateway".<br>
 Set the MQTT server and port. Usually the MQTT server is running on the same machine as Domoticz. If so, you can leave the IP and port to its default setting.
+
+## Switching from master to dev branch
+Several ways to do this. easiest is from the Domoticz plugin folder `sudo rm -r ems-esp-domoticz-plugin` and then
+`git clone -b dev https://github.com/bbqkees/ems-esp-domoticz-plugin.git`.
 
 ### Setting the correct topics
 The plugin listens to the topics preceded by "home/ems-esp/". In the latest EMS-ESP firmware versions the default topic is "ems-esp". To change this go to the Gateway web interface and to the MQTT settings. Now set the Base parameter to "home".
