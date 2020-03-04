@@ -21,9 +21,10 @@ In the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev)
 If you have a Gateway with old Telnet-only firmware or you are otherwise unable to upgrade the firmware of the Gateway, I can send you a new Wemos with soldered headers loaded with the latest firmware with web interface, so you can do future firmware updates yourself. This is a drop-in replacement. Send me an email for more information if you need this.<br><br>
 
 ### ! Issues with latest Domoticz beta versions !
-For some cases, in the latest Domoticz beta versions (2020 versions) when activating the plugin the entire device list in Domoticz gets empty.
+In some cases, for the latest Domoticz beta versions (2020 versions) when activating the plugin the entire device list in Domoticz gets empty.
 Or it becomes empty after adding more than 8 devices from the plugin. I have not found out yet why this happens.
-If you are running a stable version the problem does not occur.
+If you are running a stable version the problem does not occur, so please use the latest stable release.
+
 
 # Installation and configuration
 
