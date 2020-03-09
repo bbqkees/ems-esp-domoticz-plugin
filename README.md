@@ -1,6 +1,4 @@
-![license](https://img.shields.io/github/license/bbqkees/ems-esp-domoticz-plugin.svg)
-
-![last-commit](https://img.shields.io/github/last-commit/bbqkees/ems-esp-domoticz-plugin?label=last%20commit%20in%20Master)
+![license](https://img.shields.io/github/license/bbqkees/ems-esp-domoticz-plugin.svg) ![last-commit](https://img.shields.io/github/last-commit/bbqkees/ems-esp-domoticz-plugin?label=last%20commit%20in%20Master)
 ![last-commit-dev](https://img.shields.io/github/last-commit/bbqkees/ems-esp-domoticz-plugin/dev?label=last%20commit%20in%20DEV%20branch)
 
 # ems-esp-domoticz-plugin
