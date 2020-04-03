@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0b5] 2020-04-03
+
+Firmware of the Gateway needs to be at least 1.9.4.
+
+### Fixed
+
+Fixed onMessage log statement to only log entries when debugging is enabled.
+
 ## [1.0b4] 2020-03-02
 
 Firmware of the Gateway needs to be at least 1.9.4.
