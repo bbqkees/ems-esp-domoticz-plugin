@@ -759,7 +759,7 @@ class BasePlugin:
 
     def onMessage(self, Connection, Data):
         self.mqttClient.onMessage(Connection, Data)
-        Domoticz.Log("onMessage called with: "+Data["Verb"])
+        Domoticz.Debug("onMessage called with: "+Data["Verb"])
 
     def onHeartbeat(self):
         Domoticz.Debug("Heartbeating...")
