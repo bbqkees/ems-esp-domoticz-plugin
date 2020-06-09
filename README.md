@@ -28,6 +28,11 @@ In some cases, for the latest Domoticz beta versions (2020 versions) while on De
 Or it becomes empty after adding more than 8 devices from the plugin. I have not found out yet why this happens.
 If you are running a stable version the problem does not occur, so please use the latest stable release.
 
+### Thermostats are not updated with firmware version 1.9.5
+
+In the latest firmware version 1.9.5 the MQTT topics are not 'nested' by default.
+If you have updated from an older firmware version you will be fine but if you got a new Gateway with 1.9.5 you need to login via Telnet to the Gateway and execute the fommowing command:
+`set mqtt_nestedjson on`
 
 # Installation and configuration
 
