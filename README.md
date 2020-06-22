@@ -23,12 +23,16 @@ If you are on older firmware versions than 1.9.4  and are unable to upgrade, do 
 In the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev) a test version is also available with more additions and fixes.<br><br>
 If you have a Gateway with old Telnet-only firmware or you are otherwise unable to upgrade the firmware of the Gateway, I can send you a new Wemos with soldered headers loaded with the latest firmware with web interface, so you can do future firmware updates yourself. This is a drop-in replacement. Send me an email for more information if you need this.<br><br>
 
-### ! Issues with latest Domoticz beta versions !
+## Compatibility with EMS-ESP 2.0
+The latest stable version of EMS-ESP is 1.9.5. Alpha versions of EMS-ESP 2.0 are now available as well. Be aware that 2.0 does not have a web interface yet so all settings are to be done via Telnet.<br>
+The current plugin works fine with at least 2.0a22, but until EMS-ESP 2.0 enters at least the beta stage no guarantees are given. I do encourage everyone to try out EMS-ESP 2.0 in order to get it bug free as soon as possible. You can always downgrade again to 1.9.5 if it does not run that well.
+
+### ! Issue with latest Domoticz beta versions !
 In some cases, for the latest Domoticz beta versions (2020 versions) while on Debian Buster, when activating the plugin the entire device list in Domoticz gets empty.
 Or it becomes empty after adding more than 8 devices from the plugin. I have not found out yet why this happens.
 If you are running a stable version the problem does not occur, so please use the latest stable release.
 
-### Thermostats are not updated with firmware version 1.9.5
+### Issue: Thermostats are not updated with firmware version 1.9.5
 
 In the latest firmware version 1.9.5 the MQTT topics are not 'nested' by default.
 If you have updated from an older firmware version you will be fine but if you got a new Gateway with 1.9.5 you need to login via Telnet to the Gateway and execute the fommowing command:
