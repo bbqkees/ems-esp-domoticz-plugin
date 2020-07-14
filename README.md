@@ -24,8 +24,9 @@ In the [dev branch](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev)
 If you have a Gateway with old Telnet-only firmware or you are otherwise unable to upgrade the firmware of the Gateway, I can send you a new Wemos with soldered headers loaded with the latest firmware with web interface, so you can do future firmware updates yourself. This is a drop-in replacement. Send me an email for more information if you need this.<br><br>
 
 ## Compatibility with EMS-ESP 2.0
-The latest stable version of EMS-ESP is 1.9.5. Alpha versions of EMS-ESP 2.0 are now available as well. Be aware that 2.0 does not have a web interface yet so all settings are to be done via Telnet.<br>
-The current plugin works fine with at least 2.0a22, but until EMS-ESP 2.0 enters at least the beta stage no guarantees are given. I do encourage everyone to try out EMS-ESP 2.0 in order to get it bug free as soon as possible. You can always downgrade again to 1.9.5 if it does not run that well.
+The latest stable version of EMS-ESP is 1.9.5. Beta versions of EMS-ESP 2.0 are now available as well, but you have to manually build these and upload them to the Gateway.<br>
+The current plugin works fine with at least 2.0b3. In 2.0 the MQTT topic base is now just 'ems-esp' so you have to change this in the plugin settings as well. By default this is 'home/ems-esp' in 1.9.5.<br>
+I encourage everyone to try out EMS-ESP 2.0 in order to get it bug free as soon as possible. You can always downgrade again to 1.9.5 if it does not run that well.
 
 ## Known issues
 
