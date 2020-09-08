@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1b2] 2020-09-08
+
+Recommended to update to firmware V2.0.1 or higher.
+
+### Fixed
+
+Solar module parameters in the sm_data topic were changed in V2. This is now changed here as well.
+
 ## [1.1b1] 2020-04-03
 
 Firmware of the Gateway needs to be at least 1.9.4.
