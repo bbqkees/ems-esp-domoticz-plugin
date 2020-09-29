@@ -1,4 +1,4 @@
-# Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
+t# Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
 # last update: 8 September 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
@@ -115,7 +115,7 @@ class EmsDevices:
             Domoticz.Debug("Create on/off switch (ignWork)")
             Domoticz.Device(Name="Boiler ingnition", Unit=6, Type=244, Subtype=73, Switchtype=0).Create()
         if 7 not in Devices:
-            Domoticz.Debug("Create on/off switch (heatPmp)")
+            Domoticz.Debug("Create on/off switch (heatPump)")
             Domoticz.Device(Name="Boiler heating pump", Unit=7, Type=244, Subtype=73, Switchtype=0).Create()
         if 8 not in Devices:
             Domoticz.Debug("Create on/off switch (wWActivated)")
@@ -154,10 +154,10 @@ class EmsDevices:
             Domoticz.Debug("Create temperature device (heating_temp)")
             Domoticz.Device(Name="Heating temperature", Unit=27, Type=80, Subtype=5).Create()
         if 18 not in Devices:
-            Domoticz.Debug("Create text device (ServiceCode)")
+            Domoticz.Debug("Create text device (serviceCode)")
             Domoticz.Device(Name="Boiler Service code", Unit=18, Type=243, Subtype=19).Create()
         if 19 not in Devices:
-            Domoticz.Debug("Create text device (ServiceCodeNumber)")
+            Domoticz.Debug("Create text device (serviceCodeNumber)")
             Domoticz.Device(Name="Boiler Service code number", Unit=19, Type=243, Subtype=19).Create()
         if 21 not in Devices:
             Domoticz.Debug("Create percentage device (selBurnPow)")
@@ -175,10 +175,10 @@ class EmsDevices:
             Domoticz.Debug("Create percentage device (wWCircPump)")
             Domoticz.Device(Name="ww pump modulation", Unit=28, Type=243, Subtype=6).Create()
         if 38 not in Devices:
-            Domoticz.Debug("Create percentage device (pump_mod_max)")
+            Domoticz.Debug("Create percentage device (pumpModMax)")
             Domoticz.Device(Name="pump modulation max", Unit=38, Type=243, Subtype=6).Create()
         if 39 not in Devices:
-            Domoticz.Debug("Create percentage device (pump_mod_min)")
+            Domoticz.Debug("Create percentage device (pumpModMin)")
             Domoticz.Device(Name="pump modulation min", Unit=39, Type=243, Subtype=6).Create()
         # Current meter (called Ampere in Domoticz)
         if 29 not in Devices:
@@ -302,25 +302,25 @@ class EmsDevices:
 
         # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
         if "tapwater_active" in topic:
-            if payload == 0:
+            if payload == 0 or payload == "off" or payload == "false":
                 Devices[71].Update(nValue=0,sValue="off")
-            if payload == 1:
+            if payload == 1 or payload == "on" or payload == "true":
                 Devices[71].Update(nValue=1,sValue="on")
 
         # Process the heating_active topic. Note the contents a single boolean (0 or 1) and not json.
         if "heating_active" in topic:
-            if payload == 0:
+            if payload == 0 or payload == "off" or payload == "false":
                 Devices[72].Update(nValue=0,sValue="off")
-            if payload == 1:
+            if payload == 1 or payload == "on" or payload == "true":
                 Devices[72].Update(nValue=1,sValue="on")
 
         # Process the start topic. Note the contents a single word and not json. Does not work yet
-#        if "start" in topic:
+#        if "status" in topic:
 #            Domoticz.Debug("start topic received")    
-            # if payload == "offline":
-            #     Devices[73].Update(nValue=0,sValue="off")
-            # if payload == "online":
-            #     Devices[73].Update(nValue=1,sValue="on")
+             #if payload == "offline":
+             #    Devices[73].Update(nValue=0,sValue="off")
+             #if payload == "online":
+             #    Devices[73].Update(nValue=1,sValue="on")
 
         # Process the thermostat parameters of each heating zone
         # Because there are other topics who have 'hc1' etc in the payload, check first
@@ -430,10 +430,10 @@ class EmsDevices:
             if "wWCircPump" in payload:
                 percentage=payload["wWCircPump"]
                 updateDevice(28, 243, 6, percentage)
-            if "pump_mod_max" in payload:
+            if "pumpModMax" in payload:
                 percentage=payload["pump_mod_max"]
                 updateDevice(38, 243, 6, percentage)
-            if "pump_mod_min" in payload:
+            if "pumpModMin" in payload:
                 percentage=payload["pump_mod_min"]
                 updateDevice(39, 243, 6, percentage)
             #4 to 10 switch
@@ -446,7 +446,7 @@ class EmsDevices:
             if "ignWork" in payload:
                 switchstate=payload["ignWork"]
                 updateDevice(6, 244, 73, switchstate)
-            if "heatPmp" in payload:
+            if "heatPump" in payload:
                 switchstate=payload["heatPmp"]
                 updateDevice(7, 244, 73, switchstate)
             if "wWActivated" in payload:
@@ -458,10 +458,10 @@ class EmsDevices:
             if "wWCirc" in payload:
                 switchstate=payload["wWCirc"]
                 updateDevice(10, 244, 73, switchstate)
-            if "ServiceCode" in payload:
+            if "serviceCode" in payload:
                 text=payload["ServiceCode"]
                 updateDevice(18, 243, 19, text)
-            if "ServiceCodeNumber" in payload:
+            if "serviceCodeNumber" in payload:
                 text=payload["ServiceCodeNumber"]
                 updateDevice(19, 243, 19, text)
             if "wWStarts" in payload:
