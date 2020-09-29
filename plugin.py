@@ -1,4 +1,4 @@
-t# Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
+# Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
 # last update: 8 September 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
