@@ -302,16 +302,16 @@ class EmsDevices:
 
         # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
         if "tapwater_active" in topic:
-            if payload == 0 or payload == "off" or payload == "false":
+            if payload == 0:
                 Devices[71].Update(nValue=0,sValue="off")
-            if payload == 1 or payload == "on" or payload == "true":
+            if payload == 1:
                 Devices[71].Update(nValue=1,sValue="on")
 
         # Process the heating_active topic. Note the contents a single boolean (0 or 1) and not json.
         if "heating_active" in topic:
-            if payload == 0 or payload == "off" or payload == "false":
+            if payload == 0:
                 Devices[72].Update(nValue=0,sValue="off")
-            if payload == 1 or payload == "on" or payload == "true":
+            if payload == 1:
                 Devices[72].Update(nValue=1,sValue="on")
 
         # Process the start topic. Note the contents a single word and not json. Does not work yet
