@@ -431,10 +431,10 @@ class EmsDevices:
                 percentage=payload["wWCircPump"]
                 updateDevice(28, 243, 6, percentage)
             if "pumpModMax" in payload:
-                percentage=payload["pump_mod_max"]
+                percentage=payload["pumpModMax"]
                 updateDevice(38, 243, 6, percentage)
             if "pumpModMin" in payload:
-                percentage=payload["pump_mod_min"]
+                percentage=payload["pumpModMin"]
                 updateDevice(39, 243, 6, percentage)
             #4 to 10 switch
             if "burnGas" in payload:
@@ -447,7 +447,7 @@ class EmsDevices:
                 switchstate=payload["ignWork"]
                 updateDevice(6, 244, 73, switchstate)
             if "heatPump" in payload:
-                switchstate=payload["heatPmp"]
+                switchstate=payload["heatPump"]
                 updateDevice(7, 244, 73, switchstate)
             if "wWActivated" in payload:
                 switchstate=payload["wWActivated"]
@@ -459,10 +459,10 @@ class EmsDevices:
                 switchstate=payload["wWCirc"]
                 updateDevice(10, 244, 73, switchstate)
             if "serviceCode" in payload:
-                text=payload["ServiceCode"]
+                text=payload["serviceCode"]
                 updateDevice(18, 243, 19, text)
             if "serviceCodeNumber" in payload:
-                text=payload["ServiceCodeNumber"]
+                text=payload["serviceCodeNumber"]
                 updateDevice(19, 243, 19, text)
             if "wWStarts" in payload:
                 text=payload["wWStarts"]
