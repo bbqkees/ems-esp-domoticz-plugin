@@ -9,9 +9,9 @@
 # This is the development and debug 2 version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.1b2">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b2">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.1b2 (DEVELOPMENT 2)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.2b2 (DEVELOPMENT 2)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
       Please look at the <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -93,26 +93,8 @@ from mqtt import MqttClient
 
 class EmsDevices:
 
-    def checkDevices(self):
-
-        # Create selector switch for boiler modes
-        if 30 not in Devices:
-            Domoticz.Debug("Create boiler mode selector")
-            Options = { "LevelActions" : "||",
-                        "LevelNames"   : "Hot|Comfort|Intelligent",
-                        "LevelOffHidden" : "true",
-                        "SelectorStyle" : "0" 
-                        }
-            Domoticz.Device(Name="Boiler mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-        # Create selector switch for ww modes
-        if 31 not in Devices:
-            Domoticz.Debug("Create ww mode selector")
-            Options = { "LevelActions" : "||",
-                        "LevelNames"   : "Hot|Eco|Intelligent",
-                        "LevelOffHidden" : "true",
-                        "SelectorStyle" : "0" 
-                        }
-            Domoticz.Device(Name="ww mode", Unit=31, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+    # def checkDevices(self):
+    # not used for now  
 
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
@@ -271,7 +253,7 @@ class EmsDevices:
                     Domoticz.Debug("Create System Pressure Device")
                     Domoticz.Device(Name="Boiler system pressure", Unit=2, Type=243, Subtype=9).Create()
                 updateDevice(2, 243, 9, pressure)
-            #11 to 16 + 25 to 27 temp
+            # 11 to 16 + 25 to 27 temp
             if "selFlowTemp" in payload:
                 temp=round(float(payload["selFlowTemp"]), 1)
                 if 11 not in Devices:
@@ -468,6 +450,25 @@ class EmsDevices:
                     Domoticz.Debug("Create counter (heatWorkMin)")
                     Domoticz.Device(Name="boiler heating working minutes", Unit=37, Type=113, Subtype=0).Create()
                 updateDevice(37, 113, 0, text)
+
+            # Create selector switch for boiler modes
+            if 30 not in Devices:
+                Domoticz.Debug("Create boiler mode selector")
+                Options = { "LevelActions" : "||",
+                            "LevelNames"   : "Hot|Comfort|Intelligent",
+                            "LevelOffHidden" : "true",
+                            "SelectorStyle" : "0" 
+                            }
+                Domoticz.Device(Name="Boiler mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+            # Create selector switch for ww modes
+            if 31 not in Devices:
+                Domoticz.Debug("Create ww mode selector")
+                Options = { "LevelActions" : "||",
+                            "LevelNames"   : "Hot|Eco|Intelligent",
+                            "LevelOffHidden" : "true",
+                            "SelectorStyle" : "0" 
+                            }
+                Domoticz.Device(Name="ww mode", Unit=31, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()    
 
         # Set tapwater and heating status
         # This doesn't work yet because onMQTTPublish can't handle a non-JSON object.
@@ -692,8 +693,11 @@ class EmsDevices:
         # Change a thermostat setpoint for a specific HC
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
-                thermostatSetpointTopic = "thermostat_cmd_temp"    
-                mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
+                # test function
+                sendEmsCommand("thermostat", "temp", str(level), 1, str(int((unit-102)/10))
+
+            #    thermostatSetpointTopic = "thermostat"    
+            #    mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
                                    
         # This still needs work:
         # Change a thermostat mode for a specific HC
@@ -879,3 +883,13 @@ def updateDevice(deviceId, deviceType, deviceSubType, deviceValue):
                     Devices[deviceId].Update(nValue=1,sValue="on")
                 if (str(deviceValue) == "off"):
                     Devices[deviceId].Update(nValue=0,sValue="off")
+
+# This is the general send command function over MQTT for an EMS device
+# emsDevice are system, sensor, boiler, thermostat, solar, mixing and heatpump.
+# The payload should be in the format
+# {"cmd":<command> ,"data":<data>, "id":<id>} or {"cmd":<command> ,"data":<data>, "hc":<hc>}
+# First implementing the thermostat.
+def sendEmsCommand(emsDevice, emsCommand, emsData, emsId, emsHc):
+    if emsDevice =="thermostat" and emsCommand =="temp":
+        payloadString = "\{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"\}"
+        mqttClient.Publish(self.topicBase+"thermostat", str(temp))

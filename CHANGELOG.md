@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2b1] 2020-10-06
+
+Recommended to update to firmware V2.0.1 or higher.
+
+### Changed
+
+Devices are only added when they are found in the payload of the respective topics.
+This was done for boiler_data and thermostat_data.
+
 ## [1.1b2] 2020-09-08
 
 Recommended to update to firmware V2.0.1 or higher.
