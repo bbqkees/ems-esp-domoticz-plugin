@@ -891,16 +891,16 @@ def updateDevice(deviceId, deviceType, deviceSubType, deviceValue):
 def sendEmsCommand(mqttClient, emsDevice, emsCommand, emsData, emsId, emsHc):
     topicBase = Parameters["Mode1"].replace(" ", "")
     if emsDevice =="thermostat" and emsCommand =="temp":
-        payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
+        payloadString = "{\"cmd\":\"temp\" ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
         mqttClient.Publish(topicBase+"thermostat", payloadString)
     if emsDevice =="thermostat" and emsCommand =="wwmode":
-        payloadString = "{\"cmd\":wwmode ,\"data\":"+str(emsData)+"}"
+        payloadString = "{\"cmd\":\"wwmode\" ,\"data\":"+str(emsData)+"}"
         mqttClient.Publish(topicBase+"thermostat", payloadString)
     if emsDevice =="thermostat" and emsCommand =="mode":
-        payloadString = "{\"cmd\":mode ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
+        payloadString = "{\"cmd\":\"mode\" ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
         mqttClient.Publish(topicBase+"thermostat", payloadString)
     if emsDevice =="boiler":
-        payloadString = "{\"cmd\":"+emsCommand+" ,\"data\":"+str(emsData)+"}"
+        payloadString = "{\"cmd\":\""+emsCommand+"\" ,\"data\":"+str(emsData)+"}"
         mqttClient.Publish(topicBase+"boiler", payloadString)
 
 
