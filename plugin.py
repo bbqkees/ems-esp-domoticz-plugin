@@ -126,7 +126,6 @@ class EmsDevices:
                 Devices[71].Update(nValue=0, sValue="off")
             if payload == 1:
                 Devices[71].Update(nValue=1, sValue="on")
-                
 
         # Process the heating_active topic. Note the contents a single boolean (0 or 1) and not json.
         if "heating_active" in topic:
@@ -239,20 +238,20 @@ class EmsDevices:
                     setSelectorByName(133, str(thMode))
             if "hc4" in payload:
                 payloadHc4 = payload["hc4"]
-                    if 141 not in Devices:
-                        Domoticz.Debug("Create Temperature Device HC4")
-                        Domoticz.Device(Name="EMS thermostat current temp HC4", Unit=141, Type=80, Subtype=5).Create()
-                    if 142 not in Devices:
-                        Domoticz.Debug("Create Thermostat Setpoint Device HC4")
-                        Domoticz.Device(Name="EMS thermostat setpoint HC4", Unit=142, Type=242, Subtype=1).Create()
-                    if 143 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode selector HC4")
-                        Options = { "LevelActions" : "||||",
-                                    "LevelNames"   : "Off|Auto|Day|Night|Manual",
-                                    "LevelOffHidden" : "true",
-                                    "SelectorStyle" : "0" 
-                                    }
-                        Domoticz.Device(Name="Thermostat mode HC4", Unit=143, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                if 141 not in Devices:
+                    Domoticz.Debug("Create Temperature Device HC4")
+                    Domoticz.Device(Name="EMS thermostat current temp HC4", Unit=141, Type=80, Subtype=5).Create()
+                if 142 not in Devices:
+                    Domoticz.Debug("Create Thermostat Setpoint Device HC4")
+                    Domoticz.Device(Name="EMS thermostat setpoint HC4", Unit=142, Type=242, Subtype=1).Create()
+                if 143 not in Devices:
+                    Domoticz.Debug("Create Thermostat mode selector HC4")
+                    Options = { "LevelActions" : "||||",
+                                "LevelNames"   : "Off|Auto|Day|Night|Manual",
+                                "LevelOffHidden" : "true",
+                                "SelectorStyle" : "0" 
+                                }
+                    Domoticz.Device(Name="Thermostat mode HC4", Unit=143, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                 if "currtemp" in payloadHc4:
                     temp=round(float(payloadHc4["currtemp"]), 1)
                     updateDevice(141, 80, 5, temp)
@@ -344,13 +343,13 @@ class EmsDevices:
                 updateDevice(21, 243, 6, percentage)
             if "curBurnPow" in payload:
                 percentage=payload["curBurnPow"]
-                    if 22 not in Devices:
+                if 22 not in Devices:
                     Domoticz.Debug("Create percentage device (curBurnPow)")
                     Domoticz.Device(Name="Boiler current power", Unit=22, Type=243, Subtype=6).Create()
                 updateDevice(22, 243, 6, percentage)
             if "pumpMod" in payload:
                 percentage=payload["pumpMod"]
-                    if 23 not in Devices:
+                if 23 not in Devices:
                     Domoticz.Debug("Create percentage device (pumpMod)")
                     Domoticz.Device(Name="Boiler pump modulation", Unit=23, Type=243, Subtype=6).Create()
                 updateDevice(23, 243, 6, percentage)
@@ -362,7 +361,7 @@ class EmsDevices:
                 updateDevice(24, 243, 6, percentage)
             if "wWCircPump" in payload:
                 percentage=payload["wWCircPump"]
-                    if 28 not in Devices:
+                if 28 not in Devices:
                     Domoticz.Debug("Create percentage device (wWCircPump)")
                     Domoticz.Device(Name="ww pump modulation", Unit=28, Type=243, Subtype=6).Create()
                 updateDevice(28, 243, 6, percentage)
@@ -726,7 +725,7 @@ class BasePlugin:
 
         self.topicBase = Parameters["Mode1"].replace(" ", "")
 
-        self.topicsList = list(["thermostat_data", "boiler_data", "sensor_data", "mixing_data", "sm_data", "hp_data", "heating_active", "tapwater_active", "status", , "info"])
+        self.topicsList = list(["thermostat_data", "boiler_data", "sensor_data", "mixing_data", "sm_data", "hp_data", "heating_active", "tapwater_active", "status", "info"])
         self.topics = [self.topicBase + s for s in self.topicsList]
         Domoticz.Debug("Topiclist is:")
         Domoticz.Debug(", ".join(self.topics))
