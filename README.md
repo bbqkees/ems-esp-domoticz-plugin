@@ -1,7 +1,11 @@
 # ems-esp-domoticz-plugin
 Domoticz plugin for the EMS Wi-Fi Gateway with Proddy's EMS-ESP firmware. 
 
---You are now viewing the development branch.--<br>
+--You are now viewing the development branch 2.--<br>
+Do not use this branch until further notice.
+
+
+
 On first run the plugin will add a new thermostat device for all heating circuits hc1 to hc4. If you previously used the thermostat you now need to control it via the new Thermostat hc1. In some cases your thermostat is coupled to another heating circuit than hc1, in those cases you need to use the other hc.<br>
 <br>
 This version also supports 5 Dallas temperature sensors and several other new parameters.<br>
