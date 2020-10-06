@@ -893,5 +893,5 @@ def sendEmsCommand(emsDevice, emsCommand, emsData, emsId, emsHc):
     topicBase = "ems-esp/"
     if emsDevice =="thermostat" and emsCommand =="temp":
         payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
-        mqttClient.Publish(topicBase+"thermostat", payloadString)
+        self.mqttClient.Publish(topicBase+"thermostat", payloadString)
 
