@@ -695,7 +695,7 @@ class EmsDevices:
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
                 # test function
-                sendEmsCommand("thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
+                sendEmsCommand(self, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
             #    thermostatSetpointTopic = "thermostat"    
             #    mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
@@ -710,18 +710,6 @@ class EmsDevices:
             thermostatModeTopic = "thermostat_cmd_mode"    
             mqttClient.Publish(self.topicBase+thermostatModeTopic+str(int((unit-102)/10)), strSelectedName.lower())
     
-    # This is the general send command function over MQTT for an EMS device
-    # emsDevice are system, sensor, boiler, thermostat, solar, mixing and heatpump.
-    # The payload should be in the format
-    # {"cmd":<command> ,"data":<data>, "id":<id>} or {"cmd":<command> ,"data":<data>, "hc":<hc>}
-    # First implementing the thermostat.
-    def sendEmsCommand(emsDevice, emsCommand, emsData, emsId, emsHc):
-        topicBase = "ems-esp/"
-        if emsDevice =="thermostat" and emsCommand =="temp":
-            payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
-            mqttClient.Publish(topicBase+"thermostat", str(temp))
-
-
 class BasePlugin:
     mqttClient = None
 
@@ -804,7 +792,7 @@ class BasePlugin:
 
         if (topic in self.topics):
             self.controller.onMqttMessage(topic, message)
-
+    
 
 global _plugin
 _plugin = BasePlugin()
@@ -896,4 +884,14 @@ def updateDevice(deviceId, deviceType, deviceSubType, deviceValue):
                 if (str(deviceValue) == "off"):
                     Devices[deviceId].Update(nValue=0,sValue="off")
 
+# This is the general send command function over MQTT for an EMS device
+# emsDevice are system, sensor, boiler, thermostat, solar, mixing and heatpump.
+# The payload should be in the format
+# {"cmd":<command> ,"data":<data>, "id":<id>} or {"cmd":<command> ,"data":<data>, "hc":<hc>}
+# First implementing the thermostat.
+def sendEmsCommand(emsDevice, emsCommand, emsData, emsId, emsHc):
+    topicBase = "ems-esp/"
+    if emsDevice =="thermostat" and emsCommand =="temp":
+        payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
+        mqttClient.Publish(topicBase+"thermostat", payloadString)
 
