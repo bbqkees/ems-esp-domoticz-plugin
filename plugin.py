@@ -418,37 +418,37 @@ class EmsDevices:
                 text=payload["wWStarts"]
                 if 32 not in Devices:
                     Domoticz.Debug("Create counter (wWStarts)")
-                    Domoticz.Device(Name="ww starts", Unit=32, Type=113, Subtype=0, Switchtype=3).Create() # switchtype counter test
+                    Domoticz.Device(Name="ww starts", Unit=32, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(32, 113, 0, text)
             if "wWWorkM" in payload:
                 text=payload["wWWorkM"]
                 if 33 not in Devices:
                     Domoticz.Debug("Create counter (wWWorkM)")
-                    Domoticz.Device(Name="ww work minutes", Unit=33, Type=113, Subtype=0).Create()
+                    Domoticz.Device(Name="ww work minutes", Unit=33, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(33, 113, 0, text)
             if "UBAuptime" in payload:
                 text=payload["UBAuptime"]
                 if 34 not in Devices:
                     Domoticz.Debug("Create counter (UBAuptime)")
-                    Domoticz.Device(Name="Boiler UBA uptime", Unit=34, Type=113, Subtype=0).Create()
+                    Domoticz.Device(Name="Boiler UBA uptime", Unit=34, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(34, 113, 0, text)
             if "burnStarts" in payload:
                 text=payload["burnStarts"]
                 if 35 not in Devices:
                     Domoticz.Debug("Create counter (burnStarts)")
-                    Domoticz.Device(Name="boiler burner starts", Unit=35, Type=113, Subtype=0).Create()
+                    Domoticz.Device(Name="boiler burner starts", Unit=35, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(35, 113, 0, text)
             if "burnWorkMin" in payload:
                 text=payload["burnWorkMin"]
                 if 36 not in Devices:
                     Domoticz.Debug("Create counter (burnWorkMin)")
-                    Domoticz.Device(Name="boiler burner working minutes", Unit=36, Type=113, Subtype=0).Create()
+                    Domoticz.Device(Name="boiler burner working minutes", Unit=36, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(36, 113, 0, text)
             if "heatWorkMin" in payload:
                 text=payload["heatWorkMin"]
                 if 37 not in Devices:
                     Domoticz.Debug("Create counter (heatWorkMin)")
-                    Domoticz.Device(Name="boiler heating working minutes", Unit=37, Type=113, Subtype=0).Create()
+                    Domoticz.Device(Name="boiler heating working minutes", Unit=37, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(37, 113, 0, text)
 
             # Create selector switch for boiler modes
@@ -694,7 +694,7 @@ class EmsDevices:
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
                 # test function
-                sendEmsCommand("thermostat", "temp", str(level), 1, str(int((unit-102)/10))
+                sendEmsCommand("thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
             #    thermostatSetpointTopic = "thermostat"    
             #    mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
@@ -891,5 +891,5 @@ def updateDevice(deviceId, deviceType, deviceSubType, deviceValue):
 # First implementing the thermostat.
 def sendEmsCommand(emsDevice, emsCommand, emsData, emsId, emsHc):
     if emsDevice =="thermostat" and emsCommand =="temp":
-        payloadString = "\{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"\}"
+        payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
         mqttClient.Publish(self.topicBase+"thermostat", str(temp))
