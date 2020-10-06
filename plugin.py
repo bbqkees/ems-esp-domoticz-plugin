@@ -94,7 +94,8 @@ from mqtt import MqttClient
 class EmsDevices:
 
     def checkDevices(self):
-    # not used for now  
+    # not used for now 
+        Domoticz.Debug("checkDevices called")
 
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
