@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2b3] 2020-10-06
+
+Necessary to update to firmware V2.1 or higher.
+
+### Changed
+
+Lots of little things. Setting the thermostat should now work.
+
 ## [1.2b1] 2020-10-06
 
 Recommended to update to firmware V2.0.1 or higher.

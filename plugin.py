@@ -9,14 +9,13 @@
 # This is the development and debug 2 version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b2">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b3">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.2b2 (DEVELOPMENT 2)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.2b3 (DEVELOPMENT 2)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
       Please look at the <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
       <i>Please update the firmware of the Gateway to V2.0.1 or higher for best functionality.</i><br/>
-      As of firmware 1.9.2 the plugin supports 4 heating zones (HC1 to HC4). If you only have one thermostat/zone, the Gateway usually listens to zone 1.<br/>
       Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run.<br/>
     <br/>
     Parameters:<br/>
@@ -888,11 +887,20 @@ def updateDevice(deviceId, deviceType, deviceSubType, deviceValue):
 # emsDevice are system, sensor, boiler, thermostat, solar, mixing and heatpump.
 # The payload should be in the format
 # {"cmd":<command> ,"data":<data>, "id":<id>} or {"cmd":<command> ,"data":<data>, "hc":<hc>}
-# First implementing the thermostat.
+# First implementing the thermostat and some boiler stuff.
 def sendEmsCommand(mqttClient, emsDevice, emsCommand, emsData, emsId, emsHc):
-    #topicBase = "ems-esp/"
     topicBase = Parameters["Mode1"].replace(" ", "")
     if emsDevice =="thermostat" and emsCommand =="temp":
         payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
         mqttClient.Publish(topicBase+"thermostat", payloadString)
+    if emsDevice =="thermostat" and emsCommand =="wwmode":
+        payloadString = "{\"cmd\":wwmode ,\"data\":"+str(emsData)+"}"
+        mqttClient.Publish(topicBase+"thermostat", payloadString)
+    if emsDevice =="thermostat" and emsCommand =="mode":
+        payloadString = "{\"cmd\":mode ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
+        mqttClient.Publish(topicBase+"thermostat", payloadString)
+    if emsDevice =="boiler":
+        payloadString = "{\"cmd\":"+emsCommand+" ,\"data\":"+str(emsData)+"}"
+        mqttClient.Publish(topicBase+"boiler", payloadString)
+
 
