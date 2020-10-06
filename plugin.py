@@ -695,7 +695,7 @@ class EmsDevices:
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
                 # test function
-                sendEmsCommand(self, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
+                sendEmsCommand("thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
             #    thermostatSetpointTopic = "thermostat"    
             #    mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
