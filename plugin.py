@@ -891,7 +891,7 @@ def updateDevice(deviceId, deviceType, deviceSubType, deviceValue):
 # {"cmd":<command> ,"data":<data>, "id":<id>} or {"cmd":<command> ,"data":<data>, "hc":<hc>}
 # First implementing the thermostat.
 def sendEmsCommand(emsDevice, emsCommand, emsData, emsId, emsHc):
-    EmsDevices.topicBase = Parameters["Mode1"].replace(" ", "")
+    topicBase = "ems-esp/"
     if emsDevice =="thermostat" and emsCommand =="temp":
         payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
         mqttClient.Publish(topicBase+"thermostat", str(temp))
