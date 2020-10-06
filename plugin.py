@@ -695,7 +695,7 @@ class EmsDevices:
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
                 # test function
-                sendEmsCommand("thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
+                self.sendEmsCommand("thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
             #    thermostatSetpointTopic = "thermostat"    
             #    mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
@@ -894,4 +894,4 @@ def sendEmsCommand(self, emsDevice, emsCommand, emsData, emsId, emsHc):
     self.topicBase = Parameters["Mode1"].replace(" ", "")
     if emsDevice =="thermostat" and emsCommand =="temp":
         payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
-        mqttClient.Publish(self.topicBase+"thermostat", str(temp))
+        mqttClient.Publish(topicBase+"thermostat", str(temp))
