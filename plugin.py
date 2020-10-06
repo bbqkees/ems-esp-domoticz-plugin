@@ -93,7 +93,7 @@ from mqtt import MqttClient
 
 class EmsDevices:
 
-    # def checkDevices(self):
+    def checkDevices(self):
     # not used for now  
 
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
