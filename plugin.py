@@ -695,7 +695,7 @@ class EmsDevices:
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
                 # test function
-                sendEmsCommand("thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
+                sendEmsCommand(mqttClient, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
             #    thermostatSetpointTopic = "thermostat"    
             #    mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
@@ -889,9 +889,9 @@ def updateDevice(deviceId, deviceType, deviceSubType, deviceValue):
 # The payload should be in the format
 # {"cmd":<command> ,"data":<data>, "id":<id>} or {"cmd":<command> ,"data":<data>, "hc":<hc>}
 # First implementing the thermostat.
-def sendEmsCommand(emsDevice, emsCommand, emsData, emsId, emsHc):
+def sendEmsCommand(mqttClient, emsDevice, emsCommand, emsData, emsId, emsHc):
     topicBase = "ems-esp/"
     if emsDevice =="thermostat" and emsCommand =="temp":
         payloadString = "{\"cmd\":temp ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
-        self.mqttClient.Publish(topicBase+"thermostat", payloadString)
+        mqttClient.Publish(topicBase+"thermostat", payloadString)
 
