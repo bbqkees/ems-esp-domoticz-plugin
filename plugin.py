@@ -57,7 +57,7 @@
 # Tapwater/heating,Gateway etc on/off (topics tapwater_active and heating_active):
 # ID 70 to 79
 # 
-# Solar module data (topic sm_data):
+# Solar module data (topic solar_data):
 # ID 80 to 99
 #
 # Thermostats for heating zones (topic thermostat_data):
@@ -460,7 +460,7 @@ class EmsDevices:
                                "LevelOffHidden" : "true",
                                "SelectorStyle" : "0" 
                                 }
-                    Domoticz.Device(Name="Boiler mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                    Domoticz.Device(Name="Boiler comfort mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                 setSelectorByName(30, text)
             if "wWMode" in payload:
                 text=payload["wWMode"]
@@ -568,7 +568,7 @@ class EmsDevices:
         # (Not everyone has a solar module)
         # Available devices in topic: collectortemp bottomtemp pumpmodulation pump
         # Todo: energylasthour energytoday energytotal pumpWorkMin
-        if "sm_data" in topic:
+        if "solar_data" in topic:
             if 81 not in Devices:
                 Domoticz.Debug("Create temperature device (Solar module collectortemp)")
                 Domoticz.Device(Name="Solar Module collector", Unit=81, Type=80, Subtype=5).Create()
@@ -745,7 +745,7 @@ class BasePlugin:
 
         self.topicBase = Parameters["Mode1"].replace(" ", "")
 
-        self.topicsList = list(["thermostat_data", "boiler_data", "sensor_data", "mixing_data", "sm_data", "hp_data", "heating_active", "tapwater_active", "status", "info"])
+        self.topicsList = list(["thermostat_data", "boiler_data", "sensor_data", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info"])
         self.topics = [self.topicBase + s for s in self.topicsList]
         Domoticz.Debug("Topiclist is:")
         Domoticz.Debug(", ".join(self.topics))
