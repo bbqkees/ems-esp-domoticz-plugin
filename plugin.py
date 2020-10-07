@@ -9,13 +9,13 @@
 # This is the development and debug 2 version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b3">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b4">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.2b3 (DEVELOPMENT 2)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.2b4 (DEVELOPMENT 2)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
       <br/>
       Please look at the <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
-      <i>Please update the firmware of the Gateway to V2.0.1 or higher for best functionality.</i><br/>
+      <i>Please update the firmware of the Gateway to V2.1 or higher for best functionality.</i><br/>
       Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run.<br/>
     <br/>
     Parameters:<br/>
@@ -450,25 +450,31 @@ class EmsDevices:
                     Domoticz.Debug("Create counter (heatWorkMin)")
                     Domoticz.Device(Name="boiler heating working minutes", Unit=37, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(37, 113, 0, text)
-
-            # Create selector switch for boiler modes
-            if 30 not in Devices:
-                Domoticz.Debug("Create boiler mode selector")
-                Options = { "LevelActions" : "||",
-                            "LevelNames"   : "Hot|Comfort|Intelligent",
-                            "LevelOffHidden" : "true",
-                            "SelectorStyle" : "0" 
-                            }
-                Domoticz.Device(Name="Boiler mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-            # Create selector switch for ww modes
-            if 31 not in Devices:
-                Domoticz.Debug("Create ww mode selector")
-                Options = { "LevelActions" : "||",
-                            "LevelNames"   : "Hot|Eco|Intelligent",
-                            "LevelOffHidden" : "true",
-                            "SelectorStyle" : "0" 
-                            }
-                Domoticz.Device(Name="ww mode", Unit=31, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()    
+            if "wWComfort" in payload:
+                text=payload["wWComfort"]
+                # Create selector switch for boiler modes
+                if 30 not in Devices:
+                    Domoticz.Debug("Create boiler mode selector")
+                    Options = { "LevelActions" : "||",
+                                "LevelNames"   : "Hot|Eco|Intelligent",
+                               "LevelOffHidden" : "true",
+                               "SelectorStyle" : "0" 
+                                }
+                    Domoticz.Device(Name="Boiler mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                setSelectorByName(30, text)
+            if "wWMode" in payload:
+                text=payload["wWMode"]
+                # Create selector switch for ww modes
+                # this is actually a thermostat command but its not linked to a heating zone.
+                if 31 not in Devices:
+                    Domoticz.Debug("Create ww mode selector")
+                    Options = { "LevelActions" : "||",
+                                "LevelNames"   : "off|on|auto",
+                                "LevelOffHidden" : "true",
+                                "SelectorStyle" : "0" 
+                                }
+                    Domoticz.Device(Name="ww mode", Unit=31, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                setSelectorByName(31, text)        
 
         # Set tapwater and heating status
         # This doesn't work yet because onMQTTPublish can't handle a non-JSON object.
@@ -696,18 +702,29 @@ class EmsDevices:
                 # test function
                 sendEmsCommand(mqttClient, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
-            #    thermostatSetpointTopic = "thermostat"    
-            #    mqttClient.Publish(self.topicBase+thermostatSetpointTopic+str(int((unit-102)/10)), str(level))
-                                   
-        # This still needs work:
+        # Set boiler comfort mode
+        if (unit == 30):
+            dictOptions = Devices[unit].Options
+            listLevelNames = dictOptions['LevelNames'].split('|')
+            strSelectedName = listLevelNames[int(int(level)/10)]
+            Domoticz.Log("boiler comfort mode set to"+strSelectedName)
+            sendEmsCommand(mqttClient, "boiler", "comfort", strSelectedName.lower(), 0, 0)
+
+        # Set boiler ww mode (via thermostat command)
+        if (unit == 31):
+            dictOptions = Devices[unit].Options
+            listLevelNames = dictOptions['LevelNames'].split('|')
+            strSelectedName = listLevelNames[int(int(level)/10)]
+            Domoticz.Log("boiler ww mode set to"+strSelectedName)
+            sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0)              
+
         # Change a thermostat mode for a specific HC
         if (unit in [113, 123, 133, 143]):
             dictOptions = Devices[unit].Options
             listLevelNames = dictOptions['LevelNames'].split('|')
             strSelectedName = listLevelNames[int(int(level)/10)]
             Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
-            thermostatModeTopic = "thermostat_cmd_mode"    
-            mqttClient.Publish(self.topicBase+thermostatModeTopic+str(int((unit-102)/10)), strSelectedName.lower())
+            sendEmsCommand(mqttClient, "thermostat", "mode", strSelectedName.lower(), 1, str(int((unit-102)/10)))
     
 class BasePlugin:
     mqttClient = None
