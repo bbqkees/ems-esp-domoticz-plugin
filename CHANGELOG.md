@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2b5] 2020-10-08
+
+Necessary to update to firmware V2.1 or higher.
+
+### Added
+
+Mode type parameter for RC35.
+
+### Fixed
+
+boiler set command data was without quotes.
+
+
 ## [1.2b3] 2020-10-06
 
 Necessary to update to firmware V2.1 or higher.
