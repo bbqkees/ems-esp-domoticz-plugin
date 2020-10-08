@@ -9,12 +9,12 @@
 # This is the development and debug 2 version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b5">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b6">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.2b5 (DEVELOPMENT 2)<br/>
-      Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware '<a href="https://github.com/proddy/EMS-ESP"> from Proddy</a>'<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.2b6 (DEVELOPMENT 2)<br/>
+      Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
-      Please look at the <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
+      Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
       <i>Please update the firmware of the Gateway to V2.1 or higher for best functionality.</i><br/>
       Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run.<br/>
     <br/>
@@ -23,7 +23,7 @@
     MQTT Server address is usually, but not always, at the same address as the machine where Domoticz is running. So the 'local' machine at 127.0.0.1.<br/>
     The default port is 1883 and no user or password.<br/>
     <b>MQTT topic</b><br/>
-    The default MQTT topic folder this plugin will look in is 'ems-esp/' That forward slash at the end should not be omitted.<br/>
+    The default MQTT topic root this plugin will look in is 'ems-esp/' That forward slash at the end should not be omitted.<br/>
     Make sure that this is set accordingly in the EMS-ESP firmware settings.<br/>
     You can change it here or in the Gateway web interface if its set differently.<br/>
     </description>
@@ -136,9 +136,7 @@ class EmsDevices:
                 emsEspVersion = payload["version"]
 
         # Process the thermostat parameters of each heating zone
-        # Because there are other topics who have 'hc1' etc in the payload, check first
-        # if its thermostat_data topic.
-        # On first discovery of the hc 3 devices are created.
+        # On first discovery of a hc 4 devices are created.
         if "thermostat_data" in topic:
             if "hc1" in payload:
                 payloadHc1 = payload["hc1"]
@@ -292,8 +290,9 @@ class EmsDevices:
                     thMode=payloadHc4["modetype"]
                     Domoticz.Debug("Thermostat HC4: Mode type is: "+str(thMode))
                     setSelectorByName(144, str(thMode))
-        if "boiler_data" in topic:
+
             # Process the boiler parameters
+        if "boiler_data" in topic:
             if "sysPress" in payload:
                 pressure=payload["sysPress"]
                 if 2 not in Devices:
@@ -523,12 +522,7 @@ class EmsDevices:
                     Domoticz.Device(Name="ww mode", Unit=31, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                 setSelectorByName(31, text)        
 
-        # Set tapwater and heating status
-        # This doesn't work yet because onMQTTPublish can't handle a non-JSON object.
-        # The heating and tapwater topic's content is just a boolean.
-
-
-        # Decode heat pump data
+        # Decode heat pump data (This is not in EMS-ESP V2 anymore?)
         # This creates Domoticz devices only if a heatpump topic message has been received.
         # (Not everyone has a heat pump)
         if "hp_data" in topic:
@@ -546,68 +540,89 @@ class EmsDevices:
                 updateDevice(202, 243, 6, percentage)
 
         # Decode sensors
-        # These sensors have a Domoticz ID reserved in the range 220 to 240
-        # This creates Domoticz devices only if a sensors topic message has been received.
-        # (Not everyone has optional Dallas sensors)
-        # Todo: create only sensors reported through the topic
+        # These sensors have a Domoticz ID reserved in the range 220 to 239
+        # This creates Domoticz devices only if a sensor has been received in the topic message.
         if "sensor_data" in topic:
-            if 221 not in Devices:
-                Domoticz.Debug("Create temperature device (Dallas sensor 1)")
-                Domoticz.Device(Name="Dallas sensor 1", Unit=221, Type=80, Subtype=5).Create()
-            if 222 not in Devices:
-                Domoticz.Debug("Create temperature device (Dallas sensor 2)")
-                Domoticz.Device(Name="Dallas sensor 2", Unit=222, Type=80, Subtype=5).Create()
-            if 223 not in Devices:
-                Domoticz.Debug("Create temperature device (Dallas sensor 3)")
-                Domoticz.Device(Name="Dallas sensor 3", Unit=223, Type=80, Subtype=5).Create()
-            if 224 not in Devices:
-                Domoticz.Debug("Create temperature device (Dallas sensor 4)")
-                Domoticz.Device(Name="Dallas sensor 4", Unit=224, Type=80, Subtype=5).Create()
-            if 225 not in Devices:
-                Domoticz.Debug("Create temperature device (Dallas sensor 5)")
-                Domoticz.Device(Name="Dallas sensor 5", Unit=225, Type=80, Subtype=5).Create()
-        # Process the Dallas sensors for firmware up to 1.9.5b34
-            if "temp_1" in payload:
-                temp=round(float(payload["temp_1"]), 1)
-                updateDevice(221, 80, 5, temp)
-            if "temp_2" in payload:
-                temp=round(float(payload["temp_2"]), 1)
-                updateDevice(222, 80, 5, temp)
-            if "temp_3" in payload:
-                temp=round(float(payload["temp_3"]), 1)
-                updateDevice(223, 80, 5, temp)
-            if "temp_4" in payload:
-                temp=round(float(payload["temp_4"]), 1)
-                updateDevice(224, 80, 5, temp)
-            if "temp_5" in payload:
-                temp=round(float(payload["temp_5"]), 1)
-                updateDevice(225, 80, 5, temp)
-        # Process the Dallas sensors for firmware as of 1.9.5b35
             if "sensor1" in payload:
                 payloadS1 = payload["sensor1"]
+                if 221 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 1)")
+                    Domoticz.Device(Name="Dallas sensor 1", Unit=221, Type=80, Subtype=5).Create()
                 if "temp" in payloadS1:
                     tempS=round(float(payloadS1["temp"]), 1)
                     updateDevice(221, 80, 5, tempS)
             if "sensor2" in payload:
                 payloadS2 = payload["sensor2"]
+                if 222 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 2)")
+                    Domoticz.Device(Name="Dallas sensor 2", Unit=222, Type=80, Subtype=5).Create()
                 if "temp" in payloadS2:
                     tempS=round(float(payloadS2["temp"]), 1)
                     updateDevice(222, 80, 5, tempS)
             if "sensor3" in payload:
                 payloadS3 = payload["sensor3"]
+                if 223 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 3)")
+                    Domoticz.Device(Name="Dallas sensor 3", Unit=223, Type=80, Subtype=5).Create()
                 if "temp" in payloadS3:
                     tempS=round(float(payloadS3["temp"]), 1)
                     updateDevice(223, 80, 5, tempS)
             if "sensor4" in payload:
                 payloadS4 = payload["sensor4"]
+                if 224 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 4)")
+                    Domoticz.Device(Name="Dallas sensor 4", Unit=224, Type=80, Subtype=5).Create()
                 if "temp" in payloadS2:
                     tempS=round(float(payloadS4["temp"]), 1)
                     updateDevice(224, 80, 5, tempS)
             if "sensor5" in payload:
                 payloadS5 = payload["sensor5"]
+                if 225 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 5)")
+                    Domoticz.Device(Name="Dallas sensor 5", Unit=225, Type=80, Subtype=5).Create()
                 if "temp" in payloadS5:
-                    tempS=round(float(payloadS2["temp"]), 1)
+                    tempS=round(float(payloadS5["temp"]), 1)
                     updateDevice(225, 80, 5, tempS)
+            if "sensor6" in payload:
+                payloadS6 = payload["sensor6"]
+                if 226 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 6)")
+                    Domoticz.Device(Name="Dallas sensor 6", Unit=226, Type=80, Subtype=5).Create()
+                if "temp" in payloadS6:
+                    tempS=round(float(payloadS6["temp"]), 1)
+                    updateDevice(226, 80, 5, tempS)
+            if "sensor7" in payload:
+                payloadS7 = payload["sensor7"]
+                if 227 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 7)")
+                    Domoticz.Device(Name="Dallas sensor 7", Unit=227, Type=80, Subtype=5).Create()
+                if "temp" in payloadS7:
+                    tempS=round(float(payloadS7["temp"]), 1)
+                    updateDevice(226, 80, 5, tempS)
+            if "sensor8" in payload:
+                payloadS8 = payload["sensor8"]
+                if 228 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 8)")
+                    Domoticz.Device(Name="Dallas sensor 8", Unit=228, Type=80, Subtype=5).Create()
+                if "temp" in payloadS8:
+                    tempS=round(float(payloadS8["temp"]), 1)
+                    updateDevice(228, 80, 5, tempS)
+            if "sensor9" in payload:
+                payloadS9 = payload["sensor9"]
+                if 229 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 9)")
+                    Domoticz.Device(Name="Dallas sensor 9", Unit=229, Type=80, Subtype=5).Create()
+                if "temp" in payloadS9:
+                    tempS=round(float(payloadS9["temp"]), 1)
+                    updateDevice(229, 80, 5, tempS)
+            if "sensor10" in payload:
+                payloadS10 = payload["sensor10"]
+                if 230 not in Devices:
+                    Domoticz.Debug("Create temperature device (Dallas sensor 10)")
+                    Domoticz.Device(Name="Dallas sensor 10", Unit=230, Type=80, Subtype=5).Create()
+                if "temp" in payloadS10:
+                    tempS=round(float(payloadS10["temp"]), 1)
+                    updateDevice(230, 80, 5, tempS)
 
         # Decode solar module
         # These devices have a Domoticz ID reserved in the range 80 to 99
@@ -746,7 +761,6 @@ class EmsDevices:
         # Change a thermostat setpoint for a specific HC
         if (unit in [112, 122, 132, 142]):
             if (str(command) == "Set Level"):
-                # test function
                 sendEmsCommand(mqttClient, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
         # Set boiler comfort mode
@@ -849,7 +863,7 @@ class BasePlugin:
 #            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
 #            messageE = template.format(type(ex).__name__, ex.args)
 #            Domoticz.Debug(messageE)
-        except JSONDecodeError:
+        except json.decoder.JSONDecodeError:
             Domoticz.Debug("Exception of type JSONDecodeError")
             message = rawmessage.decode('utf8')
 

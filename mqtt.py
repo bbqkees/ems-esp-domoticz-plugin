@@ -2,6 +2,7 @@
 import Domoticz
 import time
 
+
 class MqttClient:
     Address = ""
     Port = ""
