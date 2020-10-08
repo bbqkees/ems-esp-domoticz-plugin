@@ -104,9 +104,9 @@ class EmsDevices:
             if 71 not in Devices:
                 Domoticz.Debug("Create on/off switch (tapwater active)")
                 Domoticz.Device(Name="Tapwater active", Unit=71, Type=244, Subtype=73, Switchtype=0).Create()
-            if payload == 0:
+            if payload == "off":
                 Devices[71].Update(nValue=0, sValue="off")
-            if payload == 1:
+            if payload == "on":
                 Devices[71].Update(nValue=1, sValue="on")
 
         # Process the heating_active topic. Note the contents a single boolean (0 or 1) and not json.
@@ -114,9 +114,9 @@ class EmsDevices:
             if 72 not in Devices:
                 Domoticz.Debug("Create on/off switch (heating active)")
                 Domoticz.Device(Name="Heating active", Unit=72, Type=244, Subtype=73, Switchtype=0).Create()
-            if payload == 0:
+            if payload == "off":
                 Devices[72].Update(nValue=0,sValue="off")
-            if payload == 1:
+            if payload == "on":
                 Devices[72].Update(nValue=1,sValue="on")
 
         # Process the status topic. Note the contents a single word and not json.
@@ -859,14 +859,10 @@ class BasePlugin:
         message = ""
         try:
             message = json.loads(rawmessage.decode('utf8'))
-#        except Exception as ex:
-#            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-#            messageE = template.format(type(ex).__name__, ex.args)
-#            Domoticz.Debug(messageE)
         except json.decoder.JSONDecodeError:
-            Domoticz.Debug("Exception of type JSONDecodeError")
+            Domoticz.Debug("Exception of type JSONDecodeError. Non-json object. Message is: ")
             message = rawmessage.decode('utf8')
-
+            Domoticz.Debug(message)
         if (topic in self.topics):
             self.controller.onMqttMessage(topic, message)
     
