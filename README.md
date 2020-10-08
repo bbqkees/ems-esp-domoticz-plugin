@@ -15,6 +15,10 @@ The EMS-ESP firmware was intented for integration with Home Assistant (HA).<br>
 To communicate with Domoticz you need this plugin that will listen to the topics the Gateway publishes and listens to.<br>
 The plugin will basically translate the Home Assistant format to Domoticz format.<br>
 
+## New version compatible with EMS-ESP V2 almost ready for release!
+A new version of the plugin (already available in the dev-2 branch) will be released soon (mid-October 2020). This version will be compatible with EMS-ESP V2 and V2.1.
+I removed all specific support for 1.9.5 in the new plugin so you need to update the firmware of your Gateway (which you should do anyway because the V2 firmware is awesome!).
+
 ## Compatibility
 The plugin works with all versions of EMS-ESP. So the old versions with the Telnet interface are supported but also the new versions with the web interface (1.9.0 and onwards).<br>
 However in firmware 1.9.2/1.9.3/1.9.4 the MQTT topics have changed though, you need to upgrade to 1.9.4 for full support.<br>
