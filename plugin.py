@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 8 October 2020
+# last update: 9 October 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,9 +9,9 @@
 # This is the development and debug 2 version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b6">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b7">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.2b6 (DEVELOPMENT 2)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.2b7 (DEVELOPMENT 2)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -98,6 +98,10 @@ class EmsDevices:
 
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
+
+        # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
+        # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
+        # So its best to look at the separate topics to keep the state in Domoticz in sync..
 
         # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
         if "tapwater_active" in topic:
@@ -312,10 +316,10 @@ class EmsDevices:
                     Domoticz.Debug("Create temperature device (outdoorTemp)")
                     Domoticz.Device(Name="Boiler connected outdoor temperature", Unit=12, Type=80, Subtype=5).Create()
                 updateDevice(12, 80, 5, temp)
-            if "wWCurTmp" in payload:
-                temp=round(float(payload["wWCurTmp"]), 1)
+            if "wWCurTemp" in payload:
+                temp=round(float(payload["wWCurTemp"]), 1)
                 if 13 not in Devices:
-                    Domoticz.Debug("Create temperature device (wWCurTmp)")
+                    Domoticz.Debug("Create temperature device (wWCurTemp)")
                     Domoticz.Device(Name="Boiler warm water current temperature", Unit=13, Type=80, Subtype=5).Create()
                 updateDevice(13, 80, 5, temp)
             if "curFlowTemp" in payload:

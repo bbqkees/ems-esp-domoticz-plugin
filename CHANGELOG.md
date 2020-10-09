@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2b7] 2020-10-09
+
+Necessary to update to firmware V2.1 or higher.
+
+### Fixed
+
+wWCurTmp is now corrected to wWCurTemp.
+
+
 ## [1.2b6] 2020-10-08
 
 Necessary to update to firmware V2.1 or higher.
