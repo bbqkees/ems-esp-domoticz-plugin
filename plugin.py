@@ -16,7 +16,8 @@
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
       <i>Please update the firmware of the Gateway to V2.1 or higher for best functionality.</i><br/>
-      Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run.<br/>
+      Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run.<br/><br/>
+      For this plugin to work you need to set the MQTT format to 'nested' in the EMS-ESP web interface.
     <br/>
     Parameters:<br/>
     <b>MQTT server and port</b><br/>
@@ -101,7 +102,7 @@ class EmsDevices:
 
         # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
         # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
-        # So its best to look at the separate topics to keep the state in Domoticz in sync..
+        # So its best to look at the separate topics to keep the state in Domoticz in sync.
 
         # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
         if "tapwater_active" in topic:
