@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.2b7] 2020-10-09
+## [1.2b7] 2020-10-11
 
-Necessary to update to firmware V2.1 or higher.
+### Fixed
+
+solar_data parameters were not camelcase. Now thery are.
+solar_data parameters are now only added if they are actually found in the solar_data payload.
+
+## [1.2b7] 2020-10-09
 
 ### Fixed
 
@@ -15,16 +20,12 @@ wWCurTmp is now corrected to wWCurTemp.
 
 ## [1.2b6] 2020-10-08
 
-Necessary to update to firmware V2.1 or higher.
-
 ### Added
 
 Handling of non-json MQTT payloads.
 
 
 ## [1.2b5] 2020-10-08
-
-Necessary to update to firmware V2.1 or higher.
 
 ### Added
 
