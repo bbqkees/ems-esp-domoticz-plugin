@@ -33,9 +33,9 @@ Go to the domoticz/plugins directory and run `git clone https://github.com/bbqke
 Make sure that 'Accept new Hardware Devices' is enabled in settings/system. <br>
 Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
 Create a new hardware of the type "EMS bus Wi-Fi Gateway" (Do not create a hardware of the type 'MQTT Client Gateway', this is something different). See the image below.<br>
-<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/domoticz-plugin-selection.jpg" height="200"><br><br>
+<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/main/images/domoticz-plugin-selection.jpg" height="200"><br><br>
 Set the MQTT server and port. Usually the MQTT server is running on the same machine as Domoticz. If so, you can leave the IP and port to its default setting.<br>
-<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/domoticz-plugin-parameters.jpg" height="350"><br>
+<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/main/images/domoticz-plugin-parameters.jpg" height="350"><br>
 
 ### Setting the correct topics
 The plugin listens to the topics preceded by "ems-esp/".<br>
@@ -51,7 +51,7 @@ The plugin subscribes and publishes to the default MQTT topics of the Gateway.<b
 The plugin captures the messages and updates the Domoticz devices and sensors automatically.<br>
 On the first run the plugin will create several devices and sensors in Domoticz.<br>
 Go to the 'Devices' tab in Domoticz and search for the devices that are created. You can now add each device to Domoticz by clicking on the small green arrow with 'Add Device'.<br>
-<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/domoticz-plugin-devices.jpg" height="300">
+<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/main/images/domoticz-plugin-devices.jpg" height="300">
 <br>
 
 ## Updating the plugin
