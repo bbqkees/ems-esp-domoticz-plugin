@@ -1,17 +1,17 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 11 October 2020
+# last update: 12 October 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
 # Proddy's EMS-ESP repository: https://github.com/proddy/EMS-ESP
 # Product Wiki: https://bbqkees-electronics.nl/wiki/
 #
-# This is the development and debug 2 version. Use the master version for production.
+# This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b8">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b0">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.2b8 (DEVELOPMENT 2)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b0 (DEVELOPMENT)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
