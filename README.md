@@ -84,18 +84,16 @@ For temperature and general logging this is a good update frequency. However, th
 If needed you can change the frequency in the web interface in 'Custom Settings' -> 'Publish Time'. Don't set it too low as it will bombard Domoticz with messages.
 
 ## Using the plugin
-On the first run the plugin will create several devices and sensors in Domoticz.<br>
-The plugin then subscribes and publishes to the default MQTT topics of the Gateway.<br>
+The plugin subscribes and publishes to the default MQTT topics of the Gateway.<br>
 The plugin captures the messages and updates the Domoticz devices and sensors automatically.<br>
+On the first run the plugin will create several devices and sensors in Domoticz.<br>
 Go to the 'Devices' tab in Domoticz and search for the devices that are created. You can now add each device to Domoticz by clicking on the small green arrow with 'Add Device'.<br>
 <img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/domoticz-plugin-devices.jpg" height="300">
 <br>
 
 ## Updating the plugin
-To update the plugin, stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
-Then copy the new plugin.py file to the plugin folder and overwrite the existing file.<br>
-Or if you used the `git clone` command to initially install the plugin just type `git pull` when in the plugin folder.<br>
-Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
+If you used the `git clone` command to initially install the plugin just type `git pull` when in the plugin folder.<br>
+Now restart the domoticz service (by typing `sudo systemctl restart domoticz` in the shell).<br>
 On first run of the plugin (takes a minute maybe) additional devices will be created automatically if they were not defined before. Existing devices will not change.<br>
 
 ## Issues
