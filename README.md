@@ -31,7 +31,7 @@ If you have Git installed (preferred method):<br>
 Go to the domoticz/plugins directory and run `git clone https://github.com/bbqkees/ems-esp-domoticz-plugin.git`.<br>
 <br>
 Make sure that 'Accept new Hardware Devices' is enabled in settings/system. <br>
-Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
+Now restart the domoticz service (by typing `sudo systemctl restart domoticz` in the shell).<br>
 Create a new hardware of the type "EMS bus Wi-Fi Gateway" (Do not create a hardware of the type 'MQTT Client Gateway', this is something different). See the image below.<br>
 <img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/main/images/domoticz-plugin-selection.jpg" height="200"><br><br>
 Set the MQTT server and port. Usually the MQTT server is running on the same machine as Domoticz. If so, you can leave the IP and port to its default setting.<br>
