@@ -47,30 +47,20 @@ In the MQTT setting of the web interface set the MQTT format to 'nested'.
 Otherwise the plugin won't work as intended.
 
 ## Using the plugin
-On the first run the plugin will create several devices and sensors in Domoticz.<br>
-The plugin then subscribes and publishes to the default MQTT topics of the Gateway.<br>
+The plugin subscribes and publishes to the default MQTT topics of the Gateway.<br>
 The plugin captures the messages and updates the Domoticz devices and sensors automatically.<br>
+On the first run the plugin will create several devices and sensors in Domoticz.<br>
 Go to the 'Devices' tab in Domoticz and search for the devices that are created. You can now add each device to Domoticz by clicking on the small green arrow with 'Add Device'.<br>
 <img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/master/images/domoticz-plugin-devices.jpg" height="300">
 <br>
 
 ## Updating the plugin
-To update the plugin, stop the Domoticz service (by typing `sudo systemctl stop domoticz` in the shell).<br>
-Then copy the new plugin.py file to the plugin folder and overwrite the existing file.<br>
-Or if you used the `git clone` command to initially install the plugin just type `git pull` when in the plugin folder.<br>
-Now start the domoticz service (by typing `sudo systemctl start domoticz` in the shell).<br>
+If you used the `git clone` command to initially install the plugin just type `git pull` when in the plugin folder.<br>
+Now restart the domoticz service (by typing `sudo systemctl restart domoticz` in the shell).<br>
 On first run of the plugin (takes a minute maybe) additional devices will be created automatically if they were not defined before. Existing devices will not change.<br>
 
 ## Issues
 If you find a problem with the plugin, just open an issue here.<br>
-As I do not have an EMS thermostat myself, I would like to know if this works as intended.
-
-## To Do List
-
-- Add the additional topics for controlling thermostat night/day settings.
-- Shower stats
-- Heartbeat check (MQTT availability as a sensor)
-- Add commands for setting boiler comfort parameters and ww temperature and setting.
 
 ## Credits
 This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
