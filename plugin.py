@@ -1,29 +1,29 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 8 October 2020
+# last update: 12 October 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
 # Proddy's EMS-ESP repository: https://github.com/proddy/EMS-ESP
 # Product Wiki: https://bbqkees-electronics.nl/wiki/
 #
-# This is the development and debug 2 version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV2" version="1.2b6">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway" version="1.2">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.2b6 (DEVELOPMENT 2)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.2<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
       <i>Please update the firmware of the Gateway to V2.1 or higher for best functionality.</i><br/>
-      Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run.<br/>
+      Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run.<br/><br/>
+      For this plugin to work you need to set the MQTT format to 'nested' in the EMS-ESP web interface.
     <br/>
     Parameters:<br/>
     <b>MQTT server and port</b><br/>
     MQTT Server address is usually, but not always, at the same address as the machine where Domoticz is running. So the 'local' machine at 127.0.0.1.<br/>
     The default port is 1883 and no user or password.<br/>
     <b>MQTT topic</b><br/>
-    The default MQTT topic root this plugin will look in is 'ems-esp/' That forward slash at the end should not be omitted.<br/>
+    The default MQTT topic root this plugin will look in is 'ems-esp/' That forward slash at the end should not be omitted!<br/>
     Make sure that this is set accordingly in the EMS-ESP firmware settings.<br/>
     You can change it here or in the Gateway web interface if its set differently.<br/>
     </description>
@@ -98,6 +98,10 @@ class EmsDevices:
 
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
+
+        # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
+        # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
+        # So its best to look at the separate topics to keep the state in Domoticz in sync.
 
         # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
         if "tapwater_active" in topic:
@@ -312,10 +316,10 @@ class EmsDevices:
                     Domoticz.Debug("Create temperature device (outdoorTemp)")
                     Domoticz.Device(Name="Boiler connected outdoor temperature", Unit=12, Type=80, Subtype=5).Create()
                 updateDevice(12, 80, 5, temp)
-            if "wWCurTmp" in payload:
-                temp=round(float(payload["wWCurTmp"]), 1)
+            if "wWCurTemp" in payload:
+                temp=round(float(payload["wWCurTemp"]), 1)
                 if 13 not in Devices:
-                    Domoticz.Debug("Create temperature device (wWCurTmp)")
+                    Domoticz.Debug("Create temperature device (wWCurTemp)")
                     Domoticz.Device(Name="Boiler warm water current temperature", Unit=13, Type=80, Subtype=5).Create()
                 updateDevice(13, 80, 5, temp)
             if "curFlowTemp" in payload:
@@ -628,38 +632,37 @@ class EmsDevices:
         # These devices have a Domoticz ID reserved in the range 80 to 99
         # This creates Domoticz devices only if a solar module topic message has been received.
         # (Not everyone has a solar module)
-        # Available devices in topic: collectortemp bottomtemp pumpmodulation pump
-        # Todo: energylasthour energytoday energytotal pumpWorkMin
+        # Available devices in topic: collectorTemp tankBottomTemp pumpModulation solarPump pumpWorkMin
         if "solar_data" in topic:
-            if 81 not in Devices:
-                Domoticz.Debug("Create temperature device (Solar module collectortemp)")
-                Domoticz.Device(Name="Solar Module collector", Unit=81, Type=80, Subtype=5).Create()
-            if 82 not in Devices:
-                Domoticz.Debug("Create temperature device (Solar module bottomtemp)")
-                Domoticz.Device(Name="Solar Module bottom", Unit=82, Type=80, Subtype=5).Create()
-            if 83 not in Devices:
-                Domoticz.Debug("Create on/off switch (Solar module pump)")
-                Domoticz.Device(Name="Solar module pump", Unit=83, Type=244, Subtype=73, Switchtype=0).Create()
-            if 84 not in Devices:                
-                Domoticz.Debug("Create percentage device (Solar module pump modulation)")
-                Domoticz.Device(Name="Solar module pump modulation", Unit=84, Type=243, Subtype=6).Create()
-            if 85 not in Devices:
-                Domoticz.Debug("Create counter (solarPumpWorkMin)")
-                Domoticz.Device(Name="solar pump working minutes", Unit=36, Type=113, Subtype=0).Create()
-            if "collectortemp" in payload:
-                temp=round(float(payload["collectortemp"]), 1)
+            if "collectorTemp" in payload:
+                temp=round(float(payload["collectorTemp"]), 1)
+                if 81 not in Devices:
+                    Domoticz.Debug("Create temperature device (Solar module collectortemp)")
+                    Domoticz.Device(Name="Solar Module collector", Unit=81, Type=80, Subtype=5).Create()
                 updateDevice(81, 80, 5, temp)
-            if "tankbottomtemp" in payload:
-                temp=round(float(payload["tankbottomtemp"]), 1)
+            if "tankBottomTemp" in payload:
+                temp=round(float(payload["tankBottomTemp"]), 1)
+                if 82 not in Devices:
+                    Domoticz.Debug("Create temperature device (Solar module bottomtemp)")
+                    Domoticz.Device(Name="Solar Module bottom", Unit=82, Type=80, Subtype=5).Create()
                 updateDevice(82, 80, 5, temp)
-            if "solarpump" in payload:
-                switchstate=payload["solarpump"]
+            if "solarPump" in payload:
+                switchstate=payload["solarPump"]
+                if 83 not in Devices:
+                    Domoticz.Debug("Create on/off switch (Solar module pump)")
+                    Domoticz.Device(Name="Solar module pump", Unit=83, Type=244, Subtype=73, Switchtype=0).Create()
                 updateDevice(83, 244, 73, switchstate)
-            if "solarpumpmodulation" in payload:
-                percentage=payload["solarpumpmodulation"]
+            if "solarPumpModulation" in payload:
+                percentage=payload["solarPumpModulation"]
+                if 84 not in Devices:                
+                    Domoticz.Debug("Create percentage device (Solar module pump modulation)")
+                    Domoticz.Device(Name="Solar module pump modulation", Unit=84, Type=243, Subtype=6).Create()
                 updateDevice(84, 243, 6, percentage)
             if "pumpWorkMin" in payload:
                 text=payload["pumpWorkMin"]
+                if 85 not in Devices:   
+                    Domoticz.Debug("Create counter (solarPumpWorkMin)")
+                    Domoticz.Device(Name="solar pump working minutes", Unit=36, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(85, 113, 0, text)
 
         # Decode mixing module data
