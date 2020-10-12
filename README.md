@@ -42,7 +42,7 @@ The plugin listens to the topics preceded by "ems-esp/".<br>
 Also make sure you don't change the host name of the Gateway otherwise the topic will change as well!<br>
 In the latest plugin version you can change the topic string to your own preference if needed.
 
-### Set the right MQTT update frequency
+### Set the right MQTT format
 In the MQTT setting of the web interface set the MQTT format to 'nested'.
 Otherwise the plugin won't work as intended.
 
