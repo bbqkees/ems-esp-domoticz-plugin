@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3b1] 2020-10-13
+
+### Added
+
+Several solar parameters.
+
+
 ## [1.3b0] 2020-10-12
 
 New dev based on 1.2b8. No changed made yet.
