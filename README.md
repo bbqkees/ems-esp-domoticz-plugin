@@ -60,6 +60,11 @@ On first run of the plugin (takes a minute maybe) additional devices will be cre
 
 ## Issues
 If you find a problem with the plugin, just open an issue here.<br>
+Als if you are missing parameters just let me know.
+
+## ToDo list
+The mixer logic got a bit more complex in EMS-ESP V2.
+There are now too many possible ID's and HC's so I need to create an elegant solution for this that fits into the limitations of the Domoticz Python plugin system.
 
 ## Credits
 This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
