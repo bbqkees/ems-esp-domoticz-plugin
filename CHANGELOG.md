@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3b2] 2020-10-21
+
+### Changed
+
+In firmware V2.1b9 the boiler_data topic was split into two topics.
+This update now supports all three topics.
+
 ## [1.3b1] 2020-10-13
 
 ### Added

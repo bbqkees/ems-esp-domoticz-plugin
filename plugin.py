@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 12 October 2020
+# last update: 21 October 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b1">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b2">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b1 (DEVELOPMENT)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b2 (DEVELOPMENT)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -297,7 +297,8 @@ class EmsDevices:
                     setSelectorByName(144, str(thMode))
 
             # Process the boiler parameters
-        if "boiler_data" in topic:
+            # Somewhere in 2.1bX this topic was split into two.
+        if "boiler_data" or "boiler_data_main" or "boiler_data_ww" in topic:
             if "sysPress" in payload:
                 pressure=payload["sysPress"]
                 if 2 not in Devices:
@@ -712,8 +713,9 @@ class EmsDevices:
         # This creates Domoticz devices only if a mixing module topic message has been received.
         # (Not everyone has a mixing module)
         # It also creates only those devices for heating circuits in the topic message.
-        # Mixer modules for heating zones (topic mixing_data):
-        if "mixing_data" in topic:
+        # Mixer modules for heating zones (topic mixing_dataX)
+        # TODO: automate this. Too many possible mixer ID's.
+        if "mixing_data1" in topic:
             if "hc1" in payload:
                 payloadHc1 = payload["hc1"]
                 if 151 not in Devices:                
@@ -852,7 +854,8 @@ class BasePlugin:
 
         self.topicBase = Parameters["Mode1"].replace(" ", "")
 
-        self.topicsList = list(["thermostat_data", "boiler_data", "sensor_data", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info"])
+        self.topicsList = list(["thermostat_data", "boiler_data", "boiler_data_main", "boiler_data_ww", "sensor_data", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info", 
+                                "mixing_data1", "mixing_data2", "mixing_data3", "mixing_data4", "mixing_data5", "mixing_data6", "mixing_data7", "mixing_data8", "mixing_data9", "mixing_data10"])
         self.topics = [self.topicBase + s for s in self.topicsList]
         Domoticz.Debug("Topiclist is:")
         Domoticz.Debug(", ".join(self.topics))
