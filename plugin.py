@@ -546,7 +546,7 @@ class EmsDevices:
         # Decode sensors
         # These sensors have a Domoticz ID reserved in the range 220 to 239
         # This creates Domoticz devices only if a sensor has been received in the topic message.
-        if "sensors" in topic:
+        if ("sensor_data" in topic) or ("sensors" in topic):
             if "sensor1" in payload:
                 payloadS1 = payload["sensor1"]
                 if 221 not in Devices:
@@ -809,7 +809,7 @@ class BasePlugin:
 
         self.topicBase = Parameters["Mode1"].replace(" ", "")
 
-        self.topicsList = list(["thermostat_data", "boiler_data", "sensors", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info"])
+        self.topicsList = list(["thermostat_data", "boiler_data", "sensor_data", "sensors", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info"])
         self.topics = [self.topicBase + s for s in self.topicsList]
         Domoticz.Debug("Topiclist is:")
         Domoticz.Debug(", ".join(self.topics))
