@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 21 October 2020
+# last update: 27 October 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b3">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b4">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b3 (DEVELOPMENT)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b4 (DEVELOPMENT)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -548,7 +548,7 @@ class EmsDevices:
         # Decode sensors
         # These sensors have a Domoticz ID reserved in the range 220 to 239
         # This creates Domoticz devices only if a sensor has been received in the topic message.
-        if "sensor_data" or "sensors" in topic:
+        if "sensor_data" or "sensors" or "dallassensor_data" in topic:
             if "sensor1" in payload:
                 payloadS1 = payload["sensor1"]
                 if 221 not in Devices:
@@ -854,7 +854,7 @@ class BasePlugin:
 
         self.topicBase = Parameters["Mode1"].replace(" ", "")
 
-        self.topicsList = list(["thermostat_data", "boiler_data", "boiler_data_main", "boiler_data_ww", "sensor_data", "sensors", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info", 
+        self.topicsList = list(["thermostat_data", "boiler_data", "boiler_data_main", "boiler_data_ww", "sensor_data", "sensors", "dallassensor_data", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info", 
                                 "mixing_data1", "mixing_data2", "mixing_data3", "mixing_data4", "mixing_data5", "mixing_data6", "mixing_data7", "mixing_data8", "mixing_data9", "mixing_data10"])
         self.topics = [self.topicBase + s for s in self.topicsList]
         Domoticz.Debug("Topiclist is:")
