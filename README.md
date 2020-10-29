@@ -15,7 +15,7 @@ To communicate with Domoticz you need this plugin that will listen to the topics
 The plugin will basically translate the Home Assistant format to Domoticz format.<br>
 
 ## Compatibility
-This version is compatible with EMS-ESP V2 and V2.1. I removed all specific support for 1.9.5 in the new plugin so you need to update the firmware of your Gateway (which you should do anyway because the V2 firmware is awesome!).<br>
+This version is compatible with EMS-ESP V2.1 and largely with V2.0.1. I removed all specific support for 1.9.5 in the new plugin so you need to update the firmware of your Gateway (which you should do anyway because the V2.1 firmware is awesome!).<br>
 If you are still on 1.9.5 see [the wiki](https://bbqkees-electronics.nl/wiki/gateway/firmware-update-to-v2.html) on how to safely update from 1.9.5 to 2.1.
 
 # Installation and configuration
