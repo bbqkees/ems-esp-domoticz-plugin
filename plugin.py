@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 27 October 2020
+# last update: 05 November 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b4">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b5">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b4 (DEVELOPMENT)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b5 05-NOV-2020 (DEVELOPMENT)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -140,6 +140,15 @@ class EmsDevices:
             if "version" in payload:
                 emsEspVersion = payload["version"]
 
+        # Process the shower_data topic.
+        if "shower_data" in topic:
+            if "duration" in payload:
+                text=payload["duration"]
+                if 60 not in Devices:
+                    Domoticz.Debug("Create text device (shower duration)")
+                    Domoticz.Device(Name="Shower duration", Unit=18, Type=243, Subtype=19).Create()
+                updateDevice(60, 243, 19, text)
+
         # Process the thermostat parameters of each heating zone
         # On first discovery of a hc 4 devices are created.
         if "thermostat_data" in topic:
@@ -154,7 +163,7 @@ class EmsDevices:
                 if 113 not in Devices:
                     Domoticz.Debug("Create Thermostat mode selector HC1")
                     Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "Off|Auto|Day|Night|Manual|Heat|Eco|Nofrost",
+                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                         "LevelOffHidden" : "true",
                         "SelectorStyle" : "0" 
                                 }
@@ -162,7 +171,7 @@ class EmsDevices:
                 if 114 not in Devices:
                     Domoticz.Debug("Create Thermostat mode type HC1")
                     Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "Off|Auto|Day|Night|Manual|Heat|Eco|Nofrost",
+                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                         "LevelOffHidden" : "true",
                         "SelectorStyle" : "0" 
                                 }
@@ -192,7 +201,7 @@ class EmsDevices:
                 if 123 not in Devices:
                     Domoticz.Debug("Create Thermostat mode selector HC2")
                     Options = { "LevelActions" : "||||",
-                                "LevelNames"   : "Off|Auto|Day|Night|Manual|Heat|Eco|Nofrost",
+                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                                 "LevelOffHidden" : "true",
                                 "SelectorStyle" : "0" 
                                 }
@@ -200,7 +209,7 @@ class EmsDevices:
                 if 124 not in Devices:
                     Domoticz.Debug("Create Thermostat mode type HC2")
                     Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "Off|Auto|Day|Night|Manual|Heat|Eco|Nofrost",
+                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                         "LevelOffHidden" : "true",
                         "SelectorStyle" : "0" 
                                 }
@@ -230,7 +239,7 @@ class EmsDevices:
                 if 133 not in Devices:
                     Domoticz.Debug("Create Thermostat mode selector HC3")
                     Options = { "LevelActions" : "||||",
-                                "LevelNames"   : "Off|Auto|Day|Night|Manual|Heat|Eco|Nofrost",
+                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                                "LevelOffHidden" : "true",
                                "SelectorStyle" : "0" 
                                 }
@@ -238,7 +247,7 @@ class EmsDevices:
                 if 134 not in Devices:
                     Domoticz.Debug("Create Thermostat mode type HC3")
                     Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "Off|Auto|Day|Night|Manual|Heat|Eco|Nofrost",
+                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                         "LevelOffHidden" : "true",
                         "SelectorStyle" : "0" 
                                 }
@@ -268,7 +277,7 @@ class EmsDevices:
                 if 143 not in Devices:
                     Domoticz.Debug("Create Thermostat mode selector HC4")
                     Options = { "LevelActions" : "||||",
-                                "LevelNames"   : "Off|Auto|Day|Night|Manual|Heat|Eco|Nofrost",
+                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                                 "LevelOffHidden" : "true",
                                 "SelectorStyle" : "0" 
                                 }
@@ -276,7 +285,7 @@ class EmsDevices:
                 if 144 not in Devices:
                     Domoticz.Debug("Create Thermostat mode type HC4")
                     Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "Off|Auto|Day|Night|Manual|Heat|Eco|Nofrost",
+                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                         "LevelOffHidden" : "true",
                         "SelectorStyle" : "0" 
                                 }
@@ -854,7 +863,7 @@ class BasePlugin:
 
         self.topicBase = Parameters["Mode1"].replace(" ", "")
 
-        self.topicsList = list(["thermostat_data", "boiler_data", "boiler_data_main", "boiler_data_ww", "sensor_data", "sensors", "dallassensor_data", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info", 
+        self.topicsList = list(["thermostat_data", "boiler_data", "boiler_data_main", "boiler_data_ww", "sensor_data", "sensors", "dallassensor_data", "shower_data", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info", 
                                 "mixing_data1", "mixing_data2", "mixing_data3", "mixing_data4", "mixing_data5", "mixing_data6", "mixing_data7", "mixing_data8", "mixing_data9", "mixing_data10"])
         self.topics = [self.topicBase + s for s in self.topicsList]
         Domoticz.Debug("Topiclist is:")

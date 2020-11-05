@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3b5] 2020-11-05
+
+### Fixed
+
+Thermostat modes were not updated because of the names with a capital letter.
+
+### Added
+
+Shower duration
+
 ## [1.3b4] 2020-10-27
 
 ### Changed
