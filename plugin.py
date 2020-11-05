@@ -146,7 +146,7 @@ class EmsDevices:
                 text=payload["duration"]
                 if 60 not in Devices:
                     Domoticz.Debug("Create text device (shower duration)")
-                    Domoticz.Device(Name="Shower duration", Unit=18, Type=243, Subtype=19).Create()
+                    Domoticz.Device(Name="Shower duration", Unit=60, Type=243, Subtype=19).Create()
                 updateDevice(60, 243, 19, text)
 
         # Process the thermostat parameters of each heating zone
