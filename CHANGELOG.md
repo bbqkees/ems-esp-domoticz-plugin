@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3b6] 2020-11-05
+
+### Fixed
+
+Thermostat devices are only created if they are actually in the payload.
+
 ## [1.3b5] 2020-11-05
 
 ### Fixed

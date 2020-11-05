@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b5">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b6">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b5 05-NOV-2020 (DEVELOPMENT)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b6 05-NOV-2020 (DEVELOPMENT)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -154,155 +154,150 @@ class EmsDevices:
         if "thermostat_data" in topic:
             if "hc1" in payload:
                 payloadHc1 = payload["hc1"]
-                if 111 not in Devices:
-                    Domoticz.Debug("Create Temperature Device HC1")
-                    Domoticz.Device(Name="EMS thermostat current temp HC1", Unit=111, Type=80, Subtype=5).Create()
-                if 112 not in Devices:
-                    Domoticz.Debug("Create Thermostat Setpoint Device HC1")
-                    Domoticz.Device(Name="EMS thermostat setpoint HC1", Unit=112, Type=242, Subtype=1).Create()
-                if 113 not in Devices:
-                    Domoticz.Debug("Create Thermostat mode selector HC1")
-                    Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                        "LevelOffHidden" : "true",
-                        "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Thermostat mode HC1", Unit=113, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                if 114 not in Devices:
-                    Domoticz.Debug("Create Thermostat mode type HC1")
-                    Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                        "LevelOffHidden" : "true",
-                        "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Thermostat mode type HC1", Unit=114, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                 if "currtemp" in payloadHc1:
                     temp=round(float(payloadHc1["currtemp"]), 1)
+                    if 111 not in Devices:
+                        Domoticz.Debug("Create Temperature Device HC1")
+                        Domoticz.Device(Name="EMS thermostat current temp HC1", Unit=111, Type=80, Subtype=5).Create()
                     updateDevice(111, 80, 5, temp)
                 if "seltemp" in payloadHc1:
                     temp=payloadHc1["seltemp"]
+                    if 112 not in Devices:
+                        Domoticz.Debug("Create Thermostat Setpoint Device HC1")
+                        Domoticz.Device(Name="EMS thermostat setpoint HC1", Unit=112, Type=242, Subtype=1).Create()
                     updateDevice(112, 80, 5, temp)
                 if "mode" in payloadHc1:
                     thMode=payloadHc1["mode"]
-                    Domoticz.Debug("Thermostat HC1: Mode is: "+str(thMode))
+                    if 113 not in Devices:
+                        Domoticz.Debug("Create Thermostat mode selector HC1")
+                        Options = { "LevelActions" : "||||",
+                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                            "LevelOffHidden" : "true",
+                            "SelectorStyle" : "0" 
+                                    }
+                        Domoticz.Device(Name="Thermostat mode HC1", Unit=113, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                     setSelectorByName(113, str(thMode))
                 if "modetype" in payloadHc1:
                     thMode=payloadHc1["modetype"]
-                    Domoticz.Debug("Thermostat HC1: Mode type is: "+str(thMode))
+                    if 114 not in Devices:
+                        Domoticz.Debug("Create Thermostat mode type HC1")
+                        Options = { "LevelActions" : "||||",
+                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                            "LevelOffHidden" : "true",
+                            "SelectorStyle" : "0" 
+                                    }
+                        Domoticz.Device(Name="Thermostat mode type HC1", Unit=114, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                     setSelectorByName(114, str(thMode))
+
             if "hc2" in payload:
                 payloadHc2 = payload["hc2"]
-                if 121 not in Devices:
-                    Domoticz.Debug("Create Temperature Device HC2")
-                    Domoticz.Device(Name="EMS thermostat current temp HC2", Unit=121, Type=80, Subtype=5).Create()
-                if 122 not in Devices:
-                    Domoticz.Debug("Create Thermostat Setpoint Device HC2")
-                    Domoticz.Device(Name="EMS thermostat setpoint HC2", Unit=122, Type=242, Subtype=1).Create()
-                if 123 not in Devices:
-                    Domoticz.Debug("Create Thermostat mode selector HC2")
-                    Options = { "LevelActions" : "||||",
-                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                                "LevelOffHidden" : "true",
-                                "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Thermostat mode HC2", Unit=123, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                if 124 not in Devices:
-                    Domoticz.Debug("Create Thermostat mode type HC2")
-                    Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                        "LevelOffHidden" : "true",
-                        "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Thermostat mode type HC2", Unit=124, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                 if "currtemp" in payloadHc2:
                     temp=round(float(payloadHc2["currtemp"]), 1)
+                    if 121 not in Devices:
+                        Domoticz.Debug("Create Temperature Device HC2")
+                        Domoticz.Device(Name="EMS thermostat current temp HC2", Unit=121, Type=80, Subtype=5).Create()
                     updateDevice(121, 80, 5, temp)
                 if "seltemp" in payloadHc2:
                     temp=payloadHc2["seltemp"]
+                    if 122 not in Devices:
+                        Domoticz.Debug("Create Thermostat Setpoint Device HC2")
+                        Domoticz.Device(Name="EMS thermostat setpoint HC2", Unit=122, Type=242, Subtype=1).Create()
                     updateDevice(122, 80, 5, temp)
                 if "mode" in payloadHc2:
                     thMode=payloadHc2["mode"]
-                    Domoticz.Debug("Thermostat HC2: Mode is: "+str(thMode))
+                    if 123 not in Devices:
+                        Domoticz.Debug("Create Thermostat mode selector HC2")
+                        Options = { "LevelActions" : "||||",
+                                    "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                    "LevelOffHidden" : "true",
+                                    "SelectorStyle" : "0" 
+                                    }
+                        Domoticz.Device(Name="Thermostat mode HC2", Unit=123, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                     setSelectorByName(123, str(thMode))
                 if "modetype" in payloadHc2:
                     thMode=payloadHc2["modetype"]
-                    Domoticz.Debug("Thermostat HC2: Mode type is: "+str(thMode))
+                    if 124 not in Devices:
+                        Domoticz.Debug("Create Thermostat mode type HC2")
+                        Options = { "LevelActions" : "||||",
+                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                            "LevelOffHidden" : "true",
+                            "SelectorStyle" : "0" 
+                                    }
+                        Domoticz.Device(Name="Thermostat mode type HC2", Unit=124, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                     setSelectorByName(124, str(thMode))
+
             if "hc3" in payload:
                 payloadHc3 = payload["hc3"]
-                if 131 not in Devices:
-                    Domoticz.Debug("Create Temperature Device HC3")
-                    Domoticz.Device(Name="EMS thermostat current temp HC3", Unit=131, Type=80, Subtype=5).Create()
-                if 132 not in Devices:
-                    Domoticz.Debug("Create Thermostat Setpoint Device HC3")
-                    Domoticz.Device(Name="EMS thermostat setpoint HC3", Unit=132, Type=242, Subtype=1).Create()
-                if 133 not in Devices:
-                    Domoticz.Debug("Create Thermostat mode selector HC3")
-                    Options = { "LevelActions" : "||||",
-                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                               "LevelOffHidden" : "true",
-                               "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Thermostat mode HC3", Unit=133, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                if 134 not in Devices:
-                    Domoticz.Debug("Create Thermostat mode type HC3")
-                    Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                        "LevelOffHidden" : "true",
-                        "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Thermostat mode type HC3", Unit=134, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                 if "currtemp" in payloadHc3:
                     temp=round(float(payloadHc3["currtemp"]), 1)
+                    if 131 not in Devices:
+                        Domoticz.Debug("Create Temperature Device HC3")
+                        Domoticz.Device(Name="EMS thermostat current temp HC3", Unit=131, Type=80, Subtype=5).Create()
                     updateDevice(131, 80, 5, temp)
                 if "seltemp" in payloadHc3:
                     temp=payloadHc3["seltemp"]
+                    if 132 not in Devices:
+                        Domoticz.Debug("Create Thermostat Setpoint Device HC3")
+                        Domoticz.Device(Name="EMS thermostat setpoint HC3", Unit=132, Type=242, Subtype=1).Create()
                     updateDevice(132, 80, 5, temp)
                 if "mode" in payloadHc3:
                     thMode=payloadHc3["mode"]
-                    Domoticz.Debug("Thermostat HC3: Mode is: "+str(thMode))
+                    if 133 not in Devices:
+                        Domoticz.Debug("Create Thermostat mode selector HC3")
+                        Options = { "LevelActions" : "||||",
+                                    "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                   "LevelOffHidden" : "true",
+                                   "SelectorStyle" : "0" 
+                                    }
+                        Domoticz.Device(Name="Thermostat mode HC3", Unit=133, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                     setSelectorByName(133, str(thMode))
                 if "modetype" in payloadHc3:
                     thMode=payloadHc3["modetype"]
-                    Domoticz.Debug("Thermostat HC3: Mode type is: "+str(thMode))
+                    if 134 not in Devices:
+                        Domoticz.Debug("Create Thermostat mode type HC3")
+                        Options = { "LevelActions" : "||||",
+                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                            "LevelOffHidden" : "true",
+                            "SelectorStyle" : "0" 
+                                   }
+                        Domoticz.Device(Name="Thermostat mode type HC3", Unit=134, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                     setSelectorByName(134, str(thMode))
+
             if "hc4" in payload:
                 payloadHc4 = payload["hc4"]
-                if 141 not in Devices:
-                    Domoticz.Debug("Create Temperature Device HC4")
-                    Domoticz.Device(Name="EMS thermostat current temp HC4", Unit=141, Type=80, Subtype=5).Create()
-                if 142 not in Devices:
-                    Domoticz.Debug("Create Thermostat Setpoint Device HC4")
-                    Domoticz.Device(Name="EMS thermostat setpoint HC4", Unit=142, Type=242, Subtype=1).Create()
-                if 143 not in Devices:
-                    Domoticz.Debug("Create Thermostat mode selector HC4")
-                    Options = { "LevelActions" : "||||",
-                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                                "LevelOffHidden" : "true",
-                                "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Thermostat mode HC4", Unit=143, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                if 144 not in Devices:
-                    Domoticz.Debug("Create Thermostat mode type HC4")
-                    Options = { "LevelActions" : "||||",
-                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                        "LevelOffHidden" : "true",
-                        "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Thermostat mode type HC4", Unit=144, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                 if "currtemp" in payloadHc4:
                     temp=round(float(payloadHc4["currtemp"]), 1)
+                    if 141 not in Devices:
+                        Domoticz.Debug("Create Temperature Device HC4")
+                        Domoticz.Device(Name="EMS thermostat current temp HC4", Unit=141, Type=80, Subtype=5).Create()
                     updateDevice(141, 80, 5, temp)
                 if "seltemp" in payloadHc4:
                     temp=payloadHc4["seltemp"]
+                    if 142 not in Devices:
+                        Domoticz.Debug("Create Thermostat Setpoint Device HC4")
+                        Domoticz.Device(Name="EMS thermostat setpoint HC4", Unit=142, Type=242, Subtype=1).Create()
                     updateDevice(142, 80, 5, temp)
                 if "mode" in payloadHc4:
                     thMode=payloadHc4["mode"]
-                    Domoticz.Debug("Thermostat HC4: Mode is: "+str(thMode))
+                    if 143 not in Devices:
+                        Domoticz.Debug("Create Thermostat mode selector HC4")
+                        Options = { "LevelActions" : "||||",
+                                    "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                    "LevelOffHidden" : "true",
+                                    "SelectorStyle" : "0" 
+                                    }
+                        Domoticz.Device(Name="Thermostat mode HC4", Unit=143, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                     setSelectorByName(143, str(thMode))
                 if "modetype" in payloadHc4:
                     thMode=payloadHc4["modetype"]
-                    Domoticz.Debug("Thermostat HC4: Mode type is: "+str(thMode))
+                    if 144 not in Devices:
+                        Domoticz.Debug("Create Thermostat mode type HC4")
+                        Options = { "LevelActions" : "||||",
+                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                            "LevelOffHidden" : "true",
+                            "SelectorStyle" : "0" 
+                                    }
+                    Domoticz.Device(Name="Thermostat mode type HC4", Unit=144, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                     setSelectorByName(144, str(thMode))
 
             # Process the boiler parameters
