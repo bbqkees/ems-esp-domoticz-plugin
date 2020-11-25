@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.3] 2020-11-25
+
+Firmware of the Gateway needs to be at least 2.1<br>
+This release is based on dev V1.3b6.
+
+### Added
+
+- Shower duration.
+- New MQTT topic names for boiler_ww etc are added.
+- Additional Solar parameters.
+- Lots of other fixes and additions.
+
+### Changed
+
+- Thermostat devices are only created if they are actually in the payload.
+- Thermostat modes were not updated because of the names with a capital letter.
+
 ## [1.2] 2020-10-12
 
 Firmware of the Gateway needs to be at least 2.1<br>
