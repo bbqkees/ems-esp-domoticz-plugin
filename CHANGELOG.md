@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3b7] 2020-12-07
+
+Necessary to update to firmware V2.1.1b6 or higher.
+
+### Added
+
+
+Lots of heat pump and energy parameters.
+
 ## [1.3b6] 2020-11-05
 
 ### Fixed
