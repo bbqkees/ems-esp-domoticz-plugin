@@ -4,9 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3b8] 2020-12-21
+
+Necessary to update to firmware V2.1.1b7 or higher.
+DO NOT update if you have heatpump, it will mess up the device list in Domoticz.
+There will be another branch soon with a solution.
+
+### Added
+
+wwcircmode switch.
+
 ## [1.3b7] 2020-12-07
 
 Necessary to update to firmware V2.1.1b6 or higher.
+DO NOT update if you have heatpump, it will mess up the device list in Domoticz.
+There will be another branch soon with a solution.
 
 ### Added
 

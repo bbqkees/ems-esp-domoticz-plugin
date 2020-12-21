@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 07 December 2020
+# last update: 21 December 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b7">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b8">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b7 07-DEC-2020 (DEVELOPMENT)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b8 21-DEC-2020 (DEVELOPMENT)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -154,6 +154,15 @@ class EmsDevices:
         # Process the thermostat parameters of each heating zone
         # On first discovery of a hc 4 devices are created.
         if "thermostat_data" in topic:
+            # Add wwcirc selector switch
+            if 119 not in Devices:
+                Domoticz.Debug("Create wwcircmode selector switch")
+                Options = { "LevelActions" : "||||",
+                    "LevelNames"   : "off|on|auto|own",
+                    "LevelOffHidden" : "true",
+                    "SelectorStyle" : "0" 
+                            }
+                Domoticz.Device(Name="wwcircmode switch", Unit=119, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
             if "hc1" in payload:
                 payloadHc1 = payload["hc1"]
                 if "currtemp" in payloadHc1:
@@ -938,7 +947,15 @@ class EmsDevices:
             listLevelNames = dictOptions['LevelNames'].split('|')
             strSelectedName = listLevelNames[int(int(level)/10)]
             Domoticz.Log("boiler ww mode set to"+strSelectedName)
-            sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0)              
+            sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0)   
+
+        # Set  wwcirc (via thermostat command)
+        if (unit == 119):
+            dictOptions = Devices[unit].Options
+            listLevelNames = dictOptions['LevelNames'].split('|')
+            strSelectedName = listLevelNames[int(int(level)/10)]
+            Domoticz.Log("thermostat wwcircmode set to"+strSelectedName)
+            sendEmsCommand(mqttClient, "thermostat", "wwcircmode", strSelectedName.lower(), 0, 0)            
 
         # Change a thermostat mode for a specific HC
         if (unit in [113, 123, 133, 143]):
