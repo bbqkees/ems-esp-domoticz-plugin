@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 07 December 2020
+# last update: 15 December 2020
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV" version="1.3b7">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi" version="1.3b8">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b7 07-DEC-2020 (DEVELOPMENT)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b8 15-DEC-2020 (DEVELOPMENT multiple instances)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/proddy/EMS-ESP">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -34,6 +34,14 @@
         <param field="Username" label="Username" width="300px"/>
         <param field="Password" label="Password" width="300px" default="" password="true"/>
         <param field="Mode1" label="Topic base" width="300px" required="true" default="ems-esp/"/>
+        <param field="Mode5" label="EMS Devices" width="100px">
+            <options>
+                <option label="Extra verbose" value="Verbose+"/>
+                <option label="Verbose" value="Verbose"/>
+                <option label="True" value="Debug"/>
+                <option label="False" value="Normal" default="true" />
+            </options>
+        </param>    
         <param field="Mode6" label="Debug" width="75px">
             <options>
                 <option label="Extra verbose" value="Verbose+"/>
