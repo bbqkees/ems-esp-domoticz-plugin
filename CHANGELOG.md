@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.4] 2021-03-16
+
+### Fixed
+
+Some solar parameters had the wrong ID.
+
 ## [1.3] 2020-11-25
 
 Firmware of the Gateway needs to be at least 2.1<br>
