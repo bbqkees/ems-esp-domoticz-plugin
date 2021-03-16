@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: 25 November 2020
+# last update: 16 March 2021
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -667,49 +667,49 @@ class EmsDevices:
                 text=payload["pumpWorkMin"]
                 if 85 not in Devices:   
                     Domoticz.Debug("Create counter (solarPumpWorkMin)")
-                    Domoticz.Device(Name="solar pump working minutes", Unit=36, Type=113, Subtype=0, Switchtype=3).Create()
+                    Domoticz.Device(Name="solar pump working minutes", Unit=85, Type=113, Subtype=0, Switchtype=3).Create()
                 updateDevice(85, 113, 0, text)
             if "cylinderPumpModulation" in payload:
                 percentage=payload["cylinderPumpModulation"]
                 if 86 not in Devices:                
                     Domoticz.Debug("Create percentage device (Solar module cylinderPumpModulation)")
-                    Domoticz.Device(Name="Solar module cylinderPumpModulation", Unit=84, Type=243, Subtype=6).Create()
+                    Domoticz.Device(Name="Solar module cylinderPumpModulation", Unit=86, Type=243, Subtype=6).Create()
                 updateDevice(86, 243, 6, percentage)
             if "valveStatus" in payload:
                 switchstate=payload["valveStatus"]
                 if 87 not in Devices:
                     Domoticz.Debug("Create on/off switch (Solar module valveStatus)")
-                    Domoticz.Device(Name="Solar module valveStatus", Unit=83, Type=244, Subtype=73, Switchtype=0).Create()
+                    Domoticz.Device(Name="Solar module valveStatus", Unit=87, Type=244, Subtype=73, Switchtype=0).Create()
                 updateDevice(87, 244, 73, switchstate)
             if "tankHeated" in payload:
                 switchstate=payload["tankHeated"]
                 if 88 not in Devices:
                     Domoticz.Debug("Create on/off switch (Solar module tankHeated)")
-                    Domoticz.Device(Name="Solar module tankHeated", Unit=83, Type=244, Subtype=73, Switchtype=0).Create()
+                    Domoticz.Device(Name="Solar module tankHeated", Unit=88, Type=244, Subtype=73, Switchtype=0).Create()
                 updateDevice(88, 244, 73, switchstate)
             if "collectorShutdown" in payload:
                 switchstate=payload["collectorShutdown"]
                 if 89 not in Devices:
                     Domoticz.Debug("Create on/off switch (Solar module collectorShutdown)")
-                    Domoticz.Device(Name="Solar module collectorShutdown", Unit=83, Type=244, Subtype=73, Switchtype=0).Create()
+                    Domoticz.Device(Name="Solar module collectorShutdown", Unit=89, Type=244, Subtype=73, Switchtype=0).Create()
                 updateDevice(89, 244, 73, switchstate)
             if "energyLastHour" in payload:
                 text=payload["energyLastHour"]/1000 #Counter is in kWh, value in wH.
                 if 90 not in Devices:   
                     Domoticz.Debug("Create counter (energyLastHour)")
-                    Domoticz.Device(Name="solar pump energyLastHour", Unit=36, Type=113, Subtype=0).Create()
+                    Domoticz.Device(Name="solar pump energyLastHour", Unit=90, Type=113, Subtype=0).Create()
                 updateDevice(90, 113, 0, text)
             if "energyToday" in payload:
                 text=payload["energyToday"]/1000 #Counter is in kWh, value in wH.
                 if 91 not in Devices:   
                     Domoticz.Debug("Create counter (energyToday)")
-                    Domoticz.Device(Name="solar pump energyToday", Unit=36, Type=113, Subtype=0).Create()
+                    Domoticz.Device(Name="solar pump energyToday", Unit=91, Type=113, Subtype=0).Create()
                 updateDevice(91, 113, 0, text)
             if "energyTotal" in payload:
                 text=payload["energyTotal"]
                 if 92 not in Devices:   
                     Domoticz.Debug("Create counter (energyTotal)")
-                    Domoticz.Device(Name="solar pump energyTotal", Unit=36, Type=113, Subtype=0).Create()
+                    Domoticz.Device(Name="solar pump energyTotal", Unit=92, Type=113, Subtype=0).Create()
                 updateDevice(92, 113, 0, text)
 
         # Decode mixing module data
