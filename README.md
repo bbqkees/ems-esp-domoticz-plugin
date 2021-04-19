@@ -15,8 +15,9 @@ To communicate with Domoticz you need this plugin that will listen to the topics
 The plugin will basically translate the Home Assistant format to Domoticz format.<br>
 
 ## Compatibility
-This version is compatible with EMS-ESP V2.1 and largely with V2.0.1. I removed all specific support for 1.9.5 in the new plugin so you need to update the firmware of your Gateway (which you should do anyway because the V2.1 firmware is awesome!).<br>
-If you are still on 1.9.5 see [the wiki](https://bbqkees-electronics.nl/wiki/gateway/firmware-update-to-v2.html) on how to safely update from 1.9.5 to 2.1.
+This version is compatible with EMS-ESP V2.2 and most V3 versions.
+
+I'm planning to make significant changes to the plugin soon in order to support more simultaneous devices in Domoticz. I have no real deadline though.
 
 # Installation and configuration
 
@@ -24,6 +25,21 @@ If you are still on 1.9.5 see [the wiki](https://bbqkees-electronics.nl/wiki/gat
 The Gateway communicates via MQTT. For this you need a MQTT broker/server installed on your machine. Usually this is [Mosquitto](http://mosquitto.org/).<br>
 You can check if your machine has it installed by typing f.i. `mosquitto_pub` in a terminal.<br>
 If it says 'command not found' you need to [install Mosquitto](https://www.sigmdel.ca/michel/ha/rpi/add_mqtt_en.html) first. If you get a list of option Mosquitto is installed and you can continue installing the plugin directly.<br>
+
+## Mosquitto 2.0 configuration
+
+Heads up for everyone where the Gateway/EMS-ESP MQTT status will show 'TCP disconnected' after you have updated Mosquitto:
+The default configuration of Mosquitto version 2.0 only accepts (anonymous) clients from local host (the same machine Mosquitto is running on). 
+So if you have previously used an older version of Mosquitto with no additional config, Mosquitto will now deny external connections from for instance the Gateway/EMS-ESP.
+In order to accept clients outside of local host you need to add a listener on port 1883. For this to work add the following line to your mosquitty.conf file:
+
+`listener 1883`
+
+Now is also a good time to add authentication to Mosquitto if you have not already done so.
+Google around on how to do it (See f.i. http://www.steves-internet-guide.com/mqtt-username-password-example/). 
+If you want to allow anonymous/unauthenticated access instead add the following line to mosquitto.conf:
+
+`allow_anonymous true`
 
 ## Installing the plugin
 If you have Git installed (preferred method):<br>
