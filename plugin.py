@@ -117,7 +117,7 @@ class EmsDevices:
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
 
-        if Parameters["Mode5"] == "boiler" or "heatpump":
+        if self.EMSdevice == "boiler" or "heatpump":
 
             # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
             # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
@@ -973,7 +973,7 @@ class EmsDevices:
                 Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
                 sendEmsCommand(mqttClient, "thermostat", "mode", strSelectedName.lower(), 1, str(int((unit-102)/10)))
     
-class BasePlugin:
+# class BasePlugin:
     mqttClient = None
 
     def onStart(self):
