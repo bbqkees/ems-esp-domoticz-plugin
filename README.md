@@ -1,11 +1,11 @@
 # ems-esp-domoticz-plugin
 Domoticz plugin for the EMS Wi-Fi Gateway with Proddy's EMS-ESP firmware. 
 
---You are now viewing the development branch.--<br>
+--You are now viewing the development branch. Do not use this branch yet.--<br>
 
-Make sure the firmware of the Gateway is V3 or higher.
+Make sure the firmware of the Gateway is EMS-ESP32 V3 or higher.
 You can find the latest beta software bin file here:
-https://github.com/proddy/EMS-ESP32/blob/firmware/firmware/
+https://github.com/emsesp/EMS-ESP32/releases/tag/latest
 
 And make sure MQTT format is set to 'nested' in the web interface!
 
