@@ -3,19 +3,19 @@
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
-# Proddy's EMS-ESP repository: https://github.com/proddy/EMS-ESP
+# Proddy's EMS-ESP repository: https://github.com/emsesp/EMS-ESP32
 # Product Wiki: https://bbqkees-electronics.nl/wiki/
 #
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi" version="1.3b9">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi" version="1.3b10">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b9 23-APR-2020 (DEVELOPMENT multiple instances)<br/>
-      Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/emsesp/EMS-ESP">from Proddy</a>'<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b10 23-APR-2020 (DEVELOPMENT multiple instances)<br/>
+      Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/emsesp/EMS-ESP32">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
-      <i>Please update the firmware of the Gateway to V2.2 or higher for best functionality.</i><br/>
+      <i>Please update the firmware of the Gateway to V3 or higher for best functionality.</i><br/>
       Automatically creates Domoticz devices for connected EMS devices.<br/> Do not forget to "Accept new Hardware Devices" on first run.<br/><br/>
       For this plugin to work you need to set the MQTT format to 'nested' in the EMS-ESP web interface.
     <br/>
@@ -30,7 +30,7 @@
     <br/>
     You need to add a new hardware instance of the plugin for every set of EMS devices.<br/>
     So if you have a boiler, thermostat and mixer module, you need to add a EMS-ESP hardware in Domoticz for the boiler and a second for the thermostat,
-    and a third EMS-ESP hardware for the mixer module (You only install the plugin once, just create more hardware in Domoticz).<br/>
+    and a third EMS-ESP hardware for the mixer module (You only install the plugin once, just create more hardware of the EMS-ESP type in Domoticz).<br/>
     </description>
     <params>
         <param field="Address" label="MQTT Server address" width="300px" required="true" default="127.0.0.1"/>
@@ -170,767 +170,772 @@ class EmsDevices:
                         Domoticz.Device(Name="Shower duration", Unit=60, Type=243, Subtype=19).Create()
                     updateDevice(60, 243, 19, text)
 
-        # Process the thermostat parameters of each heating zone
-        # On first discovery of a hc 4 devices are created.
-        if "thermostat_data" in topic:
-            if "hc1" in payload:
-                payloadHc1 = payload["hc1"]
-                if "currtemp" in payloadHc1:
-                    temp=round(float(payloadHc1["currtemp"]), 1)
-                    if 111 not in Devices:
-                        Domoticz.Debug("Create Temperature Device HC1")
-                        Domoticz.Device(Name="EMS thermostat current temp HC1", Unit=111, Type=80, Subtype=5).Create()
-                    updateDevice(111, 80, 5, temp)
-                if "seltemp" in payloadHc1:
-                    temp=payloadHc1["seltemp"]
-                    if 112 not in Devices:
-                        Domoticz.Debug("Create Thermostat Setpoint Device HC1")
-                        Domoticz.Device(Name="EMS thermostat setpoint HC1", Unit=112, Type=242, Subtype=1).Create()
-                    updateDevice(112, 80, 5, temp)
-                if "mode" in payloadHc1:
-                    thMode=payloadHc1["mode"]
-                    if 113 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode selector HC1")
-                        Options = { "LevelActions" : "||||",
-                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                            "LevelOffHidden" : "true",
-                            "SelectorStyle" : "0" 
-                                    }
-                        Domoticz.Device(Name="Thermostat mode HC1", Unit=113, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                    setSelectorByName(113, str(thMode))
-                if "modetype" in payloadHc1:
-                    thMode=payloadHc1["modetype"]
-                    if 114 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode type HC1")
-                        Options = { "LevelActions" : "||||",
-                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                            "LevelOffHidden" : "true",
-                            "SelectorStyle" : "0" 
-                                    }
-                        Domoticz.Device(Name="Thermostat mode type HC1", Unit=114, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                    setSelectorByName(114, str(thMode))
-
-            if "hc2" in payload:
-                payloadHc2 = payload["hc2"]
-                if "currtemp" in payloadHc2:
-                    temp=round(float(payloadHc2["currtemp"]), 1)
-                    if 121 not in Devices:
-                        Domoticz.Debug("Create Temperature Device HC2")
-                        Domoticz.Device(Name="EMS thermostat current temp HC2", Unit=121, Type=80, Subtype=5).Create()
-                    updateDevice(121, 80, 5, temp)
-                if "seltemp" in payloadHc2:
-                    temp=payloadHc2["seltemp"]
-                    if 122 not in Devices:
-                        Domoticz.Debug("Create Thermostat Setpoint Device HC2")
-                        Domoticz.Device(Name="EMS thermostat setpoint HC2", Unit=122, Type=242, Subtype=1).Create()
-                    updateDevice(122, 80, 5, temp)
-                if "mode" in payloadHc2:
-                    thMode=payloadHc2["mode"]
-                    if 123 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode selector HC2")
-                        Options = { "LevelActions" : "||||",
-                                    "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                                    "LevelOffHidden" : "true",
-                                    "SelectorStyle" : "0" 
-                                    }
-                        Domoticz.Device(Name="Thermostat mode HC2", Unit=123, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                    setSelectorByName(123, str(thMode))
-                if "modetype" in payloadHc2:
-                    thMode=payloadHc2["modetype"]
-                    if 124 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode type HC2")
-                        Options = { "LevelActions" : "||||",
-                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                            "LevelOffHidden" : "true",
-                            "SelectorStyle" : "0" 
-                                    }
-                        Domoticz.Device(Name="Thermostat mode type HC2", Unit=124, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                    setSelectorByName(124, str(thMode))
-
-            if "hc3" in payload:
-                payloadHc3 = payload["hc3"]
-                if "currtemp" in payloadHc3:
-                    temp=round(float(payloadHc3["currtemp"]), 1)
-                    if 131 not in Devices:
-                        Domoticz.Debug("Create Temperature Device HC3")
-                        Domoticz.Device(Name="EMS thermostat current temp HC3", Unit=131, Type=80, Subtype=5).Create()
-                    updateDevice(131, 80, 5, temp)
-                if "seltemp" in payloadHc3:
-                    temp=payloadHc3["seltemp"]
-                    if 132 not in Devices:
-                        Domoticz.Debug("Create Thermostat Setpoint Device HC3")
-                        Domoticz.Device(Name="EMS thermostat setpoint HC3", Unit=132, Type=242, Subtype=1).Create()
-                    updateDevice(132, 80, 5, temp)
-                if "mode" in payloadHc3:
-                    thMode=payloadHc3["mode"]
-                    if 133 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode selector HC3")
-                        Options = { "LevelActions" : "||||",
-                                    "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                                   "LevelOffHidden" : "true",
-                                   "SelectorStyle" : "0" 
-                                    }
-                        Domoticz.Device(Name="Thermostat mode HC3", Unit=133, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                    setSelectorByName(133, str(thMode))
-                if "modetype" in payloadHc3:
-                    thMode=payloadHc3["modetype"]
-                    if 134 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode type HC3")
-                        Options = { "LevelActions" : "||||",
-                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                            "LevelOffHidden" : "true",
-                            "SelectorStyle" : "0" 
-                                   }
-                        Domoticz.Device(Name="Thermostat mode type HC3", Unit=134, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                    setSelectorByName(134, str(thMode))
-
-            if "hc4" in payload:
-                payloadHc4 = payload["hc4"]
-                if "currtemp" in payloadHc4:
-                    temp=round(float(payloadHc4["currtemp"]), 1)
-                    if 141 not in Devices:
-                        Domoticz.Debug("Create Temperature Device HC4")
-                        Domoticz.Device(Name="EMS thermostat current temp HC4", Unit=141, Type=80, Subtype=5).Create()
-                    updateDevice(141, 80, 5, temp)
-                if "seltemp" in payloadHc4:
-                    temp=payloadHc4["seltemp"]
-                    if 142 not in Devices:
-                        Domoticz.Debug("Create Thermostat Setpoint Device HC4")
-                        Domoticz.Device(Name="EMS thermostat setpoint HC4", Unit=142, Type=242, Subtype=1).Create()
-                    updateDevice(142, 80, 5, temp)
-                if "mode" in payloadHc4:
-                    thMode=payloadHc4["mode"]
-                    if 143 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode selector HC4")
-                        Options = { "LevelActions" : "||||",
-                                    "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                                    "LevelOffHidden" : "true",
-                                    "SelectorStyle" : "0" 
-                                    }
-                        Domoticz.Device(Name="Thermostat mode HC4", Unit=143, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                    setSelectorByName(143, str(thMode))
-                if "modetype" in payloadHc4:
-                    thMode=payloadHc4["modetype"]
-                    if 144 not in Devices:
-                        Domoticz.Debug("Create Thermostat mode type HC4")
-                        Options = { "LevelActions" : "||||",
-                            "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
-                            "LevelOffHidden" : "true",
-                            "SelectorStyle" : "0" 
-                                    }
-                    Domoticz.Device(Name="Thermostat mode type HC4", Unit=144, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                    setSelectorByName(144, str(thMode))
-
-            # Process the boiler parameters
-            # Somewhere in 2.1bX this topic was split into two.
-        if "boiler_data" or "boiler_data_main" or "boiler_data_ww" in topic:
-            if "syspress" in payload:
-                pressure=payload["syspress"]
-                if 2 not in Devices:
-                    Domoticz.Debug("Create System Pressure Device")
-                    Domoticz.Device(Name="Boiler system pressure", Unit=2, Type=243, Subtype=9).Create()
-                updateDevice(2, 243, 9, pressure)
-            # 11 to 16 + 25 to 27 temp
-            if "selflowtemp" in payload:
-                temp=round(float(payload["selflowtemp"]), 1)
-                if 11 not in Devices:
-                    Domoticz.Debug("Create temperature device (selFlowTemp)")
-                    Domoticz.Device(Name="Boiler selected flow temperature", Unit=11, Type=80, Subtype=5).Create()
-                updateDevice(11, 80, 5, temp)
-            if "outdoortemp" in payload:
-                temp=round(float(payload["outdoortemp"]), 1)
-                if 12 not in Devices:
-                    Domoticz.Debug("Create temperature device (outdoorTemp)")
-                    Domoticz.Device(Name="Boiler connected outdoor temperature", Unit=12, Type=80, Subtype=5).Create()
-                updateDevice(12, 80, 5, temp)
-            if "wwcurtemp" in payload:
-                temp=round(float(payload["wwcurtemp"]), 1)
-                if 13 not in Devices:
-                    Domoticz.Debug("Create temperature device (wWCurTemp)")
-                    Domoticz.Device(Name="Boiler warm water current temperature", Unit=13, Type=80, Subtype=5).Create()
-                updateDevice(13, 80, 5, temp)
-            if "curflowtemp" in payload:
-                temp=round(float(payload["curflowtemp"]), 1)
-                if 14 not in Devices:
-                    Domoticz.Debug("Create temperature device (curFlowTemp)")
-                    Domoticz.Device(Name="Boiler current flow temperature", Unit=14, Type=80, Subtype=5).Create()
-                updateDevice(14, 80, 5, temp)
-            if "rettemp" in payload:
-                temp=round(float(payload["rettemp"]), 1)
-                if 15 not in Devices:
-                    Domoticz.Debug("Create temperature device (retTemp)")
-                    Domoticz.Device(Name="Boiler return temperature", Unit=15, Type=80, Subtype=5).Create()
-                updateDevice(15, 80, 5, temp)
-            if "boiltemp" in payload:
-                temp=round(float(payload["boilTemp"]), 1)
-                if 16 not in Devices:
-                    Domoticz.Debug("Create temperature device (boiltemp)")
-                    Domoticz.Device(Name="Boiler temperature", Unit=16, Type=80, Subtype=5).Create()
-                updateDevice(16, 80, 5, temp)
-            if "wwseltemp" in payload:
-                temp=round(float(payload["wwseltemp"]), 1)
-                if 25 not in Devices:
-                    Domoticz.Debug("Create temperature device (wWSelTemp)")
-                    Domoticz.Device(Name="ww selected temperature", Unit=25, Type=80, Subtype=5).Create()
-                updateDevice(25, 80, 5, temp)
-            if "wwdesiredtemp" in payload:
-                temp=round(float(payload["wwdesiredtemp"]), 1)
-                if 26 not in Devices:
-                    Domoticz.Debug("Create temperature device (wWDesiredTemp)")
-                    Domoticz.Device(Name="ww desired temperature", Unit=26, Type=80, Subtype=5).Create()
-                updateDevice(26, 80, 5, temp)
-            if "heatingtemp" in payload:
-                temp=round(float(payload["heatingtemp"]), 1)
-                if 27 not in Devices:
-                    Domoticz.Debug("Create temperature device (heatingtemp)")
-                    Domoticz.Device(Name="Heating temperature", Unit=27, Type=80, Subtype=5).Create()
-                updateDevice(27, 80, 5, temp)
-            # 29 ampere
-            if "flamecurr" in payload:
-                temp=round(float(payload["flamecurr"]), 1)
-                if 29 not in Devices:
-                    Domoticz.Debug("Create ampere device (flameCurr)")
-                    Domoticz.Device(Name="Boiler flame current", Unit=29, Type=243, Subtype=23).Create()
-                updateDevice(29, 243, 23, temp)
-            #21 to 24 + 28 + 38 + 39 percentage
-            if "selburnpow" in payload:
-                percentage=payload["selburnpow"]
-                if 21 not in Devices:
-                    Domoticz.Debug("Create percentage device (selBurnPow)")
-                    Domoticz.Device(Name="Boiler selected power", Unit=21, Type=243, Subtype=6).Create()
-                updateDevice(21, 243, 6, percentage)
-            if "curburnpow" in payload:
-                percentage=payload["curBurnPow"]
-                if 22 not in Devices:
-                    Domoticz.Debug("Create percentage device (curBurnPow)")
-                    Domoticz.Device(Name="Boiler current power", Unit=22, Type=243, Subtype=6).Create()
-                updateDevice(22, 243, 6, percentage)
-            if "pumpmod" in payload:
-                percentage=payload["pumpmod"]
-                if 23 not in Devices:
-                    Domoticz.Debug("Create percentage device (pumpMod)")
-                    Domoticz.Device(Name="Boiler pump modulation", Unit=23, Type=243, Subtype=6).Create()
-                updateDevice(23, 243, 6, percentage)
-            if "wwcurflow" in payload:
-                percentage=payload["wwcurflow"]
-                if 24 not in Devices:
-                    Domoticz.Debug("Create percentage device (wWCurFlow)")
-                    Domoticz.Device(Name="Boiler warm water flow", Unit=24, Type=243, Subtype=6).Create()
-                updateDevice(24, 243, 6, percentage)
-            if "wwcircpump" in payload:
-                percentage=payload["wwcircpump"]
-                if 28 not in Devices:
-                    Domoticz.Debug("Create percentage device (wWCircPump)")
-                    Domoticz.Device(Name="ww pump modulation", Unit=28, Type=243, Subtype=6).Create()
-                updateDevice(28, 243, 6, percentage)
-            if "pumpmodmax" in payload:
-                percentage=payload["pumpmodmax"]
-                if 38 not in Devices:
-                    Domoticz.Debug("Create percentage device (pumpModMax)")
-                    Domoticz.Device(Name="pump modulation max", Unit=38, Type=243, Subtype=6).Create()
-                updateDevice(38, 243, 6, percentage)
-            if "pumpmodmin" in payload:
-                percentage=payload["pumpmodmin"]
-                if 39 not in Devices:
-                    Domoticz.Debug("Create percentage device (pumpMod_Min)")
-                    Domoticz.Device(Name="pump modulation min", Unit=39, Type=243, Subtype=6).Create()
-                updateDevice(39, 243, 6, percentage)
-            #4 to 10 switch
-            if "burngas" in payload:
-                switchstate=payload["burngas"]
-                if 4 not in Devices:
-                    Domoticz.Debug("Create on/off switch (burnGas)")
-                    Domoticz.Device(Name="Boiler gas", Unit=4, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(4, 244, 73, switchstate)
-            if "fanwork" in payload:
-                switchstate=payload["fanwork"]
-                if 5 not in Devices:
-                    Domoticz.Debug("Create on/off switch (fanWork)")
-                    Domoticz.Device(Name="Boiler fan", Unit=5, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(5, 244, 73, switchstate)
-            if "ignwork" in payload:
-                switchstate=payload["ignwork"]
-                if 6 not in Devices:
-                    Domoticz.Debug("Create on/off switch (ignWork)")
-                    Domoticz.Device(Name="Boiler ingnition", Unit=6, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(6, 244, 73, switchstate)
-            if "heatpump" in payload:
-                switchstate=payload["heatpump"]
-                if 7 not in Devices:
-                    Domoticz.Debug("Create on/off switch (heatPump)")
-                    Domoticz.Device(Name="Boiler heating pump", Unit=7, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(7, 244, 73, switchstate)
-            if "wwactivated" in payload:
-                switchstate=payload["wwactivated"]
-                if 8 not in Devices:
-                    Domoticz.Debug("Create on/off switch (wWActivated)")
-                    Domoticz.Device(Name="Boiler warm water", Unit=8, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(8, 244, 73, switchstate)
-            if "wwheat" in payload:
-                switchstate=payload["wwheat"]
-                if 9 not in Devices:
-                    Domoticz.Debug("Create on/off switch (wWHeat)")
-                    Domoticz.Device(Name="Boiler warm water heating", Unit=9, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(9, 244, 73, switchstate)
-            if "wwcirc" in payload:
-                switchstate=payload["wwcirc"]
-                if 10 not in Devices:
-                    Domoticz.Debug("Create on/off switch (wWCirc)")
-                    Domoticz.Device(Name="Boiler warm water circulation", Unit=10, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(10, 244, 73, switchstate)
-            if "servicecode" in payload:
-                text=payload["servicecode"]
-                if 18 not in Devices:
-                    Domoticz.Debug("Create text device (serviceCode)")
-                    Domoticz.Device(Name="Boiler Service code", Unit=18, Type=243, Subtype=19).Create()
-                updateDevice(18, 243, 19, text)
-            if "servicecodenumber" in payload:
-                text=payload["servicecodenumber"]
-                if 19 not in Devices:
-                    Domoticz.Debug("Create text device (serviceCodeNumber)")
-                    Domoticz.Device(Name="Boiler Service code number", Unit=19, Type=243, Subtype=19).Create()
-                updateDevice(19, 243, 19, text)
-            if "wwstarts" in payload:
-                text=payload["wwstarts"]
-                if 32 not in Devices:
-                    Domoticz.Debug("Create counter (wwstarts)")
-                    Domoticz.Device(Name="ww starts", Unit=32, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(32, 113, 0, text)
-            if "wwworkm" in payload:
-                text=payload["wwworkm"]
-                if 33 not in Devices:
-                    Domoticz.Debug("Create counter (wWWorkM)")
-                    Domoticz.Device(Name="ww work minutes", Unit=33, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(33, 113, 0, text)
-            if "ubauptime" in payload:
-                text=payload["ubauptime"]
-                if 34 not in Devices:
-                    Domoticz.Debug("Create counter (UBAuptime)")
-                    Domoticz.Device(Name="Boiler UBA uptime", Unit=34, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(34, 113, 0, text)
-            if "burnstarts" in payload:
-                text=payload["burnstarts"]
-                if 35 not in Devices:
-                    Domoticz.Debug("Create counter (burnStarts)")
-                    Domoticz.Device(Name="boiler burner starts", Unit=35, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(35, 113, 0, text)
-            if "burnworkmin" in payload:
-                text=payload["burnworkmin"]
-                if 36 not in Devices:
-                    Domoticz.Debug("Create counter (burnWorkMin)")
-                    Domoticz.Device(Name="boiler burner working minutes", Unit=36, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(36, 113, 0, text)
-            if "heatworkmin" in payload:
-                text=payload["heatworkmin"]
-                if 37 not in Devices:
-                    Domoticz.Debug("Create counter (heatWorkMin)")
-                    Domoticz.Device(Name="boiler heating working minutes", Unit=37, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(37, 113, 0, text)
-            # heat pump uptime parameters
-            if "uptimecompheating" in payload:
-                text=payload["uptimecompheating"]
-                if 40 not in Devices:
-                    Domoticz.Debug("Create counter (upTimeCompHeating)")
-                    Domoticz.Device(Name="Operating time compressor heating", Unit=40, Type=113, Subtype=0, Switchtype=3).Create()
-            if "uptimecompcooling" in payload:
-                text=payload["upTimeCompCooling"]
-                if 41 not in Devices:
-                    Domoticz.Debug("Create counter (upTimeCompCooling)")
-                    Domoticz.Device(Name="Operating time compressor cooling", Unit=41, Type=113, Subtype=0, Switchtype=3).Create()
-            if "uptimecompww" in payload:
-                text=payload["uptimecompww"]
-                if 42 not in Devices:
-                    Domoticz.Debug("Create counter (upTimeCompWw)")
-                    Domoticz.Device(Name="Operating time compressor warm water", Unit=42, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(41, 113, 0, text)
-            if "heatingstarts" in payload:
-                text=payload["heatingstarts"]
-                if 43 not in Devices:
-                    Domoticz.Debug("Create counter (heatingStarts)")
-                    Domoticz.Device(Name="Heating starts (control)", Unit=43, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(43, 113, 0, text)
-            if "coolingstarts" in payload:
-                text=payload["coolingstarts"]
-                if 44 not in Devices:
-                    Domoticz.Debug("Create counter (coolingStarts)")
-                    Domoticz.Device(Name="Cooling starts (control)", Unit=44, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(44, 113, 0, text)
-            if "wwstarts2" in payload:
-                text=payload["wwstarts2"]
-                if 45 not in Devices:
-                    Domoticz.Debug("Create counter (wWStarts2)")
-                    Domoticz.Device(Name="Warm water starts (control)", Unit=45, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(45, 113, 0, text)
-            if "wwcomfort" in payload:
-                text=payload["wwcomfort"]
-                # Create selector switch for boiler modes
-                if 30 not in Devices:
-                    Domoticz.Debug("Create boiler mode selector")
-                    Options = { "LevelActions" : "||",
-                                "LevelNames"   : "Hot|Eco|Intelligent",
-                               "LevelOffHidden" : "true",
-                               "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="Boiler comfort mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                setSelectorByName(30, text)
-            if "wwmode" in payload:
-                text=payload["wwmode"]
-                # Create selector switch for ww modes
-                # this is actually a thermostat command but its not linked to a heating zone.
-                if 31 not in Devices:
-                    Domoticz.Debug("Create ww mode selector")
-                    Options = { "LevelActions" : "||",
-                                "LevelNames"   : "off|on|auto",
+        if self.EMSdevice == "boiler" or "heatpump":
+            # Process the thermostat parameters of each heating zone
+            # On first discovery of a hc 4 devices are created.
+            if "thermostat_data" in topic:
+                if "hc1" in payload:
+                    payloadHc1 = payload["hc1"]
+                    if "currtemp" in payloadHc1:
+                        temp=round(float(payloadHc1["currtemp"]), 1)
+                        if 111 not in Devices:
+                            Domoticz.Debug("Create Temperature Device HC1")
+                            Domoticz.Device(Name="EMS thermostat current temp HC1", Unit=111, Type=80, Subtype=5).Create()
+                        updateDevice(111, 80, 5, temp)
+                    if "seltemp" in payloadHc1:
+                        temp=payloadHc1["seltemp"]
+                        if 112 not in Devices:
+                            Domoticz.Debug("Create Thermostat Setpoint Device HC1")
+                            Domoticz.Device(Name="EMS thermostat setpoint HC1", Unit=112, Type=242, Subtype=1).Create()
+                        updateDevice(112, 80, 5, temp)
+                    if "mode" in payloadHc1:
+                        thMode=payloadHc1["mode"]
+                        if 113 not in Devices:
+                            Domoticz.Debug("Create Thermostat mode selector HC1")
+                            Options = { "LevelActions" : "||||",
+                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
                                 "LevelOffHidden" : "true",
                                 "SelectorStyle" : "0" 
-                                }
-                    Domoticz.Device(Name="ww mode", Unit=31, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
-                setSelectorByName(31, text)
-            # new energy devices mainly for heatpumps
-            if "nrgconstotal" in payload:
-                text=payload["nrgconstotal"]
-                if 50 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgConsTotal)")
-                    Domoticz.Device(Name="Energy consumption total", Unit=50, Type=113, Subtype=0, Switchtype=0).Create()
-                updateDevice(50, 113, 0, text)
-            if "auxelecheatnrgconstotal" in payload:
-                text=payload["auxelecheatnrgconstotal"]
-                if 51 not in Devices:
-                    Domoticz.Debug("Create energy counter (auxElecHeatNrgConsTotal)")
-                    Domoticz.Device(Name="uxiliary electrical heater energy consumption total", Unit=51, Type=113, Subtype=0, Switchtype=0).Create()
-                updateDevice(51, 113, 0, text)
-            if "auxelecheatnrgconsheating" in payload:
-                text=payload["auxelecheatnrgconsheating"]
-                if 52 not in Devices:
-                    Domoticz.Debug("Create energy counter (auxElecHeatNrgConsHeating)")
-                    Domoticz.Device(Name="Auxiliary electrical heater energy consumption heating", Unit=52, Type=113, Subtype=0, Switchtype=0).Create()
-                updateDevice(52, 113, 0, text)
-            if "auxelecheatnrgconsdhw" in payload:
-                text=payload["auxelecheatnrgconsdhw"]
-                if 53 not in Devices:
-                    Domoticz.Debug("Create energy counter (auxElecHeatNrgConsDHW)")
-                    Domoticz.Device(Name="Auxiliary electrical heater energy consumption DHW", Unit=53, Type=113, Subtype=0, Switchtype=0).Create()
-                updateDevice(53, 113, 0, text)
-            if "nrgconscomptotal" in payload:
-                text=payload["nrgconscomptotal"]
-                if 54 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgConsCompTotal)")
-                    Domoticz.Device(Name="Energy consumption compressor total", Unit=54, Type=113, Subtype=0, Switchtype=0).Create()
-                updateDevice(54, 113, 0, text)
-            if "nrgconscompheating" in payload:
-                text=payload["nrgconscompheating"]
-                if 55 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgConsCompHeating)")
-                    Domoticz.Device(Name="Energy consumption compressor heating", Unit=55, Type=113, Subtype=0, Switchtype=0).Create()
-                updateDevice(55, 113, 0, text)
-            if "nrgconscompww" in payload:
-                text=payload["nrgconscompWw"]
-                if 56 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgConsCompWw)")
-                    Domoticz.Device(Name="Energy consumption compressor warm water", Unit=56, Type=113, Subtype=0, Switchtype=0).Create()
-                updateDevice(56, 113, 0, text)
-            if "nrgconscompcooling" in payload:
-                text=payload["nrgconscompcooling"]
-                if 57 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgConsCompCooling)")
-                    Domoticz.Device(Name="Energy consumption compressor total", Unit=57, Type=113, Subtype=0, Switchtype=0).Create()
-                updateDevice(57, 113, 0, text)
-            if "nrgsupptotal" in payload:
-                text=payload["nrgsupptotal"]
-                if 58 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgSuppTotal)")
-                    Domoticz.Device(Name="Energy supplied total", Unit=58, Type=113, Subtype=0, Switchtype=4).Create()
-                updateDevice(58, 113, 0, text)
-            if "nrgsuppheating" in payload:
-                text=payload["nrgsuppheating"]
-                if 59 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgSuppHeating)")
-                    Domoticz.Device(Name="Energy supplied heating", Unit=59, Type=113, Subtype=0, Switchtype=4).Create()
-                updateDevice(59, 113, 0, text)
-            if "nrgsuppww" in payload:
-                text=payload["nrgsuppww"]
-                if 64 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgSuppWw)")
-                    Domoticz.Device(Name="Energy supplied warm water", Unit=64, Type=113, Subtype=0, Switchtype=4).Create()
-                updateDevice(64, 113, 0, text)
-            if "nrgsuppcooling" in payload:
-                text=payload["nrgsuppcooling"]
-                if 65 not in Devices:
-                    Domoticz.Debug("Create energy counter (nrgSuppCooling)")
-                    Domoticz.Device(Name="Energy supplied cooling", Unit=65, Type=113, Subtype=0, Switchtype=4).Create()
-                updateDevice(65, 113, 0, text)
+                                        }
+                            Domoticz.Device(Name="Thermostat mode HC1", Unit=113, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                        setSelectorByName(113, str(thMode))
+                    if "modetype" in payloadHc1:
+                        thMode=payloadHc1["modetype"]
+                        if 114 not in Devices:
+                            Domoticz.Debug("Create Thermostat mode type HC1")
+                            Options = { "LevelActions" : "||||",
+                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                "LevelOffHidden" : "true",
+                                "SelectorStyle" : "0" 
+                                        }
+                            Domoticz.Device(Name="Thermostat mode type HC1", Unit=114, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                        setSelectorByName(114, str(thMode))
 
-        # Decode heat_pump data
-        # These sensors have a Domoticz ID reserved in the range 201 to 209
-        # airHumidity dewTemperature 
-        if "heatpump_data" in topic:
-            if "airHumidity" in payload:
-                hum=round(float(payload["airHumidity"]), 1)
-                if 201 not in Devices:
-                    Domoticz.Debug("Create humidity device (airHumidity)")
-                    Domoticz.Device(Name="Heatpump air humidity", Unit=201, Type=81, Subtype=1).Create()
-                updateDevice(201, 81, 1, hum)    
-            if "dewTemperature" in payload:
-                temp=round(float(payload["dewTemperature"]), 1)
-                if 16 not in Devices:
-                    Domoticz.Debug("Create temperature device (dewTemperature)")
-                    Domoticz.Device(Name="Boiler temperature", Unit=202, Type=80, Subtype=5).Create()
-                updateDevice(202, 80, 5, temp)
+                if "hc2" in payload:
+                    payloadHc2 = payload["hc2"]
+                    if "currtemp" in payloadHc2:
+                        temp=round(float(payloadHc2["currtemp"]), 1)
+                        if 121 not in Devices:
+                            Domoticz.Debug("Create Temperature Device HC2")
+                            Domoticz.Device(Name="EMS thermostat current temp HC2", Unit=121, Type=80, Subtype=5).Create()
+                        updateDevice(121, 80, 5, temp)
+                    if "seltemp" in payloadHc2:
+                        temp=payloadHc2["seltemp"]
+                        if 122 not in Devices:
+                            Domoticz.Debug("Create Thermostat Setpoint Device HC2")
+                            Domoticz.Device(Name="EMS thermostat setpoint HC2", Unit=122, Type=242, Subtype=1).Create()
+                        updateDevice(122, 80, 5, temp)
+                    if "mode" in payloadHc2:
+                        thMode=payloadHc2["mode"]
+                        if 123 not in Devices:
+                            Domoticz.Debug("Create Thermostat mode selector HC2")
+                            Options = { "LevelActions" : "||||",
+                                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                        "LevelOffHidden" : "true",
+                                        "SelectorStyle" : "0" 
+                                        }
+                            Domoticz.Device(Name="Thermostat mode HC2", Unit=123, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                        setSelectorByName(123, str(thMode))
+                    if "modetype" in payloadHc2:
+                        thMode=payloadHc2["modetype"]
+                        if 124 not in Devices:
+                            Domoticz.Debug("Create Thermostat mode type HC2")
+                            Options = { "LevelActions" : "||||",
+                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                "LevelOffHidden" : "true",
+                                "SelectorStyle" : "0" 
+                                        }
+                            Domoticz.Device(Name="Thermostat mode type HC2", Unit=124, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                        setSelectorByName(124, str(thMode))
 
-        # Decode sensors
-        # These sensors have a Domoticz ID reserved in the range 220 to 239
-        # This creates Domoticz devices only if a sensor has been received in the topic message.
-        if "sensor_data" or "sensors" or "dallassensor_data" in topic:
-            if "sensor1" in payload:
-                payloadS1 = payload["sensor1"]
-                if 221 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 1)")
-                    Domoticz.Device(Name="Dallas sensor 1", Unit=221, Type=80, Subtype=5).Create()
-                if "temp" in payloadS1:
-                    tempS=round(float(payloadS1["temp"]), 1)
-                    updateDevice(221, 80, 5, tempS)
-            if "sensor2" in payload:
-                payloadS2 = payload["sensor2"]
-                if 222 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 2)")
-                    Domoticz.Device(Name="Dallas sensor 2", Unit=222, Type=80, Subtype=5).Create()
-                if "temp" in payloadS2:
-                    tempS=round(float(payloadS2["temp"]), 1)
-                    updateDevice(222, 80, 5, tempS)
-            if "sensor3" in payload:
-                payloadS3 = payload["sensor3"]
-                if 223 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 3)")
-                    Domoticz.Device(Name="Dallas sensor 3", Unit=223, Type=80, Subtype=5).Create()
-                if "temp" in payloadS3:
-                    tempS=round(float(payloadS3["temp"]), 1)
-                    updateDevice(223, 80, 5, tempS)
-            if "sensor4" in payload:
-                payloadS4 = payload["sensor4"]
-                if 224 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 4)")
-                    Domoticz.Device(Name="Dallas sensor 4", Unit=224, Type=80, Subtype=5).Create()
-                if "temp" in payloadS2:
-                    tempS=round(float(payloadS4["temp"]), 1)
-                    updateDevice(224, 80, 5, tempS)
-            if "sensor5" in payload:
-                payloadS5 = payload["sensor5"]
-                if 225 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 5)")
-                    Domoticz.Device(Name="Dallas sensor 5", Unit=225, Type=80, Subtype=5).Create()
-                if "temp" in payloadS5:
-                    tempS=round(float(payloadS5["temp"]), 1)
-                    updateDevice(225, 80, 5, tempS)
-            if "sensor6" in payload:
-                payloadS6 = payload["sensor6"]
-                if 226 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 6)")
-                    Domoticz.Device(Name="Dallas sensor 6", Unit=226, Type=80, Subtype=5).Create()
-                if "temp" in payloadS6:
-                    tempS=round(float(payloadS6["temp"]), 1)
-                    updateDevice(226, 80, 5, tempS)
-            if "sensor7" in payload:
-                payloadS7 = payload["sensor7"]
-                if 227 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 7)")
-                    Domoticz.Device(Name="Dallas sensor 7", Unit=227, Type=80, Subtype=5).Create()
-                if "temp" in payloadS7:
-                    tempS=round(float(payloadS7["temp"]), 1)
-                    updateDevice(226, 80, 5, tempS)
-            if "sensor8" in payload:
-                payloadS8 = payload["sensor8"]
-                if 228 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 8)")
-                    Domoticz.Device(Name="Dallas sensor 8", Unit=228, Type=80, Subtype=5).Create()
-                if "temp" in payloadS8:
-                    tempS=round(float(payloadS8["temp"]), 1)
-                    updateDevice(228, 80, 5, tempS)
-            if "sensor9" in payload:
-                payloadS9 = payload["sensor9"]
-                if 229 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 9)")
-                    Domoticz.Device(Name="Dallas sensor 9", Unit=229, Type=80, Subtype=5).Create()
-                if "temp" in payloadS9:
-                    tempS=round(float(payloadS9["temp"]), 1)
-                    updateDevice(229, 80, 5, tempS)
-            if "sensor10" in payload:
-                payloadS10 = payload["sensor10"]
-                if 230 not in Devices:
-                    Domoticz.Debug("Create temperature device (Dallas sensor 10)")
-                    Domoticz.Device(Name="Dallas sensor 10", Unit=230, Type=80, Subtype=5).Create()
-                if "temp" in payloadS10:
-                    tempS=round(float(payloadS10["temp"]), 1)
-                    updateDevice(230, 80, 5, tempS)
+                if "hc3" in payload:
+                    payloadHc3 = payload["hc3"]
+                    if "currtemp" in payloadHc3:
+                        temp=round(float(payloadHc3["currtemp"]), 1)
+                        if 131 not in Devices:
+                            Domoticz.Debug("Create Temperature Device HC3")
+                            Domoticz.Device(Name="EMS thermostat current temp HC3", Unit=131, Type=80, Subtype=5).Create()
+                        updateDevice(131, 80, 5, temp)
+                    if "seltemp" in payloadHc3:
+                        temp=payloadHc3["seltemp"]
+                        if 132 not in Devices:
+                            Domoticz.Debug("Create Thermostat Setpoint Device HC3")
+                            Domoticz.Device(Name="EMS thermostat setpoint HC3", Unit=132, Type=242, Subtype=1).Create()
+                        updateDevice(132, 80, 5, temp)
+                    if "mode" in payloadHc3:
+                        thMode=payloadHc3["mode"]
+                        if 133 not in Devices:
+                            Domoticz.Debug("Create Thermostat mode selector HC3")
+                            Options = { "LevelActions" : "||||",
+                                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                    "LevelOffHidden" : "true",
+                                    "SelectorStyle" : "0" 
+                                        }
+                            Domoticz.Device(Name="Thermostat mode HC3", Unit=133, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                        setSelectorByName(133, str(thMode))
+                    if "modetype" in payloadHc3:
+                        thMode=payloadHc3["modetype"]
+                        if 134 not in Devices:
+                            Domoticz.Debug("Create Thermostat mode type HC3")
+                            Options = { "LevelActions" : "||||",
+                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                "LevelOffHidden" : "true",
+                                "SelectorStyle" : "0" 
+                                    }
+                            Domoticz.Device(Name="Thermostat mode type HC3", Unit=134, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                        setSelectorByName(134, str(thMode))
 
-        # Decode solar module
-        # These devices have a Domoticz ID reserved in the range 80 to 99
-        # This creates Domoticz devices only if a solar module topic message has been received.
-        # (Not everyone has a solar module)
-        # Available devices in topic: collectorTemp tankBottomTemp pumpModulation solarPump pumpWorkMin
-        if "solar_data" in topic:
-            if "collectorTemp" in payload:
-                temp=round(float(payload["collectorTemp"]), 1)
-                if 81 not in Devices:
-                    Domoticz.Debug("Create temperature device (Solar module collectortemp)")
-                    Domoticz.Device(Name="Solar Module collector", Unit=81, Type=80, Subtype=5).Create()
-                updateDevice(81, 80, 5, temp)
-            if "tankBottomTemp" in payload:
-                temp=round(float(payload["tankBottomTemp"]), 1)
-                if 82 not in Devices:
-                    Domoticz.Debug("Create temperature device (Solar module bottomtemp)")
-                    Domoticz.Device(Name="Solar Module bottom", Unit=82, Type=80, Subtype=5).Create()
-                updateDevice(82, 80, 5, temp)
-            if "solarPump" in payload:
-                switchstate=payload["solarPump"]
-                if 83 not in Devices:
-                    Domoticz.Debug("Create on/off switch (Solar module pump)")
-                    Domoticz.Device(Name="Solar module pump", Unit=83, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(83, 244, 73, switchstate)
-            if "solarPumpModulation" in payload:
-                percentage=payload["solarPumpModulation"]
-                if 84 not in Devices:                
-                    Domoticz.Debug("Create percentage device (Solar module pump modulation)")
-                    Domoticz.Device(Name="Solar module pump modulation", Unit=84, Type=243, Subtype=6).Create()
-                updateDevice(84, 243, 6, percentage)
-            if "pumpWorkMin" in payload:
-                text=payload["pumpWorkMin"]
-                if 85 not in Devices:   
-                    Domoticz.Debug("Create counter (solarPumpWorkMin)")
-                    Domoticz.Device(Name="solar pump working minutes", Unit=85, Type=113, Subtype=0, Switchtype=3).Create()
-                updateDevice(85, 113, 0, text)
-            if "cylinderPumpModulation" in payload:
-                percentage=payload["cylinderPumpModulation"]
-                if 86 not in Devices:                
-                    Domoticz.Debug("Create percentage device (Solar module cylinderPumpModulation)")
-                    Domoticz.Device(Name="Solar module cylinderPumpModulation", Unit=86, Type=243, Subtype=6).Create()
-                updateDevice(86, 243, 6, percentage)
-            if "valveStatus" in payload:
-                switchstate=payload["valveStatus"]
-                if 87 not in Devices:
-                    Domoticz.Debug("Create on/off switch (Solar module valveStatus)")
-                    Domoticz.Device(Name="Solar module valveStatus", Unit=87, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(87, 244, 73, switchstate)
-            if "tankHeated" in payload:
-                switchstate=payload["tankHeated"]
-                if 88 not in Devices:
-                    Domoticz.Debug("Create on/off switch (Solar module tankHeated)")
-                    Domoticz.Device(Name="Solar module tankHeated", Unit=88, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(88, 244, 73, switchstate)
-            if "collectorShutdown" in payload:
-                switchstate=payload["collectorShutdown"]
-                if 89 not in Devices:
-                    Domoticz.Debug("Create on/off switch (Solar module collectorShutdown)")
-                    Domoticz.Device(Name="Solar module collectorShutdown", Unit=89, Type=244, Subtype=73, Switchtype=0).Create()
-                updateDevice(89, 244, 73, switchstate)
-            if "energyLastHour" in payload:
-                text=payload["energyLastHour"]/1000 #Counter is in kWh, value in wH.
-                if 90 not in Devices:   
-                    Domoticz.Debug("Create counter (energyLastHour)")
-                    Domoticz.Device(Name="solar pump energyLastHour", Unit=90, Type=113, Subtype=0).Create()
-                updateDevice(90, 113, 0, text)
-            if "energyToday" in payload:
-                text=payload["energyToday"]/1000 #Counter is in kWh, value in wH.
-                if 91 not in Devices:   
-                    Domoticz.Debug("Create counter (energyToday)")
-                    Domoticz.Device(Name="solar pump energyToday", Unit=91, Type=113, Subtype=0).Create()
-                updateDevice(91, 113, 0, text)
-            if "energyTotal" in payload:
-                text=payload["energyTotal"]
-                if 92 not in Devices:   
-                    Domoticz.Debug("Create counter (energyTotal)")
-                    Domoticz.Device(Name="solar pump energyTotal", Unit=92, Type=113, Subtype=0).Create()
-                updateDevice(92, 113, 0, text)
+                if "hc4" in payload:
+                    payloadHc4 = payload["hc4"]
+                    if "currtemp" in payloadHc4:
+                        temp=round(float(payloadHc4["currtemp"]), 1)
+                        if 141 not in Devices:
+                            Domoticz.Debug("Create Temperature Device HC4")
+                            Domoticz.Device(Name="EMS thermostat current temp HC4", Unit=141, Type=80, Subtype=5).Create()
+                        updateDevice(141, 80, 5, temp)
+                    if "seltemp" in payloadHc4:
+                        temp=payloadHc4["seltemp"]
+                        if 142 not in Devices:
+                            Domoticz.Debug("Create Thermostat Setpoint Device HC4")
+                            Domoticz.Device(Name="EMS thermostat setpoint HC4", Unit=142, Type=242, Subtype=1).Create()
+                        updateDevice(142, 80, 5, temp)
+                    if "mode" in payloadHc4:
+                        thMode=payloadHc4["mode"]
+                        if 143 not in Devices:
+                            Domoticz.Debug("Create Thermostat mode selector HC4")
+                            Options = { "LevelActions" : "||||",
+                                        "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                        "LevelOffHidden" : "true",
+                                        "SelectorStyle" : "0" 
+                                        }
+                            Domoticz.Device(Name="Thermostat mode HC4", Unit=143, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                        setSelectorByName(143, str(thMode))
+                    if "modetype" in payloadHc4:
+                        thMode=payloadHc4["modetype"]
+                        if 144 not in Devices:
+                            Domoticz.Debug("Create Thermostat mode type HC4")
+                            Options = { "LevelActions" : "||||",
+                                "LevelNames"   : "off|auto|day|night|manual|heat|eco|nofrost",
+                                "LevelOffHidden" : "true",
+                                "SelectorStyle" : "0" 
+                                        }
+                        Domoticz.Device(Name="Thermostat mode type HC4", Unit=144, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                        setSelectorByName(144, str(thMode))
 
-        # Decode mixing module data
-        # This creates Domoticz devices only if a mixing module topic message has been received.
-        # (Not everyone has a mixing module)
-        # It also creates only those devices for heating circuits in the topic message.
-        # Mixer modules for heating zones (topic mixing_dataX)
-        # TODO: automate this. Too many possible mixer ID's.
-        if "mixing_data1" in topic:
-            if "hc1" in payload:
-                payloadHc1 = payload["hc1"]
-                if 151 not in Devices:                
-                    Domoticz.Debug("Create percentage device (Mixing module HC1 pump modulation)")
-                    Domoticz.Device(Name="Mixing module HC1 pump modulation", Unit=151, Type=243, Subtype=6).Create()
-                if 152 not in Devices:
-                    Domoticz.Debug("Create temperature device (Mixing module HC1 flowtemp)")
-                    Domoticz.Device(Name="Mixing module HC1 flow", Unit=152, Type=80, Subtype=5).Create()
-                if 153 not in Devices:
-                    Domoticz.Debug("Create on/off switch (Mixing module HC1 valvestatus)")
-                    Domoticz.Device(Name="Mixing module HC1 valve", Unit=153, Type=244, Subtype=73, Switchtype=0).Create()
-                if "pumpMod" in payloadHc1:
-                    percentage=payloadHc1["pumpMod"]
-                    updateDevice(151, 243, 6, percentage)
-                if "flowTemp" in payloadHc1:
-                    temp=round(float(payloadHc1["flowTemp"]), 1)
-                    updateDevice(152, 80, 5, temp)
-                if "valveStatus" in payloadHc1:
-                    switchstate=payloadHc1["valveStatus"]
-                    updateDevice(153, 244, 73, switchstate)
+        if self.EMSdevice == "boiler" or "heatpump":
+                # Process the boiler parameters
+                # Somewhere in 2.1bX this topic was split into two.
+            if "boiler_data" or "boiler_data_main" or "boiler_data_ww" in topic:
+                if "syspress" in payload:
+                    pressure=payload["syspress"]
+                    if 2 not in Devices:
+                        Domoticz.Debug("Create System Pressure Device")
+                        Domoticz.Device(Name="Boiler system pressure", Unit=2, Type=243, Subtype=9).Create()
+                    updateDevice(2, 243, 9, pressure)
+                # 11 to 16 + 25 to 27 temp
+                if "selflowtemp" in payload:
+                    temp=round(float(payload["selflowtemp"]), 1)
+                    if 11 not in Devices:
+                        Domoticz.Debug("Create temperature device (selFlowTemp)")
+                        Domoticz.Device(Name="Boiler selected flow temperature", Unit=11, Type=80, Subtype=5).Create()
+                    updateDevice(11, 80, 5, temp)
+                if "outdoortemp" in payload:
+                    temp=round(float(payload["outdoortemp"]), 1)
+                    if 12 not in Devices:
+                        Domoticz.Debug("Create temperature device (outdoorTemp)")
+                        Domoticz.Device(Name="Boiler connected outdoor temperature", Unit=12, Type=80, Subtype=5).Create()
+                    updateDevice(12, 80, 5, temp)
+                if "wwcurtemp" in payload:
+                    temp=round(float(payload["wwcurtemp"]), 1)
+                    if 13 not in Devices:
+                        Domoticz.Debug("Create temperature device (wWCurTemp)")
+                        Domoticz.Device(Name="Boiler warm water current temperature", Unit=13, Type=80, Subtype=5).Create()
+                    updateDevice(13, 80, 5, temp)
+                if "curflowtemp" in payload:
+                    temp=round(float(payload["curflowtemp"]), 1)
+                    if 14 not in Devices:
+                        Domoticz.Debug("Create temperature device (curFlowTemp)")
+                        Domoticz.Device(Name="Boiler current flow temperature", Unit=14, Type=80, Subtype=5).Create()
+                    updateDevice(14, 80, 5, temp)
+                if "rettemp" in payload:
+                    temp=round(float(payload["rettemp"]), 1)
+                    if 15 not in Devices:
+                        Domoticz.Debug("Create temperature device (retTemp)")
+                        Domoticz.Device(Name="Boiler return temperature", Unit=15, Type=80, Subtype=5).Create()
+                    updateDevice(15, 80, 5, temp)
+                if "boiltemp" in payload:
+                    temp=round(float(payload["boiltemp"]), 1)
+                    if 16 not in Devices:
+                        Domoticz.Debug("Create temperature device (boiltemp)")
+                        Domoticz.Device(Name="Boiler temperature", Unit=16, Type=80, Subtype=5).Create()
+                    updateDevice(16, 80, 5, temp)
+                if "wwseltemp" in payload:
+                    temp=round(float(payload["wwseltemp"]), 1)
+                    if 25 not in Devices:
+                        Domoticz.Debug("Create temperature device (wWSelTemp)")
+                        Domoticz.Device(Name="ww selected temperature", Unit=25, Type=80, Subtype=5).Create()
+                    updateDevice(25, 80, 5, temp)
+                if "wwdesiredtemp" in payload:
+                    temp=round(float(payload["wwdesiredtemp"]), 1)
+                    if 26 not in Devices:
+                        Domoticz.Debug("Create temperature device (wWDesiredTemp)")
+                        Domoticz.Device(Name="ww desired temperature", Unit=26, Type=80, Subtype=5).Create()
+                    updateDevice(26, 80, 5, temp)
+                if "heatingtemp" in payload:
+                    temp=round(float(payload["heatingtemp"]), 1)
+                    if 27 not in Devices:
+                        Domoticz.Debug("Create temperature device (heatingtemp)")
+                        Domoticz.Device(Name="Heating temperature", Unit=27, Type=80, Subtype=5).Create()
+                    updateDevice(27, 80, 5, temp)
+                # 29 ampere
+                if "flamecurr" in payload:
+                    temp=round(float(payload["flamecurr"]), 1)
+                    if 29 not in Devices:
+                        Domoticz.Debug("Create ampere device (flameCurr)")
+                        Domoticz.Device(Name="Boiler flame current", Unit=29, Type=243, Subtype=23).Create()
+                    updateDevice(29, 243, 23, temp)
+                #21 to 24 + 28 + 38 + 39 percentage
+                if "selburnpow" in payload:
+                    percentage=payload["selburnpow"]
+                    if 21 not in Devices:
+                        Domoticz.Debug("Create percentage device (selBurnPow)")
+                        Domoticz.Device(Name="Boiler selected power", Unit=21, Type=243, Subtype=6).Create()
+                    updateDevice(21, 243, 6, percentage)
+                if "curburnpow" in payload:
+                    percentage=payload["curburnpow"]
+                    if 22 not in Devices:
+                        Domoticz.Debug("Create percentage device (curBurnPow)")
+                        Domoticz.Device(Name="Boiler current power", Unit=22, Type=243, Subtype=6).Create()
+                    updateDevice(22, 243, 6, percentage)
+                if "pumpmod" in payload:
+                    percentage=payload["pumpmod"]
+                    if 23 not in Devices:
+                        Domoticz.Debug("Create percentage device (pumpMod)")
+                        Domoticz.Device(Name="Boiler pump modulation", Unit=23, Type=243, Subtype=6).Create()
+                    updateDevice(23, 243, 6, percentage)
+                if "wwcurflow" in payload:
+                    percentage=payload["wwcurflow"]
+                    if 24 not in Devices:
+                        Domoticz.Debug("Create percentage device (wWCurFlow)")
+                        Domoticz.Device(Name="Boiler warm water flow", Unit=24, Type=243, Subtype=6).Create()
+                    updateDevice(24, 243, 6, percentage)
+                if "wwcircpump" in payload:
+                    percentage=payload["wwcircpump"]
+                    if 28 not in Devices:
+                        Domoticz.Debug("Create percentage device (wWCircPump)")
+                        Domoticz.Device(Name="ww pump modulation", Unit=28, Type=243, Subtype=6).Create()
+                    updateDevice(28, 243, 6, percentage)
+                if "pumpmodmax" in payload:
+                    percentage=payload["pumpmodmax"]
+                    if 38 not in Devices:
+                        Domoticz.Debug("Create percentage device (pumpModMax)")
+                        Domoticz.Device(Name="pump modulation max", Unit=38, Type=243, Subtype=6).Create()
+                    updateDevice(38, 243, 6, percentage)
+                if "pumpmodmin" in payload:
+                    percentage=payload["pumpmodmin"]
+                    if 39 not in Devices:
+                        Domoticz.Debug("Create percentage device (pumpMod_Min)")
+                        Domoticz.Device(Name="pump modulation min", Unit=39, Type=243, Subtype=6).Create()
+                    updateDevice(39, 243, 6, percentage)
+                #4 to 10 switch
+                if "burngas" in payload:
+                    switchstate=payload["burngas"]
+                    if 4 not in Devices:
+                        Domoticz.Debug("Create on/off switch (burnGas)")
+                        Domoticz.Device(Name="Boiler gas", Unit=4, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(4, 244, 73, switchstate)
+                if "fanwork" in payload:
+                    switchstate=payload["fanwork"]
+                    if 5 not in Devices:
+                        Domoticz.Debug("Create on/off switch (fanWork)")
+                        Domoticz.Device(Name="Boiler fan", Unit=5, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(5, 244, 73, switchstate)
+                if "ignwork" in payload:
+                    switchstate=payload["ignwork"]
+                    if 6 not in Devices:
+                        Domoticz.Debug("Create on/off switch (ignWork)")
+                        Domoticz.Device(Name="Boiler ingnition", Unit=6, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(6, 244, 73, switchstate)
+                if "heatpump" in payload:
+                    switchstate=payload["heatpump"]
+                    if 7 not in Devices:
+                        Domoticz.Debug("Create on/off switch (heatPump)")
+                        Domoticz.Device(Name="Boiler heating pump", Unit=7, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(7, 244, 73, switchstate)
+                if "wwactivated" in payload:
+                    switchstate=payload["wwactivated"]
+                    if 8 not in Devices:
+                        Domoticz.Debug("Create on/off switch (wWActivated)")
+                        Domoticz.Device(Name="Boiler warm water", Unit=8, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(8, 244, 73, switchstate)
+                if "wwheat" in payload:
+                    switchstate=payload["wwheat"]
+                    if 9 not in Devices:
+                        Domoticz.Debug("Create on/off switch (wWHeat)")
+                        Domoticz.Device(Name="Boiler warm water heating", Unit=9, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(9, 244, 73, switchstate)
+                if "wwcirc" in payload:
+                    switchstate=payload["wwcirc"]
+                    if 10 not in Devices:
+                        Domoticz.Debug("Create on/off switch (wWCirc)")
+                        Domoticz.Device(Name="Boiler warm water circulation", Unit=10, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(10, 244, 73, switchstate)
+                if "servicecode" in payload:
+                    text=payload["servicecode"]
+                    if 18 not in Devices:
+                        Domoticz.Debug("Create text device (serviceCode)")
+                        Domoticz.Device(Name="Boiler Service code", Unit=18, Type=243, Subtype=19).Create()
+                    updateDevice(18, 243, 19, text)
+                if "servicecodenumber" in payload:
+                    text=payload["servicecodenumber"]
+                    if 19 not in Devices:
+                        Domoticz.Debug("Create text device (serviceCodeNumber)")
+                        Domoticz.Device(Name="Boiler Service code number", Unit=19, Type=243, Subtype=19).Create()
+                    updateDevice(19, 243, 19, text)
+                if "wwstarts" in payload:
+                    text=payload["wwstarts"]
+                    if 32 not in Devices:
+                        Domoticz.Debug("Create counter (wwstarts)")
+                        Domoticz.Device(Name="ww starts", Unit=32, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(32, 113, 0, text)
+                if "wwworkm" in payload:
+                    text=payload["wwworkm"]
+                    if 33 not in Devices:
+                        Domoticz.Debug("Create counter (wWWorkM)")
+                        Domoticz.Device(Name="ww work minutes", Unit=33, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(33, 113, 0, text)
+                if "ubauptime" in payload:
+                    text=payload["ubauptime"]
+                    if 34 not in Devices:
+                        Domoticz.Debug("Create counter (UBAuptime)")
+                        Domoticz.Device(Name="Boiler UBA uptime", Unit=34, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(34, 113, 0, text)
+                if "burnstarts" in payload:
+                    text=payload["burnstarts"]
+                    if 35 not in Devices:
+                        Domoticz.Debug("Create counter (burnStarts)")
+                        Domoticz.Device(Name="boiler burner starts", Unit=35, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(35, 113, 0, text)
+                if "burnworkmin" in payload:
+                    text=payload["burnworkmin"]
+                    if 36 not in Devices:
+                        Domoticz.Debug("Create counter (burnWorkMin)")
+                        Domoticz.Device(Name="boiler burner working minutes", Unit=36, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(36, 113, 0, text)
+                if "heatworkmin" in payload:
+                    text=payload["heatworkmin"]
+                    if 37 not in Devices:
+                        Domoticz.Debug("Create counter (heatWorkMin)")
+                        Domoticz.Device(Name="boiler heating working minutes", Unit=37, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(37, 113, 0, text)
+                # heat pump uptime parameters
+                if "uptimecompheating" in payload:
+                    text=payload["uptimecompheating"]
+                    if 40 not in Devices:
+                        Domoticz.Debug("Create counter (upTimeCompHeating)")
+                        Domoticz.Device(Name="Operating time compressor heating", Unit=40, Type=113, Subtype=0, Switchtype=3).Create()
+                if "uptimecompcooling" in payload:
+                    text=payload["upTimeCompCooling"]
+                    if 41 not in Devices:
+                        Domoticz.Debug("Create counter (upTimeCompCooling)")
+                        Domoticz.Device(Name="Operating time compressor cooling", Unit=41, Type=113, Subtype=0, Switchtype=3).Create()
+                if "uptimecompww" in payload:
+                    text=payload["uptimecompww"]
+                    if 42 not in Devices:
+                        Domoticz.Debug("Create counter (upTimeCompWw)")
+                        Domoticz.Device(Name="Operating time compressor warm water", Unit=42, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(41, 113, 0, text)
+                if "heatingstarts" in payload:
+                    text=payload["heatingstarts"]
+                    if 43 not in Devices:
+                        Domoticz.Debug("Create counter (heatingStarts)")
+                        Domoticz.Device(Name="Heating starts (control)", Unit=43, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(43, 113, 0, text)
+                if "coolingstarts" in payload:
+                    text=payload["coolingstarts"]
+                    if 44 not in Devices:
+                        Domoticz.Debug("Create counter (coolingStarts)")
+                        Domoticz.Device(Name="Cooling starts (control)", Unit=44, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(44, 113, 0, text)
+                if "wwstarts2" in payload:
+                    text=payload["wwstarts2"]
+                    if 45 not in Devices:
+                        Domoticz.Debug("Create counter (wWStarts2)")
+                        Domoticz.Device(Name="Warm water starts (control)", Unit=45, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(45, 113, 0, text)
+                if "wwcomfort" in payload:
+                    text=payload["wwcomfort"]
+                    # Create selector switch for boiler modes
+                    if 30 not in Devices:
+                        Domoticz.Debug("Create boiler mode selector")
+                        Options = { "LevelActions" : "||",
+                                    "LevelNames"   : "Hot|Eco|Intelligent",
+                                "LevelOffHidden" : "true",
+                                "SelectorStyle" : "0" 
+                                    }
+                        Domoticz.Device(Name="Boiler comfort mode", Unit=30, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                    setSelectorByName(30, text)
+                if "wwmode" in payload:
+                    text=payload["wwmode"]
+                    # Create selector switch for ww modes
+                    # this is actually a thermostat command but its not linked to a heating zone.
+                    if 31 not in Devices:
+                        Domoticz.Debug("Create ww mode selector")
+                        Options = { "LevelActions" : "||",
+                                    "LevelNames"   : "off|on|auto",
+                                    "LevelOffHidden" : "true",
+                                    "SelectorStyle" : "0" 
+                                    }
+                        Domoticz.Device(Name="ww mode", Unit=31, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
+                    setSelectorByName(31, text)
+                # new energy devices mainly for heatpumps
+                if "nrgconstotal" in payload:
+                    text=payload["nrgconstotal"]
+                    if 50 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgConsTotal)")
+                        Domoticz.Device(Name="Energy consumption total", Unit=50, Type=113, Subtype=0, Switchtype=0).Create()
+                    updateDevice(50, 113, 0, text)
+                if "auxelecheatnrgconstotal" in payload:
+                    text=payload["auxelecheatnrgconstotal"]
+                    if 51 not in Devices:
+                        Domoticz.Debug("Create energy counter (auxElecHeatNrgConsTotal)")
+                        Domoticz.Device(Name="uxiliary electrical heater energy consumption total", Unit=51, Type=113, Subtype=0, Switchtype=0).Create()
+                    updateDevice(51, 113, 0, text)
+                if "auxelecheatnrgconsheating" in payload:
+                    text=payload["auxelecheatnrgconsheating"]
+                    if 52 not in Devices:
+                        Domoticz.Debug("Create energy counter (auxElecHeatNrgConsHeating)")
+                        Domoticz.Device(Name="Auxiliary electrical heater energy consumption heating", Unit=52, Type=113, Subtype=0, Switchtype=0).Create()
+                    updateDevice(52, 113, 0, text)
+                if "auxelecheatnrgconsdhw" in payload:
+                    text=payload["auxelecheatnrgconsdhw"]
+                    if 53 not in Devices:
+                        Domoticz.Debug("Create energy counter (auxElecHeatNrgConsDHW)")
+                        Domoticz.Device(Name="Auxiliary electrical heater energy consumption DHW", Unit=53, Type=113, Subtype=0, Switchtype=0).Create()
+                    updateDevice(53, 113, 0, text)
+                if "nrgconscomptotal" in payload:
+                    text=payload["nrgconscomptotal"]
+                    if 54 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgConsCompTotal)")
+                        Domoticz.Device(Name="Energy consumption compressor total", Unit=54, Type=113, Subtype=0, Switchtype=0).Create()
+                    updateDevice(54, 113, 0, text)
+                if "nrgconscompheating" in payload:
+                    text=payload["nrgconscompheating"]
+                    if 55 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgConsCompHeating)")
+                        Domoticz.Device(Name="Energy consumption compressor heating", Unit=55, Type=113, Subtype=0, Switchtype=0).Create()
+                    updateDevice(55, 113, 0, text)
+                if "nrgconscompww" in payload:
+                    text=payload["nrgconscompWw"]
+                    if 56 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgConsCompWw)")
+                        Domoticz.Device(Name="Energy consumption compressor warm water", Unit=56, Type=113, Subtype=0, Switchtype=0).Create()
+                    updateDevice(56, 113, 0, text)
+                if "nrgconscompcooling" in payload:
+                    text=payload["nrgconscompcooling"]
+                    if 57 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgConsCompCooling)")
+                        Domoticz.Device(Name="Energy consumption compressor total", Unit=57, Type=113, Subtype=0, Switchtype=0).Create()
+                    updateDevice(57, 113, 0, text)
+                if "nrgsupptotal" in payload:
+                    text=payload["nrgsupptotal"]
+                    if 58 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgSuppTotal)")
+                        Domoticz.Device(Name="Energy supplied total", Unit=58, Type=113, Subtype=0, Switchtype=4).Create()
+                    updateDevice(58, 113, 0, text)
+                if "nrgsuppheating" in payload:
+                    text=payload["nrgsuppheating"]
+                    if 59 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgSuppHeating)")
+                        Domoticz.Device(Name="Energy supplied heating", Unit=59, Type=113, Subtype=0, Switchtype=4).Create()
+                    updateDevice(59, 113, 0, text)
+                if "nrgsuppww" in payload:
+                    text=payload["nrgsuppww"]
+                    if 64 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgSuppWw)")
+                        Domoticz.Device(Name="Energy supplied warm water", Unit=64, Type=113, Subtype=0, Switchtype=4).Create()
+                    updateDevice(64, 113, 0, text)
+                if "nrgsuppcooling" in payload:
+                    text=payload["nrgsuppcooling"]
+                    if 65 not in Devices:
+                        Domoticz.Debug("Create energy counter (nrgSuppCooling)")
+                        Domoticz.Device(Name="Energy supplied cooling", Unit=65, Type=113, Subtype=0, Switchtype=4).Create()
+                    updateDevice(65, 113, 0, text)
 
-            if "hc2" in payload:
-                payloadHc2 = payload["hc2"]
-                if 161 not in Devices:                
-                    Domoticz.Debug("Create percentage device (Mixing module HC2 pump modulation)")
-                    Domoticz.Device(Name="Mixing module HC2 pump modulation", Unit=161, Type=243, Subtype=6).Create()
-                if 162 not in Devices:
-                    Domoticz.Debug("Create temperature device (Mixing module HC2 flowtemp)")
-                    Domoticz.Device(Name="Mixing module HC2 flow", Unit=162, Type=80, Subtype=5).Create()
-                if 163 not in Devices:
-                    Domoticz.Debug("Create on/off switch (Mixing module HC2 valvestatus)")
-                    Domoticz.Device(Name="Mixing module HC2 valve", Unit=163, Type=244, Subtype=73, Switchtype=0).Create()
-                if "pumpMod" in payloadHc2:
-                    percentage=payloadHc2["pumpMod"]
-                    updateDevice(161, 243, 6, percentage)
-                if "flowTemp" in payloadHc2:
-                    temp=round(float(payloadHc2["flowTemp"]), 1)
-                    updateDevice(162, 80, 5, temp)
-                if "valveStatus" in payloadHc2:
-                    switchstate=payloadHc2["valveStatus"]
-                    updateDevice(163, 244, 73, switchstate)
+        if self.EMSdevice == "heatpump":
+            # Decode heat_pump data
+            # These sensors have a Domoticz ID reserved in the range 201 to 209
+            # airHumidity dewTemperature 
+            if "heatpump_data" in topic:
+                if "airhumidity" in payload:
+                    hum=round(float(payload["airhumidity"]), 1)
+                    if 201 not in Devices:
+                        Domoticz.Debug("Create humidity device (airHumidity)")
+                        Domoticz.Device(Name="Heatpump air humidity", Unit=201, Type=81, Subtype=1).Create()
+                    updateDevice(201, 81, 1, hum)    
+                if "dewtemperature" in payload:
+                    temp=round(float(payload["dewtemperature"]), 1)
+                    if 16 not in Devices:
+                        Domoticz.Debug("Create temperature device (dewTemperature)")
+                        Domoticz.Device(Name="Boiler temperature", Unit=202, Type=80, Subtype=5).Create()
+                    updateDevice(202, 80, 5, temp)
 
-            if "hc3" in payload:
-                payloadHc3 = payload["hc3"]
-                if 171 not in Devices:                
-                    Domoticz.Debug("Create percentage device (Mixing module HC3 pump modulation)")
-                    Domoticz.Device(Name="Mixing module HC3 pump modulation", Unit=171, Type=243, Subtype=6).Create()
-                if 172 not in Devices:
-                    Domoticz.Debug("Create temperature device (Mixing module HC3 flowtemp)")
-                    Domoticz.Device(Name="Mixing module HC3 flow", Unit=172, Type=80, Subtype=5).Create()
-                if 173 not in Devices:
-                    Domoticz.Debug("Create on/off switch (Mixing module HC3 valvestatus)")
-                    Domoticz.Device(Name="Mixing module HC3 valve", Unit=173, Type=244, Subtype=73, Switchtype=0).Create()
-                if "pumpMod" in payloadHc3:
-                    percentage=payloadHc3["pumpMod"]
-                    updateDevice(171, 243, 6, percentage)
-                if "flowTemp" in payloadHc3:
-                    temp=round(float(payloadHc3["flowTemp"]), 1)
-                    updateDevice(172, 80, 5, temp)
-                if "valveStatus" in payloadHc3:
-                    switchstate=payloadHc3["valveStatus"]
-                    updateDevice(173, 244, 73, switchstate)
+        if self.EMSdevice == "dallas":
+            # Decode sensors
+            # These sensors have a Domoticz ID reserved in the range 220 to 239
+            # This creates Domoticz devices only if a sensor has been received in the topic message.
+            if "sensor_data" or "sensors" or "dallassensor_data" in topic:
+                if "sensor1" in payload:
+                    payloadS1 = payload["sensor1"]
+                    if 221 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 1)")
+                        Domoticz.Device(Name="Dallas sensor 1", Unit=221, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS1:
+                        tempS=round(float(payloadS1["temp"]), 1)
+                        updateDevice(221, 80, 5, tempS)
+                if "sensor2" in payload:
+                    payloadS2 = payload["sensor2"]
+                    if 222 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 2)")
+                        Domoticz.Device(Name="Dallas sensor 2", Unit=222, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS2:
+                        tempS=round(float(payloadS2["temp"]), 1)
+                        updateDevice(222, 80, 5, tempS)
+                if "sensor3" in payload:
+                    payloadS3 = payload["sensor3"]
+                    if 223 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 3)")
+                        Domoticz.Device(Name="Dallas sensor 3", Unit=223, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS3:
+                        tempS=round(float(payloadS3["temp"]), 1)
+                        updateDevice(223, 80, 5, tempS)
+                if "sensor4" in payload:
+                    payloadS4 = payload["sensor4"]
+                    if 224 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 4)")
+                        Domoticz.Device(Name="Dallas sensor 4", Unit=224, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS2:
+                        tempS=round(float(payloadS4["temp"]), 1)
+                        updateDevice(224, 80, 5, tempS)
+                if "sensor5" in payload:
+                    payloadS5 = payload["sensor5"]
+                    if 225 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 5)")
+                        Domoticz.Device(Name="Dallas sensor 5", Unit=225, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS5:
+                        tempS=round(float(payloadS5["temp"]), 1)
+                        updateDevice(225, 80, 5, tempS)
+                if "sensor6" in payload:
+                    payloadS6 = payload["sensor6"]
+                    if 226 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 6)")
+                        Domoticz.Device(Name="Dallas sensor 6", Unit=226, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS6:
+                        tempS=round(float(payloadS6["temp"]), 1)
+                        updateDevice(226, 80, 5, tempS)
+                if "sensor7" in payload:
+                    payloadS7 = payload["sensor7"]
+                    if 227 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 7)")
+                        Domoticz.Device(Name="Dallas sensor 7", Unit=227, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS7:
+                        tempS=round(float(payloadS7["temp"]), 1)
+                        updateDevice(226, 80, 5, tempS)
+                if "sensor8" in payload:
+                    payloadS8 = payload["sensor8"]
+                    if 228 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 8)")
+                        Domoticz.Device(Name="Dallas sensor 8", Unit=228, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS8:
+                        tempS=round(float(payloadS8["temp"]), 1)
+                        updateDevice(228, 80, 5, tempS)
+                if "sensor9" in payload:
+                    payloadS9 = payload["sensor9"]
+                    if 229 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 9)")
+                        Domoticz.Device(Name="Dallas sensor 9", Unit=229, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS9:
+                        tempS=round(float(payloadS9["temp"]), 1)
+                        updateDevice(229, 80, 5, tempS)
+                if "sensor10" in payload:
+                    payloadS10 = payload["sensor10"]
+                    if 230 not in Devices:
+                        Domoticz.Debug("Create temperature device (Dallas sensor 10)")
+                        Domoticz.Device(Name="Dallas sensor 10", Unit=230, Type=80, Subtype=5).Create()
+                    if "temp" in payloadS10:
+                        tempS=round(float(payloadS10["temp"]), 1)
+                        updateDevice(230, 80, 5, tempS)
 
-            if "hc4" in payload:
-                payloadHc4 = payload["hc4"]
-                if 181 not in Devices:                
-                    Domoticz.Debug("Create percentage device (Mixing module HC4 pump modulation)")
-                    Domoticz.Device(Name="Mixing module HC4 pump modulation", Unit=181, Type=243, Subtype=6).Create()
-                if 182 not in Devices:
-                    Domoticz.Debug("Create temperature device (Mixing module HC4 flowtemp)")
-                    Domoticz.Device(Name="Mixing module HC4 flow", Unit=182, Type=80, Subtype=5).Create()
-                if 183 not in Devices:
-                    Domoticz.Debug("Create on/off switch (Mixing module HC1 valvestatus)")
-                    Domoticz.Device(Name="Mixing module HC4 valve", Unit=183, Type=244, Subtype=73, Switchtype=0).Create()
-                if "pumpMod" in payloadHc4:
-                    percentage=payloadHc4["pumpMod"]
-                    updateDevice(181, 243, 6, percentage)
-                if "flowTemp" in payloadHc4:
-                    temp=round(float(payloadHc4["flowTemp"]), 1)
-                    updateDevice(182, 80, 5, temp)
-                if "valveStatus" in payloadHc4:
-                    switchstate=payloadHc4["valveStatus"]
-                    updateDevice(183, 244, 73, switchstate)
+        if self.EMSdevice == "solar_mixer":
+            # Decode solar module
+            # These devices have a Domoticz ID reserved in the range 80 to 99
+            # This creates Domoticz devices only if a solar module topic message has been received.
+            # (Not everyone has a solar module)
+            # Available devices in topic: collectorTemp tankBottomTemp pumpModulation solarPump pumpWorkMin
+            if "solar_data" in topic:
+                if "collectortemp" in payload:
+                    temp=round(float(payload["collectortemp"]), 1)
+                    if 81 not in Devices:
+                        Domoticz.Debug("Create temperature device (Solar module collectortemp)")
+                        Domoticz.Device(Name="Solar Module collector", Unit=81, Type=80, Subtype=5).Create()
+                    updateDevice(81, 80, 5, temp)
+                if "tankbottomtemp" in payload:
+                    temp=round(float(payload["tankbottomtemp"]), 1)
+                    if 82 not in Devices:
+                        Domoticz.Debug("Create temperature device (Solar module bottomtemp)")
+                        Domoticz.Device(Name="Solar Module bottom", Unit=82, Type=80, Subtype=5).Create()
+                    updateDevice(82, 80, 5, temp)
+                if "solarpump" in payload:
+                    switchstate=payload["solarpump"]
+                    if 83 not in Devices:
+                        Domoticz.Debug("Create on/off switch (Solar module pump)")
+                        Domoticz.Device(Name="Solar module pump", Unit=83, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(83, 244, 73, switchstate)
+                if "solarpumpmodulation" in payload:
+                    percentage=payload["solarpumpmodulation"]
+                    if 84 not in Devices:                
+                        Domoticz.Debug("Create percentage device (Solar module pump modulation)")
+                        Domoticz.Device(Name="Solar module pump modulation", Unit=84, Type=243, Subtype=6).Create()
+                    updateDevice(84, 243, 6, percentage)
+                if "pumpworkmin" in payload:
+                    text=payload["pumpworkmin"]
+                    if 85 not in Devices:   
+                        Domoticz.Debug("Create counter (solarPumpWorkMin)")
+                        Domoticz.Device(Name="solar pump working minutes", Unit=85, Type=113, Subtype=0, Switchtype=3).Create()
+                    updateDevice(85, 113, 0, text)
+                if "cylinderpumpmodulation" in payload:
+                    percentage=payload["cylinderpumpmodulation"]
+                    if 86 not in Devices:                
+                        Domoticz.Debug("Create percentage device (Solar module cylinderPumpModulation)")
+                        Domoticz.Device(Name="Solar module cylinderPumpModulation", Unit=86, Type=243, Subtype=6).Create()
+                    updateDevice(86, 243, 6, percentage)
+                if "valvestatus" in payload:
+                    switchstate=payload["valvestatus"]
+                    if 87 not in Devices:
+                        Domoticz.Debug("Create on/off switch (Solar module valveStatus)")
+                        Domoticz.Device(Name="Solar module valveStatus", Unit=87, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(87, 244, 73, switchstate)
+                if "tankheated" in payload:
+                    switchstate=payload["tankheated"]
+                    if 88 not in Devices:
+                        Domoticz.Debug("Create on/off switch (Solar module tankHeated)")
+                        Domoticz.Device(Name="Solar module tankHeated", Unit=88, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(88, 244, 73, switchstate)
+                if "collectorshutdown" in payload:
+                    switchstate=payload["collectorshutdown"]
+                    if 89 not in Devices:
+                        Domoticz.Debug("Create on/off switch (Solar module collectorShutdown)")
+                        Domoticz.Device(Name="Solar module collectorShutdown", Unit=89, Type=244, Subtype=73, Switchtype=0).Create()
+                    updateDevice(89, 244, 73, switchstate)
+                if "energylasthour" in payload:
+                    text=payload["energylasthour"]/1000 #Counter is in kWh, value in wH.
+                    if 90 not in Devices:   
+                        Domoticz.Debug("Create counter (energyLastHour)")
+                        Domoticz.Device(Name="solar pump energyLastHour", Unit=90, Type=113, Subtype=0).Create()
+                    updateDevice(90, 113, 0, text)
+                if "energytoday" in payload:
+                    text=payload["energytoday"]/1000 #Counter is in kWh, value in wH.
+                    if 91 not in Devices:   
+                        Domoticz.Debug("Create counter (energyToday)")
+                        Domoticz.Device(Name="solar pump energyToday", Unit=91, Type=113, Subtype=0).Create()
+                    updateDevice(91, 113, 0, text)
+                if "energytotal" in payload:
+                    text=payload["energytotal"]
+                    if 92 not in Devices:   
+                        Domoticz.Debug("Create counter (energyTotal)")
+                        Domoticz.Device(Name="solar pump energyTotal", Unit=92, Type=113, Subtype=0).Create()
+                    updateDevice(92, 113, 0, text)
+
+            # Decode mixing module data
+            # This creates Domoticz devices only if a mixing module topic message has been received.
+            # (Not everyone has a mixing module)
+            # It also creates only those devices for heating circuits in the topic message.
+            # Mixer modules for heating zones (topic mixing_dataX)
+            # TODO: automate this. Too many possible mixer ID's.
+            if "mixing_data1" in topic:
+                if "hc1" in payload:
+                    payloadHc1 = payload["hc1"]
+                    if "pumpmod" in payloadHc1:
+                        percentage=payloadHc1["pumpmod"]                    
+                        if 151 not in Devices:                
+                            Domoticz.Debug("Create percentage device (Mixing module HC1 pump modulation)")
+                            Domoticz.Device(Name="Mixing module HC1 pump modulation", Unit=151, Type=243, Subtype=6).Create()
+                        updateDevice(151, 243, 6, percentage)
+                    if "flowtemp" in payloadHc1:
+                        temp=round(float(payloadHc1["flowtemp"]), 1)
+                        if 152 not in Devices:
+                            Domoticz.Debug("Create temperature device (Mixing module HC1 flowtemp)")
+                            Domoticz.Device(Name="Mixing module HC1 flow", Unit=152, Type=80, Subtype=5).Create()
+                        updateDevice(152, 80, 5, temp)
+                    if "valvestatus" in payloadHc1:
+                        switchstate=payloadHc1["valvestatus"]
+                        if 153 not in Devices:
+                            Domoticz.Debug("Create on/off switch (Mixing module HC1 valvestatus)")
+                            Domoticz.Device(Name="Mixing module HC1 valve", Unit=153, Type=244, Subtype=73, Switchtype=0).Create()
+                        updateDevice(153, 244, 73, switchstate)
+
+                if "hc2" in payload:
+                    payloadHc2 = payload["hc2"]
+                    if "pumpmod" in payloadHc2:
+                        percentage=payloadHc2["pumpmod"]
+                        if 161 not in Devices:                
+                            Domoticz.Debug("Create percentage device (Mixing module HC2 pump modulation)")
+                            Domoticz.Device(Name="Mixing module HC2 pump modulation", Unit=161, Type=243, Subtype=6).Create()
+                        updateDevice(161, 243, 6, percentage)
+                    if "flowtemp" in payloadHc2:
+                        temp=round(float(payloadHc2["flowtemp"]), 1)
+                        if 162 not in Devices:
+                            Domoticz.Debug("Create temperature device (Mixing module HC2 flowtemp)")
+                            Domoticz.Device(Name="Mixing module HC2 flow", Unit=162, Type=80, Subtype=5).Create()
+                        updateDevice(162, 80, 5, temp)
+                    if "valvestatus" in payloadHc2:
+                        switchstate=payloadHc2["valvestatus"]
+                        if 163 not in Devices:
+                            Domoticz.Debug("Create on/off switch (Mixing module HC2 valvestatus)")
+                            Domoticz.Device(Name="Mixing module HC2 valve", Unit=163, Type=244, Subtype=73, Switchtype=0).Create()
+                        updateDevice(163, 244, 73, switchstate)
+
+                if "hc3" in payload:
+                    payloadHc3 = payload["hc3"]
+                    if 171 not in Devices:                
+                        Domoticz.Debug("Create percentage device (Mixing module HC3 pump modulation)")
+                        Domoticz.Device(Name="Mixing module HC3 pump modulation", Unit=171, Type=243, Subtype=6).Create()
+                    if 172 not in Devices:
+                        Domoticz.Debug("Create temperature device (Mixing module HC3 flowtemp)")
+                        Domoticz.Device(Name="Mixing module HC3 flow", Unit=172, Type=80, Subtype=5).Create()
+                    if 173 not in Devices:
+                        Domoticz.Debug("Create on/off switch (Mixing module HC3 valvestatus)")
+                        Domoticz.Device(Name="Mixing module HC3 valve", Unit=173, Type=244, Subtype=73, Switchtype=0).Create()
+                    if "pumpmod" in payloadHc3:
+                        percentage=payloadHc3["pumpmod"]
+                        updateDevice(171, 243, 6, percentage)
+                    if "flowtemp" in payloadHc3:
+                        temp=round(float(payloadHc3["flowtemp"]), 1)
+                        updateDevice(172, 80, 5, temp)
+                    if "valvestatus" in payloadHc3:
+                        switchstate=payloadHc3["valvestatus"]
+                        updateDevice(173, 244, 73, switchstate)
+
+                if "hc4" in payload:
+                    payloadHc4 = payload["hc4"]
+                    if 181 not in Devices:                
+                        Domoticz.Debug("Create percentage device (Mixing module HC4 pump modulation)")
+                        Domoticz.Device(Name="Mixing module HC4 pump modulation", Unit=181, Type=243, Subtype=6).Create()
+                    if 182 not in Devices:
+                        Domoticz.Debug("Create temperature device (Mixing module HC4 flowtemp)")
+                        Domoticz.Device(Name="Mixing module HC4 flow", Unit=182, Type=80, Subtype=5).Create()
+                    if 183 not in Devices:
+                        Domoticz.Debug("Create on/off switch (Mixing module HC1 valvestatus)")
+                        Domoticz.Device(Name="Mixing module HC4 valve", Unit=183, Type=244, Subtype=73, Switchtype=0).Create()
+                    if "pumpmod" in payloadHc4:
+                        percentage=payloadHc4["pumpmod"]
+                        updateDevice(181, 243, 6, percentage)
+                    if "flowtemp" in payloadHc4:
+                        temp=round(float(payloadHc4["flowtemp"]), 1)
+                        updateDevice(182, 80, 5, temp)
+                    if "valvestatus" in payloadHc4:
+                        switchstate=payloadHc4["valvestatus"]
+                        updateDevice(183, 244, 73, switchstate)
 
 
     # onCommand publishes a MQTT message for each command received from Domoticz
@@ -938,34 +943,37 @@ class EmsDevices:
         self.topicBase = Parameters["Mode1"].replace(" ", "")
         Domoticz.Log("onCommand called for Unit " + str(unit) + ": Parameter '" + str(command) + "', Level: " + str(level))
 
-        # Change a thermostat setpoint for a specific HC
-        if (unit in [112, 122, 132, 142]):
-            if (str(command) == "Set Level"):
-                sendEmsCommand(mqttClient, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
+        if self.EMSdevice == "thermostat":
+            # Change a thermostat setpoint for a specific HC
+            if (unit in [112, 122, 132, 142]):
+                if (str(command) == "Set Level"):
+                    sendEmsCommand(mqttClient, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
-        # Set boiler comfort mode
-        if (unit == 30):
-            dictOptions = Devices[unit].Options
-            listLevelNames = dictOptions['LevelNames'].split('|')
-            strSelectedName = listLevelNames[int(int(level)/10)]
-            Domoticz.Log("boiler comfort mode set to"+strSelectedName)
-            sendEmsCommand(mqttClient, "boiler", "comfort", strSelectedName.lower(), 0, 0)
+        if self.EMSdevice == "boiler" or "heatpump":
+            # Set boiler comfort mode
+            if (unit == 30):
+                dictOptions = Devices[unit].Options
+                listLevelNames = dictOptions['LevelNames'].split('|')
+                strSelectedName = listLevelNames[int(int(level)/10)]
+                Domoticz.Log("boiler comfort mode set to"+strSelectedName)
+                sendEmsCommand(mqttClient, "boiler", "comfort", strSelectedName.lower(), 0, 0)
 
-        # Set boiler ww mode (via thermostat command)
-        if (unit == 31):
-            dictOptions = Devices[unit].Options
-            listLevelNames = dictOptions['LevelNames'].split('|')
-            strSelectedName = listLevelNames[int(int(level)/10)]
-            Domoticz.Log("boiler ww mode set to"+strSelectedName)
-            sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0)              
+            # Set boiler ww mode (via thermostat command)
+            if (unit == 31):
+                dictOptions = Devices[unit].Options
+                listLevelNames = dictOptions['LevelNames'].split('|')
+                strSelectedName = listLevelNames[int(int(level)/10)]
+                Domoticz.Log("boiler ww mode set to"+strSelectedName)
+                sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0)              
 
-        # Change a thermostat mode for a specific HC
-        if (unit in [113, 123, 133, 143]):
-            dictOptions = Devices[unit].Options
-            listLevelNames = dictOptions['LevelNames'].split('|')
-            strSelectedName = listLevelNames[int(int(level)/10)]
-            Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
-            sendEmsCommand(mqttClient, "thermostat", "mode", strSelectedName.lower(), 1, str(int((unit-102)/10)))
+        if self.EMSdevice == "thermostat":
+            # Change a thermostat mode for a specific HC
+            if (unit in [113, 123, 133, 143]):
+                dictOptions = Devices[unit].Options
+                listLevelNames = dictOptions['LevelNames'].split('|')
+                strSelectedName = listLevelNames[int(int(level)/10)]
+                Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
+                sendEmsCommand(mqttClient, "thermostat", "mode", strSelectedName.lower(), 1, str(int((unit-102)/10)))
     
 class BasePlugin:
     mqttClient = None
