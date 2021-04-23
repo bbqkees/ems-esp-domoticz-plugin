@@ -29,8 +29,8 @@
     You can change it here or in the Gateway web interface if its set differently.<br/>
     <br/>
     You need to add a new hardware instance of the plugin for every set of EMS devices.<br/>
-    So if you have a boiler, thermostat and mixer module, you need to add a EMS-ESP hardware in Domoticz for the boiler and the thermostat,
-    and a second EMS-ESP hardware for the mixer module (You only install the plugin once, just create more hardware in Domoticz).<br/>
+    So if you have a boiler, thermostat and mixer module, you need to add a EMS-ESP hardware in Domoticz for the boiler and a second for the thermostat,
+    and a third EMS-ESP hardware for the mixer module (You only install the plugin once, just create more hardware in Domoticz).<br/>
     </description>
     <params>
         <param field="Address" label="MQTT Server address" width="300px" required="true" default="127.0.0.1"/>
@@ -117,54 +117,58 @@ class EmsDevices:
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
 
-        # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
-        # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
-        # So its best to look at the separate topics to keep the state in Domoticz in sync.
+        self.EMSdevice = Parameters["Mode5"]
 
-        # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
-        if "tapwater_active" in topic:
-            if 71 not in Devices:
-                Domoticz.Debug("Create on/off switch (tapwater active)")
-                Domoticz.Device(Name="Tapwater active", Unit=71, Type=244, Subtype=73, Switchtype=0).Create()
-            if payload == "off":
-                Devices[71].Update(nValue=0, sValue="off")
-            if payload == "on":
-                Devices[71].Update(nValue=1, sValue="on")
+        if self.debugging == "boiler" or "heatpump":
 
-        # Process the heating_active topic. Note the contents a single boolean (0 or 1) and not json.
-        if "heating_active" in topic:
-            if 72 not in Devices:
-                Domoticz.Debug("Create on/off switch (heating active)")
-                Domoticz.Device(Name="Heating active", Unit=72, Type=244, Subtype=73, Switchtype=0).Create()
-            if payload == "off":
-                Devices[72].Update(nValue=0,sValue="off")
-            if payload == "on":
-                Devices[72].Update(nValue=1,sValue="on")
+            # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
+            # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
+            # So its best to look at the separate topics to keep the state in Domoticz in sync.
 
-        # Process the status topic. Note the contents a single word and not json.
-        if "status" in topic:
-            Domoticz.Debug("status topic received")   
-            if 73 not in Devices:
-                Domoticz.Debug("Create on/off switch (Gateway online/offline)")
-                Domoticz.Device(Name="Gateway online", Unit=73, Type=244, Subtype=73, Switchtype=0).Create() 
-            if payload == "offline":
-                Devices[73].Update(nValue=0,sValue="off")
-            if payload == "online":
-                Devices[73].Update(nValue=1,sValue="on")
+            # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
+            if "tapwater_active" in topic:
+                if 71 not in Devices:
+                    Domoticz.Debug("Create on/off switch (tapwater active)")
+                    Domoticz.Device(Name="Tapwater active", Unit=71, Type=244, Subtype=73, Switchtype=0).Create()
+                if payload == "off":
+                    Devices[71].Update(nValue=0, sValue="off")
+                if payload == "on":
+                    Devices[71].Update(nValue=1, sValue="on")
 
-        # Process the info topic. It extracts the EMS-ESP version for future use.
-        if "info" in topic:
-            if "version" in payload:
-                emsEspVersion = payload["version"]
+            # Process the heating_active topic. Note the contents a single boolean (0 or 1) and not json.
+            if "heating_active" in topic:
+                if 72 not in Devices:
+                    Domoticz.Debug("Create on/off switch (heating active)")
+                    Domoticz.Device(Name="Heating active", Unit=72, Type=244, Subtype=73, Switchtype=0).Create()
+                if payload == "off":
+                    Devices[72].Update(nValue=0,sValue="off")
+                if payload == "on":
+                    Devices[72].Update(nValue=1,sValue="on")
 
-        # Process the shower_data topic.
-        if "shower_data" in topic:
-            if "duration" in payload:
-                text=payload["duration"]
-                if 60 not in Devices:
-                    Domoticz.Debug("Create text device (shower duration)")
-                    Domoticz.Device(Name="Shower duration", Unit=60, Type=243, Subtype=19).Create()
-                updateDevice(60, 243, 19, text)
+            # Process the status topic. Note the contents a single word and not json.
+            if "status" in topic:
+                Domoticz.Debug("status topic received")   
+                if 73 not in Devices:
+                    Domoticz.Debug("Create on/off switch (Gateway online/offline)")
+                    Domoticz.Device(Name="Gateway online", Unit=73, Type=244, Subtype=73, Switchtype=0).Create() 
+                if payload == "offline":
+                    Devices[73].Update(nValue=0,sValue="off")
+                if payload == "online":
+                    Devices[73].Update(nValue=1,sValue="on")
+
+            # Process the info topic. It extracts the EMS-ESP version for future use.
+            if "info" in topic:
+                if "version" in payload:
+                    emsEspVersion = payload["version"]
+
+            # Process the shower_data topic.
+            if "shower_data" in topic:
+                if "duration" in payload:
+                    text=payload["duration"]
+                    if 60 not in Devices:
+                        Domoticz.Debug("Create text device (shower duration)")
+                        Domoticz.Device(Name="Shower duration", Unit=60, Type=243, Subtype=19).Create()
+                    updateDevice(60, 243, 19, text)
 
         # Process the thermostat parameters of each heating zone
         # On first discovery of a hc 4 devices are created.
