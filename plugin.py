@@ -40,7 +40,7 @@
         <param field="Mode1" label="Topic base" width="300px" required="true" default="ems-esp/"/>
         <param field="Mode5" label="EMS Devices" width="100px">
             <options>
-                <option label="Boiler" value="boiler" default="true"/>
+                <option label="Boiler" value="boiler"/>
                 <option label="Heatpump" value="heatpump"/>
                 <option label="Thermostat" value="thermostat"/>
                 <option label="Solar + mixer modules" value="solar_mixers"/>
@@ -987,6 +987,10 @@ class BasePlugin:
             Domoticz.Debugging(2+4+8+16+64)
         if self.debugging == "Debug":
             Domoticz.Debugging(2+4+8)
+    
+        self.EMSdevice = Parameters["Mode5"]
+        Domoticz.Log("EMS hardware type is: ")
+        Domoticz.Log(self.EMSdevice)
 
         self.controller = EmsDevices()
 
