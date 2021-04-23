@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3b9] 2020-12-07
+
+Necessary to update to firmware V3 or higher.
+
+### Fixed
+
+All boiler parameters were previously reported in camelcase, now there are lowercase.
+
 ## [1.3b7] 2020-12-07
 
 Necessary to update to firmware V2.1.1b6 or higher.
