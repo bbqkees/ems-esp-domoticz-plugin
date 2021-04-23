@@ -322,7 +322,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Thermostat mode type HC4", Unit=144, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                         setSelectorByName(144, str(thMode))
 
-        if self.EMSdevice == "boiler" or "heatpump":
+        if self.EMSdevice == "boiler2" or "heatpump2":
                 # Process the boiler parameters
                 # Somewhere in 2.1bX this topic was split into two.
             if "boiler_data" or "boiler_data_main" or "boiler_data_ww" in topic:
