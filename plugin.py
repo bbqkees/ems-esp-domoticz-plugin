@@ -170,7 +170,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Shower duration", Unit=60, Type=243, Subtype=19).Create()
                     updateDevice(60, 243, 19, text)
 
-        if self.EMSdevice == "boiler" or "heatpump":
+        if self.EMSdevice == "thermostat":
             # Process the thermostat parameters of each heating zone
             # On first discovery of a hc 4 devices are created.
             if "thermostat_data" in topic:
