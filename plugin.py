@@ -314,8 +314,8 @@ class EmsDevices:
             # Process the boiler parameters
             # Somewhere in 2.1bX this topic was split into two.
         if "boiler_data" or "boiler_data_main" or "boiler_data_ww" in topic:
-            if "sysPress" in payload:
-                pressure=payload["sysPress"]
+            if "syspress" in payload:
+                pressure=payload["syspress"]
                 if 2 not in Devices:
                     Domoticz.Debug("Create System Pressure Device")
                     Domoticz.Device(Name="Boiler system pressure", Unit=2, Type=243, Subtype=9).Create()
