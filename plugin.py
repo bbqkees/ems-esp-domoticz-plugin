@@ -103,6 +103,7 @@
 
 
 import Domoticz
+from Domoticz import Devices, Parameters
 import json
 import time
 from mqtt import MqttClient
@@ -117,7 +118,7 @@ class EmsDevices:
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
 
-        if self.EMSdevice == "boiler" or "heatpump":
+        if Parameters["Mode5"] == "boiler" or "heatpump":
 
             # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
             # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
@@ -168,7 +169,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Shower duration", Unit=60, Type=243, Subtype=19).Create()
                     updateDevice(60, 243, 19, text)
 
-        if self.EMSdevice == "thermostat":
+        if Parameters["Mode5"] == "thermostat":
             # Process the thermostat parameters of each heating zone
             # On first discovery of a hc 4 devices are created.
             if "thermostat_data" in topic:
@@ -320,7 +321,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Thermostat mode type HC4", Unit=144, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                         setSelectorByName(144, str(thMode))
 
-        if self.EMSdevice == "boiler" or "heatpump":
+        if Parameters["Mode5"] == "boiler" or "heatpump":
                 # Process the boiler parameters
                 # Somewhere in 2.1bX this topic was split into two.
             if "boiler_data" or "boiler_data_main" or "boiler_data_ww" in topic:
@@ -660,7 +661,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Energy supplied cooling", Unit=65, Type=113, Subtype=0, Switchtype=4).Create()
                     updateDevice(65, 113, 0, text)
 
-        if self.EMSdevice == "heatpump":
+        if Parameters["Mode5"] == "heatpump":
             # Decode heat_pump data
             # These sensors have a Domoticz ID reserved in the range 201 to 209
             # airHumidity dewTemperature 
@@ -678,7 +679,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Boiler temperature", Unit=202, Type=80, Subtype=5).Create()
                     updateDevice(202, 80, 5, temp)
 
-        if self.EMSdevice == "dallas":
+        if Parameters["Mode5"] == "dallas":
             # Decode sensors
             # These sensors have a Domoticz ID reserved in the range 220 to 239
             # This creates Domoticz devices only if a sensor has been received in the topic message.
@@ -764,7 +765,7 @@ class EmsDevices:
                         tempS=round(float(payloadS10["temp"]), 1)
                         updateDevice(230, 80, 5, tempS)
 
-        if Parameters[Mode6] == "solar_mixer":
+        if Parameters["Mode5"] == "solar_mixer":
             # Decode solar module
             # These devices have a Domoticz ID reserved in the range 80 to 99
             # This creates Domoticz devices only if a solar module topic message has been received.
@@ -941,13 +942,13 @@ class EmsDevices:
         self.topicBase = Parameters["Mode1"].replace(" ", "")
         Domoticz.Log("onCommand called for Unit " + str(unit) + ": Parameter '" + str(command) + "', Level: " + str(level))
 
-        if self.EMSdevice == "thermostat":
+        if Parameters["Mode5"] == "thermostat":
             # Change a thermostat setpoint for a specific HC
             if (unit in [112, 122, 132, 142]):
                 if (str(command) == "Set Level"):
                     sendEmsCommand(mqttClient, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
-        if self.EMSdevice == "boiler" or "heatpump":
+        if Parameters["Mode5"] == "boiler" or "heatpump":
             # Set boiler comfort mode
             if (unit == 30):
                 dictOptions = Devices[unit].Options
@@ -964,7 +965,7 @@ class EmsDevices:
                 Domoticz.Log("boiler ww mode set to"+strSelectedName)
                 sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0)              
 
-        if self.EMSdevice == "thermostat":
+        if Parameters["Mode5"] == "thermostat":
             # Change a thermostat mode for a specific HC
             if (unit in [113, 123, 133, 143]):
                 dictOptions = Devices[unit].Options
