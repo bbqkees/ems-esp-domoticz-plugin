@@ -973,7 +973,7 @@ class EmsDevices:
                 Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
                 sendEmsCommand(mqttClient, "thermostat", "mode", strSelectedName.lower(), 1, str(int((unit-102)/10)))
     
-# class BasePlugin:
+class BasePlugin:
     mqttClient = None
 
     def onStart(self):
