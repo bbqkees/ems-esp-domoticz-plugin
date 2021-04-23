@@ -119,7 +119,7 @@ class EmsDevices:
 
         self.EMSdevice = Parameters["Mode5"]
 
-        if self.debugging == "boiler" or "heatpump":
+        if self.EMSdevice == "boiler" or "heatpump":
 
             # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
             # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
