@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3b15] 2021-05-06
+
+Necessary to update to firmware V3 or higher.
+
+### Changed
+
+Split up the plugin per EMS hardware device.
+
 ## [1.3b9] 2020-12-07
 
 Necessary to update to firmware V3 or higher.
