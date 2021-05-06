@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: April 2020
+# last update: May 2021
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi" version="1.3b10">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi2" version="1.3b15">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b10 23-APR-2020 (DEVELOPMENT multiple instances)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b15 6-MAY-2021 (DEVELOPMENT multiple instances)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/emsesp/EMS-ESP32">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -109,7 +109,91 @@ import time
 from mqtt import MqttClient
 
 
-class EmsDevices:
+class BasePlugin:
+    mqttClient = None
+
+    def __init__(self):
+        return
+
+    def onStart(self):
+        self.debugging = Parameters["Mode6"]
+        
+        if self.debugging == "Verbose+":
+            Domoticz.Debugging(2+4+8+16+64)
+        if self.debugging == "Verbose":
+            Domoticz.Debugging(2+4+8+16+64)
+        if self.debugging == "Debug":
+            Domoticz.Debugging(2+4+8)
+    
+        self.EMSdevice = Parameters["Mode5"]
+        Domoticz.Log("EMS hardware type is: ")
+        Domoticz.Log(self.EMSdevice)
+
+        self.checkDevices()
+
+        self.topicBase = Parameters["Mode1"].replace(" ", "")
+
+        self.topicsList = list(["thermostat_data", "boiler_data", "boiler_data_main", "boiler_data_ww", "sensor_data", "sensors", "dallassensor_data", "shower_data", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info", 
+                                "mixing_data1", "mixing_data2", "mixing_data3", "mixing_data4", "mixing_data5", "mixing_data6", "mixing_data7", "mixing_data8", "mixing_data9", "mixing_data10", "heatpump_data"])
+        self.topics = [self.topicBase + s for s in self.topicsList]
+        Domoticz.Debug("Topiclist is:")
+        Domoticz.Debug(", ".join(self.topics))
+        self.mqttserveraddress = Parameters["Address"].replace(" ", "")
+        self.mqttserverport = Parameters["Port"].replace(" ", "")
+        self.mqttClient = MqttClient(self.mqttserveraddress, self.mqttserverport, self.onMQTTConnected, self.onMQTTDisconnected, self.onMQTTPublish, self.onMQTTSubscribed)
+
+    def checkDevices(self):
+        Domoticz.Log("checkDevices called")
+
+    def onStop(self):
+        Domoticz.Log("onStop called")
+
+    def onCommand(self, Unit, Command, Level, Color):
+        Domoticz.Debug("Command: " + Command + " (" + str(Level))
+        self.onCommand(self.mqttClient, Unit, Command, Level, Color)
+
+    def onConnect(self, Connection, Status, Description):
+        self.mqttClient.onConnect(Connection, Status, Description)
+
+    def onDisconnect(self, Connection):
+        self.mqttClient.onDisconnect(Connection)
+
+    def onMessage(self, Connection, Data):
+        self.mqttClient.onMessage(Connection, Data)
+        Domoticz.Debug("onMessage called with: "+Data["Verb"])
+
+    def onHeartbeat(self):
+        Domoticz.Debug("Heartbeating...")
+
+        # Reconnect if connection has dropped
+        if self.mqttClient.mqttConn is None or (not self.mqttClient.mqttConn.Connecting() and not self.mqttClient.mqttConn.Connected() or not self.mqttClient.isConnected):
+            Domoticz.Debug("Reconnecting")
+            self.mqttClient.Open()
+        else:
+            self.mqttClient.Ping()
+
+    def onMQTTConnected(self):
+        Domoticz.Debug("onMQTTConnected")
+        self.mqttClient.Subscribe(self.topics)
+
+    def onMQTTDisconnected(self):
+        Domoticz.Debug("onMQTTDisconnected")
+
+    def onMQTTSubscribed(self):
+        Domoticz.Debug("onMQTTSubscribed")
+
+    def onMQTTPublish(self, topic, rawmessage):
+        Domoticz.Debug("MQTT message: " + topic + " " + str(rawmessage))
+        message = ""
+        try:
+            message = json.loads(rawmessage.decode('utf8'))
+        except json.decoder.JSONDecodeError:
+            Domoticz.Debug("Exception of type JSONDecodeError. Non-json object. Message is: ")
+            message = rawmessage.decode('utf8')
+            Domoticz.Debug(message)
+        if (topic in self.topics):
+            self.onMqttMessage(topic, message)
+    
 
     def checkDevices(self):
     # not used for now 
@@ -118,8 +202,7 @@ class EmsDevices:
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
 
-        if Parameters["Mode5"] == "boiler" or "heatpump":
-
+        if self.EMSdevice == "boiler" or self.EMSdevice == "heatpump":
             # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
             # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
             # So its best to look at the separate topics to keep the state in Domoticz in sync.
@@ -169,7 +252,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Shower duration", Unit=60, Type=243, Subtype=19).Create()
                     updateDevice(60, 243, 19, text)
 
-        if Parameters["Mode5"] == "thermostat":
+        if self.EMSdevice == "thermostat":
             # Process the thermostat parameters of each heating zone
             # On first discovery of a hc 4 devices are created.
             if "thermostat_data" in topic:
@@ -321,7 +404,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Thermostat mode type HC4", Unit=144, TypeName="Selector Switch", Switchtype=18, Options=Options, Used=1).Create()
                         setSelectorByName(144, str(thMode))
 
-        if Parameters["Mode5"] == "boiler" or "heatpump":
+        if self.EMSdevice == "boiler" or self.EMSdevice == "heatpump":
                 # Process the boiler parameters
                 # Somewhere in 2.1bX this topic was split into two.
             if "boiler_data" or "boiler_data_main" or "boiler_data_ww" in topic:
@@ -661,7 +744,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Energy supplied cooling", Unit=65, Type=113, Subtype=0, Switchtype=4).Create()
                     updateDevice(65, 113, 0, text)
 
-        if Parameters["Mode5"] == "heatpump":
+        if self.EMSdevice == "heatpump":
             # Decode heat_pump data
             # These sensors have a Domoticz ID reserved in the range 201 to 209
             # airHumidity dewTemperature 
@@ -679,7 +762,7 @@ class EmsDevices:
                         Domoticz.Device(Name="Boiler temperature", Unit=202, Type=80, Subtype=5).Create()
                     updateDevice(202, 80, 5, temp)
 
-        if Parameters["Mode5"] == "dallas":
+        if self.EMSdevice == "dallas":
             # Decode sensors
             # These sensors have a Domoticz ID reserved in the range 220 to 239
             # This creates Domoticz devices only if a sensor has been received in the topic message.
@@ -765,7 +848,7 @@ class EmsDevices:
                         tempS=round(float(payloadS10["temp"]), 1)
                         updateDevice(230, 80, 5, tempS)
 
-        if Parameters["Mode5"] == "solar_mixer":
+        if self.EMSdevice == "solar_mixer":
             # Decode solar module
             # These devices have a Domoticz ID reserved in the range 80 to 99
             # This creates Domoticz devices only if a solar module topic message has been received.
@@ -942,13 +1025,13 @@ class EmsDevices:
         self.topicBase = Parameters["Mode1"].replace(" ", "")
         Domoticz.Log("onCommand called for Unit " + str(unit) + ": Parameter '" + str(command) + "', Level: " + str(level))
 
-        if Parameters["Mode5"] == "thermostat":
+        if self.EMSdevice == "thermostat":
             # Change a thermostat setpoint for a specific HC
             if (unit in [112, 122, 132, 142]):
                 if (str(command) == "Set Level"):
                     sendEmsCommand(mqttClient, "thermostat", "temp", str(level), 1, str(int((unit-102)/10)))
 
-        if Parameters["Mode5"] == "boiler" or "heatpump":
+        if self.EMSdevice == "boiler" or self.EMSdevice == "heatpump":
             # Set boiler comfort mode
             if (unit == 30):
                 dictOptions = Devices[unit].Options
@@ -965,7 +1048,7 @@ class EmsDevices:
                 Domoticz.Log("boiler ww mode set to"+strSelectedName)
                 sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0)              
 
-        if Parameters["Mode5"] == "thermostat":
+        if self.EMSdevice == "thermostat":
             # Change a thermostat mode for a specific HC
             if (unit in [113, 123, 133, 143]):
                 dictOptions = Devices[unit].Options
@@ -973,90 +1056,6 @@ class EmsDevices:
                 strSelectedName = listLevelNames[int(int(level)/10)]
                 Domoticz.Log("Thermostat mode for unit "+str(unit)+"= "+strSelectedName)
                 sendEmsCommand(mqttClient, "thermostat", "mode", strSelectedName.lower(), 1, str(int((unit-102)/10)))
-    
-class BasePlugin:
-    mqttClient = None
-
-    def onStart(self):
-        self.debugging = Parameters["Mode6"]
-
-        if self.debugging == "Verbose+":
-            Domoticz.Debugging(2+4+8+16+64)
-        if self.debugging == "Verbose":
-            Domoticz.Debugging(2+4+8+16+64)
-        if self.debugging == "Debug":
-            Domoticz.Debugging(2+4+8)
-    
-        self.EMSdevice = Parameters["Mode5"]
-        Domoticz.Log("EMS hardware type is: ")
-        Domoticz.Log(self.EMSdevice)
-
-        self.controller = EmsDevices()
-
-        self.controller.checkDevices()
-
-        self.topicBase = Parameters["Mode1"].replace(" ", "")
-
-        self.topicsList = list(["thermostat_data", "boiler_data", "boiler_data_main", "boiler_data_ww", "sensor_data", "sensors", "dallassensor_data", "shower_data", "mixing_data", "solar_data", "hp_data", "heating_active", "tapwater_active", "status", "info", 
-                                "mixing_data1", "mixing_data2", "mixing_data3", "mixing_data4", "mixing_data5", "mixing_data6", "mixing_data7", "mixing_data8", "mixing_data9", "mixing_data10", "heatpump_data"])
-        self.topics = [self.topicBase + s for s in self.topicsList]
-        Domoticz.Debug("Topiclist is:")
-        Domoticz.Debug(", ".join(self.topics))
-        self.mqttserveraddress = Parameters["Address"].replace(" ", "")
-        self.mqttserverport = Parameters["Port"].replace(" ", "")
-        self.mqttClient = MqttClient(self.mqttserveraddress, self.mqttserverport, self.onMQTTConnected, self.onMQTTDisconnected, self.onMQTTPublish, self.onMQTTSubscribed)
-
-    def checkDevices(self):
-        Domoticz.Log("checkDevices called")
-
-    def onStop(self):
-        Domoticz.Log("onStop called")
-
-    def onCommand(self, Unit, Command, Level, Color):
-        Domoticz.Debug("Command: " + Command + " (" + str(Level))
-        self.controller.onCommand(self.mqttClient, Unit, Command, Level, Color)
-
-    def onConnect(self, Connection, Status, Description):
-        self.mqttClient.onConnect(Connection, Status, Description)
-
-    def onDisconnect(self, Connection):
-        self.mqttClient.onDisconnect(Connection)
-
-    def onMessage(self, Connection, Data):
-        self.mqttClient.onMessage(Connection, Data)
-        Domoticz.Debug("onMessage called with: "+Data["Verb"])
-
-    def onHeartbeat(self):
-        Domoticz.Debug("Heartbeating...")
-
-        # Reconnect if connection has dropped
-        if self.mqttClient.mqttConn is None or (not self.mqttClient.mqttConn.Connecting() and not self.mqttClient.mqttConn.Connected() or not self.mqttClient.isConnected):
-            Domoticz.Debug("Reconnecting")
-            self.mqttClient.Open()
-        else:
-            self.mqttClient.Ping()
-
-    def onMQTTConnected(self):
-        Domoticz.Debug("onMQTTConnected")
-        self.mqttClient.Subscribe(self.topics)
-
-    def onMQTTDisconnected(self):
-        Domoticz.Debug("onMQTTDisconnected")
-
-    def onMQTTSubscribed(self):
-        Domoticz.Debug("onMQTTSubscribed")
-
-    def onMQTTPublish(self, topic, rawmessage):
-        Domoticz.Debug("MQTT message: " + topic + " " + str(rawmessage))
-        message = ""
-        try:
-            message = json.loads(rawmessage.decode('utf8'))
-        except json.decoder.JSONDecodeError:
-            Domoticz.Debug("Exception of type JSONDecodeError. Non-json object. Message is: ")
-            message = rawmessage.decode('utf8')
-            Domoticz.Debug(message)
-        if (topic in self.topics):
-            self.controller.onMqttMessage(topic, message)
     
 
 global _plugin
