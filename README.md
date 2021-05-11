@@ -83,5 +83,7 @@ Als if you are missing parameters just let me know.
 The mixer logic got a bit more complex in EMS-ESP V2.
 There are now too many possible ID's and HC's so I need to create an elegant solution for this that fits into the limitations of the Domoticz Python plugin system.
 
+Also there are many ongoing changes in EMS-ESP so it is hard to keep the plugin in perfect sync all the time.
+
 ## Credits
 This plugin was based on the beta version version created by [Gert05](https://github.com/Gert05)
