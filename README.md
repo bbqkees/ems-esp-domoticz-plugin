@@ -17,7 +17,8 @@ The plugin will basically translate the Home Assistant format to Domoticz format
 ## Compatibility
 This version is compatible with EMS-ESP V2.2 and most V3 versions.
 
-I'm planning to make significant changes to the plugin soon in order to support more simultaneous devices in Domoticz. I have no real deadline though.
+I'm making significant changes to the plugin soon in order to support more simultaneous devices in Domoticz.
+You can find the new plugin version [HERE](https://github.com/bbqkees/ems-esp-domoticz-plugin/tree/dev-multi2).
 
 # Installation and configuration
 
