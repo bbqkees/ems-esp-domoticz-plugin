@@ -10,7 +10,7 @@ So you install the plugin once, but you create a new hardware of the type EMS Ga
 If you have a boiler and a thermostat, you need to create a new hardware in Domoticz for the boiler and one for the thermostat.
 Dallas sensors also need their own hardware instance.
 
-<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/dev-multi2/images/multi-dev2.JPG"><br>
+<img src="https://raw.githubusercontent.com/bbqkees/ems-esp-domoticz-plugin/dev-multi2/multi-dev2.JPG"><br>
 
 Make sure the firmware of the Gateway is EMS-ESP32 V3.1 or higher.
 You can find the latest beta software bin file here:
