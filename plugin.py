@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi2" version="1.3b15">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi2" version="1.3b16">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b15 6-MAY-2021 (DEVELOPMENT multiple instances)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b16 20-MAY-2021 (DEVELOPMENT multiple instances)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/emsesp/EMS-ESP32">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -201,6 +201,9 @@ class BasePlugin:
 
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
+
+        # make lowercase of all keys in the MQTT payload for comaptibility with EMS-ESP V2.2
+        payload =  {k.lower(): v for k, v in payload.items()}
 
         if self.EMSdevice == "boiler" or self.EMSdevice == "heatpump":
             # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
