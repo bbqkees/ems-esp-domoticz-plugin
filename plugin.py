@@ -202,13 +202,14 @@ class BasePlugin:
     # onMqttMessage decodes the MQTT messages and updates the Domoticz parameters
     def onMqttMessage(self, topic, payload):
 
-        # make lowercase of all keys in the MQTT payload for comaptibility with EMS-ESP V2.2
+        # Convert all keys in the MQTT payload to lowercase before processing them (for compatibility with EMS-ESP V2.2).
+        # EMS-ESP V2 has the keys in camelcase notation, V3 uses all lowercase.
         payload =  {k.lower(): v for k, v in payload.items()}
 
         if self.EMSdevice == "boiler" or self.EMSdevice == "heatpump":
-            # In firmware V2.1 the tapwater_active and heating_active are also included in boiler_data.
+            # In firmware V2.1 and higher the tapwater_active and heating_active are also included in boiler_data.
             # However, tapwater_active and heating_active are published on state change while boiler_data is periodical.
-            # So its best to look at the separate topics to keep the state in Domoticz in sync.
+            # So its best to look at the separate topics here to keep the state in Domoticz in sync.
 
             # Process the tapwater_active topic. Note the contents a single boolean (0 or 1) and not json.
             if "tapwater_active" in topic:
@@ -257,7 +258,6 @@ class BasePlugin:
 
         if self.EMSdevice == "thermostat":
             # Process the thermostat parameters of each heating zone
-            # On first discovery of a hc 4 devices are created.
             if "thermostat_data" in topic:
                 if "hc1" in payload:
                     payloadHc1 = payload["hc1"]
@@ -409,7 +409,7 @@ class BasePlugin:
 
         if self.EMSdevice == "boiler" or self.EMSdevice == "heatpump":
                 # Process the boiler parameters
-                # Somewhere in 2.1bX this topic was split into two.
+                # Somewhere in 2.1bX this topic was split into two, one for heating and one for warm water.
             if "boiler_data" or "boiler_data_main" or "boiler_data_ww" in topic:
                 if "syspress" in payload:
                     pressure=payload["syspress"]
@@ -854,9 +854,6 @@ class BasePlugin:
         if self.EMSdevice == "solar_mixer":
             # Decode solar module
             # These devices have a Domoticz ID reserved in the range 80 to 99
-            # This creates Domoticz devices only if a solar module topic message has been received.
-            # (Not everyone has a solar module)
-            # Available devices in topic: collectorTemp tankBottomTemp pumpModulation solarPump pumpWorkMin
             if "solar_data" in topic:
                 if "collectortemp" in payload:
                     temp=round(float(payload["collectortemp"]), 1)
@@ -913,13 +910,13 @@ class BasePlugin:
                         Domoticz.Device(Name="Solar module collectorShutdown", Unit=89, Type=244, Subtype=73, Switchtype=0).Create()
                     updateDevice(89, 244, 73, switchstate)
                 if "energylasthour" in payload:
-                    text=payload["energylasthour"]/1000 #Counter is in kWh, value in wH.
+                    text=payload["energylasthour"]/1000 #Counter is in kWh, value in Wh.
                     if 90 not in Devices:   
                         Domoticz.Debug("Create counter (energyLastHour)")
                         Domoticz.Device(Name="solar pump energyLastHour", Unit=90, Type=113, Subtype=0).Create()
                     updateDevice(90, 113, 0, text)
                 if "energytoday" in payload:
-                    text=payload["energytoday"]/1000 #Counter is in kWh, value in wH.
+                    text=payload["energytoday"]/1000 #Counter is in kWh, value in Wh.
                     if 91 not in Devices:   
                         Domoticz.Debug("Create counter (energyToday)")
                         Domoticz.Device(Name="solar pump energyToday", Unit=91, Type=113, Subtype=0).Create()
@@ -933,7 +930,6 @@ class BasePlugin:
 
             # Decode mixing module data
             # This creates Domoticz devices only if a mixing module topic message has been received.
-            # (Not everyone has a mixing module)
             # It also creates only those devices for heating circuits in the topic message.
             # Mixer modules for heating zones (topic mixing_dataX)
             # TODO: automate this. Too many possible mixer ID's.
