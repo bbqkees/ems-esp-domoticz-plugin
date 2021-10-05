@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: May 2021
+# last update: October 2021
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -851,7 +851,7 @@ class BasePlugin:
                         tempS=round(float(payloadS10["temp"]), 1)
                         updateDevice(230, 80, 5, tempS)
 
-        if self.EMSdevice == "solar_mixer":
+        if self.EMSdevice == "solar_mixers":
             # Decode solar module
             # These devices have a Domoticz ID reserved in the range 80 to 99
             if "solar_data" in topic:
