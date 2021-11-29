@@ -1,5 +1,5 @@
 # Domoticz Python Plugin for EMS bus Wi-Fi Gateway with Proddy's EMS-ESP firmware
-# last update: October 2021
+# last update: November 2021
 # Author: bbqkees @www.bbqkees-electronics.nl
 # Credits to @Gert05 for creating the first version of this plugin
 # https://github.com/bbqkees/ems-esp-domoticz-plugin
@@ -9,9 +9,9 @@
 # This is the development and debug version. Use the master version for production.
 #
 """
-<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi2" version="1.3b16">
+<plugin key="ems-gateway" name="EMS bus Wi-Fi Gateway DEV-multi2" version="1.3b18">
     <description>
-      EMS bus Wi-Fi Gateway plugin version 1.3b16 20-MAY-2021 (DEVELOPMENT multiple instances)<br/>
+      EMS bus Wi-Fi Gateway plugin version 1.3b18 29-NOV-2021 (DEVELOPMENT multiple instances)<br/>
       Plugin to interface with EMS bus equipped Bosch brands boilers together with the EMS-ESP firmware  '<a href="https://github.com/emsesp/EMS-ESP32">from Proddy</a>'<br/>
       <br/>
       Please look at the  <a href="https://bbqkees-electronics.nl/wiki/">Product Wiki</a> for all instructions.<br/>
@@ -61,7 +61,7 @@
 """
 
 # Plugin Device ID numbering scheme:
-# Bit inconvenient but Domoticz limts the ID's to max 255 for Python plugins.
+# Bit inconvenient but Domoticz limits the ID's to max 255 for Python plugins.
 # And even well before you reach the limit the device list of Domoticz may get messed up.
 #
 # Boiler data (topic boiler_data):
@@ -72,7 +72,7 @@
 # Shower data (topic shower_data):
 # ID 60 to 63
 #
-# Tapwater/heating,Gateway etc on/off (topics tapwater_active and heating_active):
+# Tapwater/heating, Gateway etc on/off (topics tapwater_active and heating_active):
 # ID 70 to 79
 # 
 # Solar module data (topic solar_data):
@@ -148,9 +148,9 @@ class BasePlugin:
     def onStop(self):
         Domoticz.Log("onStop called")
 
-    def onCommand(self, Unit, Command, Level, Color):
+    def onCommand(self, Unit, Command, Level, Hue):
         Domoticz.Debug("Command: " + Command + " (" + str(Level))
-        self.onCommand(self.mqttClient, Unit, Command, Level, Color)
+        self.onCommand(self.mqttClient, Unit, Command, Level, Hue)
 
     def onConnect(self, Connection, Status, Description):
         self.mqttClient.onConnect(Connection, Status, Description)
@@ -747,6 +747,19 @@ class BasePlugin:
                         Domoticz.Device(Name="Energy supplied cooling", Unit=65, Type=113, Subtype=0, Switchtype=4).Create()
                     updateDevice(65, 113, 0, text)
 
+                # Create device for wwchargeduration and wwcharge
+                # These are actually thermostat commands
+
+                # Create a thermostat setpoint device (each degree is 15min of charge time)
+                # Had no idea how to implement this otherwise.
+                if 66 not in Devices:
+                    Domoticz.Debug("Create wwchargeduration setter")
+                    Domoticz.Device(Name="WW charge duration x15min", Unit=66, Type=242, Subtype=1).Create()
+                # Create a push on button for wwcharge
+                if 67 not in Devices:
+                    Domoticz.Debug("Create push button switch (wwcharge)")
+                    Domoticz.Device(Name="WW charge", Unit=67, Type=244, Subtype=73, Switchtype=9).Create()                        
+
         if self.EMSdevice == "heatpump":
             # Decode heat_pump data
             # These sensors have a Domoticz ID reserved in the range 201 to 209
@@ -1020,7 +1033,7 @@ class BasePlugin:
 
 
     # onCommand publishes a MQTT message for each command received from Domoticz
-    def onCommand(self, mqttClient, unit, command, level, color):
+    def onCommand(self, mqttClient, unit, command, level, hue):
         self.topicBase = Parameters["Mode1"].replace(" ", "")
         Domoticz.Log("onCommand called for Unit " + str(unit) + ": Parameter '" + str(command) + "', Level: " + str(level))
 
@@ -1045,7 +1058,19 @@ class BasePlugin:
                 listLevelNames = dictOptions['LevelNames'].split('|')
                 strSelectedName = listLevelNames[int(int(level)/10)]
                 Domoticz.Log("boiler ww mode set to"+strSelectedName)
-                sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0)              
+                sendEmsCommand(mqttClient, "thermostat", "wwmode", strSelectedName.lower(), 0, 0) 
+
+            # Set wwchargeduration (via thermostat command)
+            # A thermostat is used here of which the value is the set temperature x 15min 
+            # also set this if wwcharge is called, to make sure the right charge time is set.
+            if (unit in [66, 67]):
+                if (str(command) == "Set Level"):
+                    sendEmsCommand(mqttClient, "thermostat", "wwchargeduration", str(level)*15, 1, str(66))
+            
+            # Set wwcharge
+            if (unit == 67):
+                if (str(command) == "On"):
+                    sendEmsCommand(mqttClient, "thermostat", "wwcharge", "on", 0, 0)            
 
         if self.EMSdevice == "thermostat":
             # Change a thermostat mode for a specific HC
@@ -1080,9 +1105,9 @@ def onMessage(Connection, Data):
     global _plugin
     _plugin.onMessage(Connection, Data)
 
-def onCommand(Unit, Command, Level, Color):
+def onCommand(Unit, Command, Level, Hue):
     global _plugin
-    _plugin.onCommand(Unit, Command, Level, Color)
+    _plugin.onCommand(Unit, Command, Level, Hue)
 
 def onHeartbeat():
     global _plugin
@@ -1156,15 +1181,15 @@ def sendEmsCommand(mqttClient, emsDevice, emsCommand, emsData, emsId, emsHc):
     topicBase = Parameters["Mode1"].replace(" ", "")
     if emsDevice =="thermostat" and emsCommand =="temp":
         payloadString = "{\"cmd\":\"temp\" ,\"data\":"+str(emsData)+", \"hc\":"+str(emsHc)+"}"
-        mqttClient.Publish(topicBase+"thermostat", payloadString)
     if emsDevice =="thermostat" and emsCommand =="wwmode":
         payloadString = "{\"cmd\":\"wwmode\" ,\"data\":\""+str(emsData)+"\"}"
-        mqttClient.Publish(topicBase+"thermostat", payloadString)
+    if emsDevice =="thermostat" and emsCommand =="wwcharge":
+        payloadString = "{\"cmd\":\"wwcharge\" ,\"data\":\""+str(emsData)+"\"}"
+    if emsDevice =="thermostat" and emsCommand =="wwchargeduration":
+        payloadString = "{\"cmd\":\"wwchargeduration\" ,\"data\":"+str(emsData)+"\"}"
     if emsDevice =="thermostat" and emsCommand =="mode":
         payloadString = "{\"cmd\":\"mode\" ,\"data\":\""+str(emsData)+"\", \"hc\":"+str(emsHc)+"}"
-        mqttClient.Publish(topicBase+"thermostat", payloadString)
     if emsDevice =="boiler":
         payloadString = "{\"cmd\":\""+emsCommand+"\" ,\"data\":\""+str(emsData)+"\"}"
-        mqttClient.Publish(topicBase+"boiler", payloadString)
-
+    mqttClient.Publish(topicBase+emsDevice, payloadString)
 
