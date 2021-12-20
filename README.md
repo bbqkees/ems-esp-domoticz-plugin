@@ -4,7 +4,12 @@
 # ems-esp-domoticz-plugin
 Domoticz plugin for the EMS Wi-Fi Gateway with Proddy's EMS-ESP firmware. 
 
-## When do you need this?
+# DECEMBER 2021 -> YOU DO NOT NEED THIS PLUGIN ANYMORE
+Domoticz now natively supports the Home Assistant MQTT Discovery protocol. The Gateway already supported this protocol.
+With a recent Domoticz beta version (late December 2021 and onwards) you can get all your EMS parameters into Domoticz without any further plugin.
+See [HERE](https://bbqkees-electronics.nl/wiki/gateway/domoticz-configuration.html) for the instructions on how to add it to Domoticz.
+
+## When do you need this plugin?
 If you are using the [EMS Wi-Fi Gateway](https://bbqkees-electronics.nl/) (or another setup with) with [Proddy's EMS-ESP firmware](https://github.com/proddy/EMS-ESP) in combination with Domoticz.<br><br>
 <img src="https://bbqkees-electronics.nl/wp-content/uploads/2019/12/on-boiler.jpg" height="200">
 <img src="https://bbqkees-electronics.nl/wp-content/uploads/2019/12/gateway-p2-kit.jpg" height="200">
